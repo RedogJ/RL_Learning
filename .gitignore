@@ -1,0 +1,22 @@
+# Python environments and caches
+__pycache__/
+*.py[cod]
+.venv/
+.pytest_cache/
+.ruff_cache/
+
+# Local training results (keep source and configuration in Git)
+checkpoints/
+logs/
+runs/
+outputs/
+wandb/
+
+# Local credentials and machine-specific settings
+.env
+.env.*
+!.env.example
+!.env.template
+
+# Desktop metadata
+.DS_Store

@@ -1,0 +1,50 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Python: Current File",
+            "type": "debugpy",
+            "request": "launch",
+            // Use the interpreter recorded by `isaaclab --editor`; VS Code skips wrapper scripts such as python.sh
+            "python": "${config:python.defaultInterpreterPath}",
+            "program": "${file}",
+            "console": "integratedTerminal"
+        },
+{% for specification in specifications %}
+  {% for rl_library in specification.rl_libraries %}
+    {% for rl_algorithm in rl_library.algorithms %}
+        {
+            "name": "Train {{ specification.task.id }} with {{ rl_library.name }} ({{ rl_algorithm|upper }})",
+            "type": "debugpy",
+            "request": "launch",
+            "python": "${config:python.defaultInterpreterPath}",
+            "module": "isaaclab",
+            "args": [
+                "train",
+                "--rl_library", "{{ rl_library.name }}",
+                "--task", "{{ specification.task.id }}",
+                "--num_envs", "4096"{% if rl_library.name == "skrl" %},
+                "--algorithm", "{{ rl_algorithm|upper }}"{% endif %}
+            ],
+            "console": "integratedTerminal"
+        },
+        {
+            "name": "Play {{ specification.task.id }} with {{ rl_library.name }} ({{ rl_algorithm|upper }})",
+            "type": "debugpy",
+            "request": "launch",
+            "python": "${config:python.defaultInterpreterPath}",
+            "module": "isaaclab",
+            "args": [
+                "play",
+                "--rl_library", "{{ rl_library.name }}",
+                "--task", "{{ specification.task.id }}",
+                "--num_envs", "32"{% if rl_library.name == "skrl" %},
+                "--algorithm", "{{ rl_algorithm|upper }}"{% endif %}
+            ],
+            "console": "integratedTerminal"
+        },
+    {% endfor %}
+  {% endfor %}
+{% endfor %}
+    ]
+}
