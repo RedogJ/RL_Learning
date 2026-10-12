@@ -3,4 +3,4 @@
 #
 # SPDX-License-Identifier: BSD-3-Clause
 
-"""RSL-RL comparison for the hand-written double-cartpole project."""
+"""Self-contained double-cartpole project using standard RSL-RL."""

@@ -3,6 +3,8 @@
 #
 # SPDX-License-Identifier: BSD-3-Clause
 
+"""双杆场景：世界 → X 轴滑块 → 第一根杆 → 第二根杆。"""
+
 from pxr import Gf, Sdf, Usd, UsdGeom, UsdPhysics
 
 import isaaclab.sim as sim_utils
@@ -10,12 +12,11 @@ from isaaclab.assets import AssetBaseCfg, RigidObjectCfg
 from isaaclab.scene import InteractiveSceneCfg
 from isaaclab.utils import configclass
 
-import torch
-
 @configclass
 class PoleSpawnCfg(sim_utils.CuboidCfg):
-    # 创建场景前，由 main.py 根据小车尺寸填写
-    cart_half_height: float = 0.0
+    # 本环境内的父刚体，以及父刚体局部坐标系中的连接点高度 [m]。
+    parent_body: str = "Cart"
+    parent_anchor_z: float = 0.0
 
 
 @sim_utils.clone
@@ -55,14 +56,14 @@ def spawn_cart(
     return prim
 
 @sim_utils.clone
-def spawn_slider(
+def spawn_pole(
     prim_path: str,
-    cfg:  PoleSpawnCfg,
+    cfg: PoleSpawnCfg,
     translation: tuple[float, float, float] | None = None,
     orientation: tuple[float, float, float, float] | None = None,
     **kwargs,
 ) -> Usd.Prim:
-    """创建杆，并通过 Y 轴转动关节连接到小车上表面。"""
+    """创建杆，并通过 Y 轴转动关节连接到父刚体的上端。"""
     prim = sim_utils.spawn_cuboid(
         prim_path,
         cfg,
@@ -72,27 +73,24 @@ def spawn_slider(
     )
 
     stage = sim_utils.get_current_stage()
-    jstage = sim_utils.get_current_stage()
 
     joint = UsdPhysics.RevoluteJoint.Define(
         stage,
         f"{prim_path}/HingeJoint",
     )
 
-    # 找到同一环境下的小车路径
+    # 第一根杆的父刚体是 Cart，第二根杆的父刚体是 Ball。
     env_path = prim_path.rsplit("/", 1)[0]
-    cart_path = f"{env_path}/Cart"
+    parent_path = f"{env_path}/{cfg.parent_body}"
 
-    # body0 是小车，body1 是杆
-    joint.CreateBody0Rel().SetTargets([Sdf.Path(cart_path)])
+    joint.CreateBody0Rel().SetTargets([Sdf.Path(parent_path)])
     joint.CreateBody1Rel().SetTargets([Sdf.Path(prim_path)])
 
     half_length = cfg.size[2] / 2
 
-    # 小车端：根据小车配置计算上表面中心。
-    cart_half_height = cfg.cart_half_height
+    # 父刚体端：小车上表面或第一根杆的上端。
     joint.CreateLocalPos0Attr(
-        Gf.Vec3f(0.0, 0.0, cart_half_height)
+        Gf.Vec3f(0.0, 0.0, cfg.parent_anchor_z)
     )
 
     # 杆端：杆的下端
@@ -106,8 +104,30 @@ def spawn_slider(
 
     joint.CreateLowerLimitAttr(-90.0)
     joint.CreateUpperLimitAttr(90.0)
+    # 接头附近几何可能交叠，连接的两刚体不相互碰撞。
+    joint.CreateCollisionEnabledAttr(False)
 
     return prim
+
+
+def configure_cartpole_scene_cfg(scene_cfg):
+    """根据刚体长度设置双杆初始位置与局部锚点 [m]，创建场景前调用。"""
+    cart_pos = scene_cfg.cart.init_state.pos
+    cart_half_height = scene_cfg.cart.spawn.size[2] / 2
+    lower_half_length = scene_cfg.ball.spawn.size[2] / 2
+    upper_half_length = scene_cfg.ball2.spawn.size[2] / 2
+
+    scene_cfg.ball.spawn.parent_body = "Cart"
+    scene_cfg.ball.spawn.parent_anchor_z = cart_half_height
+    scene_cfg.ball.init_state.pos = (
+        cart_pos[0], cart_pos[1], cart_pos[2] + cart_half_height + lower_half_length
+    )
+    scene_cfg.ball2.spawn.parent_body = "Ball"
+    scene_cfg.ball2.spawn.parent_anchor_z = lower_half_length
+    scene_cfg.ball2.init_state.pos = (
+        cart_pos[0], cart_pos[1],
+        scene_cfg.ball.init_state.pos[2] + lower_half_length + upper_half_length,
+    )
 
 
 def configure_cartpole_joints(scene):
@@ -117,10 +137,8 @@ def configure_cartpole_joints(scene):
 
     for env_path in scene.env_prim_paths:
         cart_path = f"{env_path}/Cart"
-        pole_path = f"{env_path}/Ball"
         slide = UsdPhysics.PrismaticJoint.Get(stage, f"{cart_path}/SlideJoint")
-        hinge = UsdPhysics.RevoluteJoint.Get(stage, f"{pole_path}/HingeJoint")
-        if not slide or not hinge:
+        if not slide:
             raise RuntimeError(f"环境关节缺失：{env_path}")
 
         # 小车的世界位置包含环境原点的偏移。
@@ -129,13 +147,20 @@ def configure_cartpole_joints(scene):
         slide.CreateLocalPos0Attr(Gf.Vec3f(*anchor))
         slide.CreateBody1Rel().SetTargets([Sdf.Path(cart_path)])
 
+        # 两个转动关节分别连接 Cart→Ball、Ball→Ball2。
         # 复制资产后，显式绑定本环境的两端，避免跨环境连接。
-        hinge.CreateBody0Rel().SetTargets([Sdf.Path(cart_path)])
-        hinge.CreateBody1Rel().SetTargets([Sdf.Path(pole_path)])
+        for parent_name, pole_name in (("Cart", "Ball"), ("Ball", "Ball2")):
+            pole_path = f"{env_path}/{pole_name}"
+            hinge = UsdPhysics.RevoluteJoint.Get(stage, f"{pole_path}/HingeJoint")
+            if not hinge:
+                raise RuntimeError(f"环境关节缺失：{pole_path}/HingeJoint")
+            hinge.CreateBody0Rel().SetTargets([Sdf.Path(f"{env_path}/{parent_name}")])
+            hinge.CreateBody1Rel().SetTargets([Sdf.Path(pole_path)])
+            hinge.CreateCollisionEnabledAttr(False)
 
 
 @configclass
-class DropSceneCfg(InteractiveSceneCfg):
+class CartpoleSceneCfg(InteractiveSceneCfg):
     ground = AssetBaseCfg(
         prim_path="/World/Ground",
         spawn=sim_utils.CuboidCfg(
@@ -155,60 +180,42 @@ class DropSceneCfg(InteractiveSceneCfg):
     )
 
     cart = RigidObjectCfg(
-    prim_path="{ENV_REGEX_NS}/Cart",
-    spawn=sim_utils.CuboidCfg(
-        func=spawn_cart,
-        size=(0.4, 0.3, 0.2),
-        rigid_props=sim_utils.UsdPhysicsRigidBodyCfg(),
-        collision_props=sim_utils.UsdPhysicsCollisionCfg(),
-        mass_props=sim_utils.MassCfg(mass=1.0),
-    ),
-    init_state=RigidObjectCfg.InitialStateCfg(
-        pos=(0.0, 0.0, 2.6),
-    ),
+        prim_path="{ENV_REGEX_NS}/Cart",
+        spawn=sim_utils.CuboidCfg(
+            func=spawn_cart,
+            size=(0.4, 0.3, 0.2),
+            rigid_props=sim_utils.UsdPhysicsRigidBodyCfg(),
+            collision_props=sim_utils.UsdPhysicsCollisionCfg(),
+            mass_props=sim_utils.MassCfg(mass=1.0),
+        ),
+        init_state=RigidObjectCfg.InitialStateCfg(pos=(0.0, 0.0, 2.6)),
     )
 
     ball = RigidObjectCfg(
         prim_path="{ENV_REGEX_NS}/Ball",
         spawn=PoleSpawnCfg(
-            func=spawn_slider,
+            func=spawn_pole,
             size=(0.08, 0.08, 1.0),
             rigid_props=sim_utils.UsdPhysicsRigidBodyCfg(),
             collision_props=sim_utils.UsdPhysicsCollisionCfg(),
             mass_props=sim_utils.MassCfg(mass=1.0),
+            visual_material=sim_utils.PreviewSurfaceCfg(diffuse_color=(0.1, 0.5, 0.9)),
         ),
         init_state=RigidObjectCfg.InitialStateCfg(
             pos=(0.0, 0.0, 2.0),
         ),
     )
 
-def read_cartpole_state(scene, scene_cfg):
-    """返回各环境的小车位置 [m]、速度 [m/s]、杆角度 [rad]、角速度 [rad/s]。"""
-    cart = scene["cart"]
-    pole = scene["ball"]
-
-    cart_position = cart.data.root_link_pos_w.torch
-    pole_position = pole.data.root_com_pos_w.torch
-
-    # 小车相对初始中心的位置
-    x = (
-        cart_position[:, 0]
-        - scene.env_origins[:, 0]
-        - scene_cfg.cart.init_state.pos[0]
+    ball2 = RigidObjectCfg(
+        prim_path="{ENV_REGEX_NS}/Ball2",
+        spawn=PoleSpawnCfg(
+            func=spawn_pole,
+            parent_body="Ball",
+            size=(0.08, 0.08, 1.0),
+            rigid_props=sim_utils.UsdPhysicsRigidBodyCfg(),
+            collision_props=sim_utils.UsdPhysicsCollisionCfg(),
+            mass_props=sim_utils.MassCfg(mass=1.0),
+            visual_material=sim_utils.PreviewSurfaceCfg(diffuse_color=(0.9, 0.4, 0.1)),
+        ),
+        init_state=RigidObjectCfg.InitialStateCfg(pos=(0.0, 0.0, 4.2)),
     )
-    x_dot = cart.data.root_link_lin_vel_w.torch[:, 0]
-
-    # 小车上表面的连接点
-    pivot_x = cart_position[:, 0]
-    pivot_z = (
-        cart_position[:, 2]
-        + scene_cfg.ball.spawn.cart_half_height
-    )
-
-    theta = torch.atan2(
-        pole_position[:, 0] - pivot_x,
-        pole_position[:, 2] - pivot_z,
-    )
-    theta_dot = pole.data.root_ang_vel_w.torch[:, 1]
-
-    return x, x_dot, theta, theta_dot

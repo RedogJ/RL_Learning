@@ -4,7 +4,7 @@
 #
 # SPDX-License-Identifier: BSD-3-Clause
 
-# Reuse the local image and the original scene; no image pulls or package installs.
+# Run this self-contained project with the existing Isaac Lab image.
 set -euo pipefail
 
 mode="${1:-train}"
@@ -12,16 +12,15 @@ if [[ $# -gt 0 ]]; then shift; fi
 case "$mode" in
     train) defaults=(--control train --viz none) ;;
     play) defaults=(--control play --viz newton_gl --num_envs 1) ;;
-    *) printf 'Usage: bash IsaacLab/scripts/my_cartpole/rsl_rl_version/run.sh [train|play] [arguments]\n' >&2; exit 2 ;;
+    *) printf 'Usage: bash run.sh [train|play] [arguments]\n' >&2; exit 2 ;;
 esac
 [[ "$EUID" -ne 0 ]] || { printf '请以桌面用户运行，脚本会调用 sudo。\n' >&2; exit 1; }
 command -v docker >/dev/null || { printf '找不到 docker。\n' >&2; exit 1; }
 
 version_dir="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
-workspace_dir="$(cd -- "$version_dir/../../../.." && pwd)"
 container_home="$HOME/.cache/isaaclab-docker/home"
-log_dir="$workspace_dir/IsaacLab/logs"
-mkdir -p "$log_dir/my_cartpole_rsl_rl" "$HOME/.cache/ov" \
+log_dir="$version_dir/logs"
+mkdir -p "$log_dir" "$HOME/.cache/ov" \
     "$container_home/.cache" "$container_home/.local/share" \
     "$container_home/.nv" "$container_home/.nvidia-omniverse/logs"
 
@@ -51,7 +50,7 @@ if [[ "$viz" != none ]]; then
 fi
 terminal_args=(-i)
 if [[ -t 0 && -t 1 ]]; then terminal_args+=(-t); fi
-printf 'RSL-RL double Cartpole: %s\n结果目录：%s/my_cartpole_rsl_rl\n' "$mode" "$log_dir"
+printf 'RSL-RL double Cartpole: %s\n结果目录：%s\n' "$mode" "$log_dir"
 
 sudo docker run --rm "${terminal_args[@]}" --pull=never --network none --gpus all \
     --user "$(id -u):$(id -g)" --entrypoint /bin/bash --shm-size=1g \
@@ -60,10 +59,9 @@ sudo docker run --rm "${terminal_args[@]}" --pull=never --network none --gpus al
     "${display_args[@]}" \
     -v "$container_home:/home/ubuntu" \
     -v "$HOME/.cache/ov:/home/ubuntu/.cache/ov" \
-    -v "$workspace_dir/IsaacLab/source:/workspace/isaaclab/source:ro" \
-    -v "$workspace_dir/IsaacLab/scripts:/workspace/isaaclab/scripts:ro" \
-    -v "$log_dir:/workspace/isaaclab/logs" \
-    -w /workspace/isaaclab \
+    -v "$version_dir:/workspace/rsl_rl_version:ro" \
+    -v "$log_dir:/workspace/rsl_rl_version/logs" \
+    -w /workspace \
     isaaclab-base:local -c '
         set -e
         sim_root=/workspace/isaaclab/_isaac_sim
@@ -82,5 +80,5 @@ sudo docker run --rm "${terminal_args[@]}" --pull=never --network none --gpus al
         site_dir="$(/opt/isaaclab-venv/bin/python -c "import site; print(site.getsitepackages()[0])")"
         export PYTHONPATH="$site_dir:${PYTHONPATH:-}"
         exec uv run --offline --no-project --active python \
-            scripts/my_cartpole/rsl_rl_version/main.py "$@"
+            -m rsl_rl_version.main "$@"
     ' cartpole-rsl "${all_args[@]}"
