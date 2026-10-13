@@ -1,0 +1,30 @@
+{
+  "download_date": "2026-10-13",
+  "source_version": "Isaac 6.1/default_ground_plane_checker_v1",
+  "built_in_dependencies": [
+    "OmniPBR.mdl (provided by the existing Isaac Sim runtime)"
+  ],
+  "files": [
+    {
+      "path": "default_ground_plane.usda",
+      "source": "https://omniverse-content-production.s3-us-west-2.amazonaws.com/Assets/Isaac/6.1/Isaac/IsaacLab/Environments/Grid/default_ground_plane_checker_v1/default_ground_plane.usda",
+      "bytes": 3369,
+      "sha256": "8d86d2473acd68f6e4f3763c52347eee283b521303c56d29b8bd733c72811636",
+      "etag": "\"ec618d54bd0d8b990ed275c729b8c067\""
+    },
+    {
+      "path": "Materials/Textures/default_ground_plane_albedo.png",
+      "source": "https://omniverse-content-production.s3-us-west-2.amazonaws.com/Assets/Isaac/6.1/Isaac/IsaacLab/Environments/Grid/default_ground_plane_checker_v1/Materials/Textures/default_ground_plane_albedo.png",
+      "bytes": 1686,
+      "sha256": "2c41b1f063769715b3d74738abd3efa4078eabb95f6ada8e5d2b3bba29411b14",
+      "etag": "\"3bd44aba8bb5f5ff4fc8bffdcb46ed2c\""
+    },
+    {
+      "path": "Materials/Textures/default_ground_plane_roughness.png",
+      "source": "https://omniverse-content-production.s3-us-west-2.amazonaws.com/Assets/Isaac/6.1/Isaac/IsaacLab/Environments/Grid/default_ground_plane_checker_v1/Materials/Textures/default_ground_plane_roughness.png",
+      "bytes": 985,
+      "sha256": "a55248660ef2d82b15b9cf731d42b2580c160314be5ae4c13e27c773c2debf8c",
+      "etag": "\"184e663e26afa396e65e7450b089b4c1\""
+    }
+  ]
+}

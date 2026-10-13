@@ -1,0 +1,32 @@
+{
+  "repository": "unitreerobotics/unitree_model",
+  "revision": "323e350252b9c3aee9c40acbfdad84f6ce46a5ac",
+  "download_date": "2026-10-13",
+  "files": [
+    {
+      "path": "Go2/usd/configuration/go2_description_base.usd",
+      "bytes": 18806122,
+      "sha256": "eeed42fb9e41395c47bc3fac7ff5d58625ac62f44bfa5a09cacebff83229c7a0",
+      "source": "https://huggingface.co/datasets/unitreerobotics/unitree_model/resolve/323e350252b9c3aee9c40acbfdad84f6ce46a5ac/Go2/usd/configuration/go2_description_base.usd?download=true"
+    },
+    {
+      "path": "Go2/usd/configuration/go2_description_physics.usd",
+      "bytes": 6829,
+      "sha256": "43800f436b3533c869f0b7774e5c70bc4291579df70a62263f808fb1a8f05505",
+      "source": "https://huggingface.co/datasets/unitreerobotics/unitree_model/resolve/323e350252b9c3aee9c40acbfdad84f6ce46a5ac/Go2/usd/configuration/go2_description_physics.usd?download=true"
+    },
+    {
+      "path": "Go2/usd/configuration/go2_description_sensor.usd",
+      "bytes": 655,
+      "sha256": "d63cfa5964eb5a72b8e2a02dc89448881497717f21d76b1ec9683a92cb765a16",
+      "source": "https://huggingface.co/datasets/unitreerobotics/unitree_model/resolve/323e350252b9c3aee9c40acbfdad84f6ce46a5ac/Go2/usd/configuration/go2_description_sensor.usd?download=true"
+    },
+    {
+      "path": "Go2/usd/go2.usd",
+      "bytes": 1601,
+      "sha256": "fd3c8c23c97cea3208fae1ab5eeacba4ffa616fe5f1397be6c7edf4feb93f180",
+      "source": "https://huggingface.co/datasets/unitreerobotics/unitree_model/resolve/323e350252b9c3aee9c40acbfdad84f6ce46a5ac/Go2/usd/go2.usd?download=true"
+    }
+  ],
+  "text_usd_references": []
+}
