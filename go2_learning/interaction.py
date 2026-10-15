@@ -192,6 +192,10 @@ class MousePush:
         self.arrow_visible = True
 
     def apply(self):
+        if not self.env.policy_active[self.picked_env]:
+            self.force.zero_()
+            self.hide_arrow()
+            return
         if self.anchor is not None:
             if self.pending_mouse is not None:
                 # 保留官方目标更新算法，将同一帧的鼠标事件合并。

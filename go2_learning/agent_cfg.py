@@ -38,13 +38,13 @@ def make_agent_cfg() -> dict:
             "num_learning_epochs": 4,
             # 每个 epoch 使用整批样本。
             "num_mini_batches": 1,
-            "learning_rate": 3e-4,
+            "learning_rate": 4e-4,
             "schedule": "fixed",
-            "desired_kl": None,
-            "gamma": 0.99,
+            "desired_kl": None, 
+            "gamma": 0.999,
             "lam": 0.95,
-            "clip_param": 0.2,
-            "entropy_coef": 0.005,
+            "clip_param": 0.3,
+            "entropy_coef": 0.01,  # 降低探索奖励；旧日志中 std 持续增长，影响站立精度。
             "value_loss_coef": 0.5,
             "use_clipped_value_loss": False,
             "max_grad_norm": 0.5,

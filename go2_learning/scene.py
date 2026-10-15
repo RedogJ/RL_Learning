@@ -6,6 +6,7 @@ import isaaclab.sim as sim_utils
 from isaaclab.actuators import ImplicitActuatorCfg
 from isaaclab.assets import ArticulationCfg, AssetBaseCfg
 from isaaclab.scene import InteractiveSceneCfg
+from isaaclab.sensors import ContactSensorCfg
 from isaaclab.utils import configclass
 from isaaclab_physx.sim.schemas import PhysxArticulationCfg, PhysxRigidBodyCfg
 
@@ -37,6 +38,7 @@ class Go2SceneCfg(InteractiveSceneCfg):
         prim_path="{ENV_REGEX_NS}/Robot",
         spawn=sim_utils.UsdFileCfg(
             usd_path=str(USD_PATH),
+            activate_contact_sensors=True,
             rigid_props=PhysxRigidBodyCfg(disable_gravity=False, max_depenetration_velocity=1.0),
             articulation_props=PhysxArticulationCfg(
                 enabled_self_collisions=False,
@@ -47,11 +49,10 @@ class Go2SceneCfg(InteractiveSceneCfg):
         init_state=ArticulationCfg.InitialStateCfg(
             pos=(0.0, 0.0, 0.4),
             joint_pos={
-                ".*L_hip_joint": 0.1,
-                ".*R_hip_joint": -0.1,
-                "F[L,R]_thigh_joint": 0.8,
-                "R[L,R]_thigh_joint": 1.0,
-                ".*_calf_joint": -1.5,
+                # 四条腿采用相同参考角，与髋角趋零奖励保持一致。
+                ".*_hip_joint": 0.0,
+                ".*_thigh_joint": 0.8,
+                ".*_calf_joint": -1.6,
             },
             joint_vel={".*": 0.0},
         ),
@@ -64,4 +65,9 @@ class Go2SceneCfg(InteractiveSceneCfg):
                 joint_effort_limit=23.7,
             ),
         },
+    )
+    # 更新周期在 make_env 中设为物理 dt；4 帧覆盖 30 Hz 控制之间的全部物理步。
+    contact_forces = ContactSensorCfg(
+        prim_path="{ENV_REGEX_NS}/Robot/[^/]+",
+        history_length=4,
     )
