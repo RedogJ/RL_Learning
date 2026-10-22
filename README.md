@@ -1,60 +1,84 @@
 # RL Learning
 
-当前 Go2 学习工程是 **[go2_learning](go2_learning/README.md)**：本地模型、地面、轻量可视化和标准 RSL-RL 接口。
-双杆对照工程保存在 **[rsl_rl_version](rsl_rl_version/README.md)**，二者复用现有 Docker 镜像。
+用 Isaac Lab 和 RSL-RL 学习机器人强化学习。当前主工程包含 **Go2 站立抗扰动、速度跟踪与后腿直立**。
 
 ## 目录
 
 ```text
 RL_Learning/
-├── go2_learning/            # Go2：场景、站立环境、标准 RSL-RL
-├── rsl_rl_version/          # 双杆独立工程：场景、环境、配置、入口
-│   └── logs/               # 运行后生成的训练日志和权重，Git 忽略
-├── IsaacLab/               # Isaac Lab 框架与 Docker 构建上下文
-│   └── scripts/my_cartpole/ # 之前的手写 PPO 学习工程，保留供对照
-├── unitree_rl_lab/         # Unitree 参考工程
-├── assets/unitree_model/   # 官方 Go2 USD 模型与来源记录
-├── docs/                   # 学习笔记
-├── archive/                # 早期示例与一次性维护脚本
-├── run-cartpole-gui.sh      # 旧工程入口，仍从根目录使用
-└── DOCKER_GUIDE.md          # Docker 构建、运行和服务器迁移说明
+├── run.sh                      # 统一运行入口
+├── projects/
+│   ├── go2_learning/           # Go2 主工程：standing / running / upright
+│   └── go2_sim2sim/            # Go2 的 MuJoCo 独立播放与验证
+├── examples/
+│   ├── rsl_rl_version/         # 最小 RSL-RL 双杆示例
+│   ├── cartpole_ppo/           # 手写 PPO 双杆及单杆备份
+│   └── cartpole_compare.py     # 官方单杆奖励对照
+├── third_party/
+│   ├── IsaacLab/              # 框架源码和 Docker 构建上下文
+│   └── unitree_rl_lab/        # Unitree 参考工程
+├── assets/                    # 本地 Go2 USD、地面及贴图
+├── scripts/                   # Docker 共用启动器与官方例程入口
+├── tests/                     # 启动参数与挂载检查，不启动 Docker
+├── docs/                      # 使用说明、目录与迁移指南
+└── archive/                   # 早期示例与一次性维护脚本
 ```
 
-## 当前工程
+## 运行 Go2
 
-从本目录执行：
+在本目录执行，复用已有的 `isaaclab-base:local` 镜像：
 
 ```bash
-bash go2_learning/run.sh
+bash run.sh go2 view
+bash run.sh go2 train --task standing --max_updates 1000 --run_name stand
+bash run.sh go2 play --task standing
 ```
 
-默认只观察一台 Go2 的 PD 站姿，使用 `newton_gl`。训练入口见工程 README。
-
-## 双杆工程
+继续训练最近完成的模型：
 
 ```bash
-cd rsl_rl_version
-bash run.sh train --max_updates 2 --num_envs 4
+bash run.sh go2 train --task standing --resume latest --max_updates 1000 --run_name continue_stand
 ```
 
-正式训练与播放：
+训练默认无窗口，查看与播放默认使用 `newton_gl`。参数说明见 [Go2 工程](projects/go2_learning/README.md)。
+奖励、PPO、扰动及任务配置集中在 [tasks/standing](projects/go2_learning/tasks/standing/)。
+移动任务使用 `--task running`，训练与键盘播放见 [running 说明](projects/go2_learning/tasks/running/README.md)。
+日志和权重保存在 `projects/go2_learning/logs/`，已被 Git 忽略，需要单独备份。
+
+## 学习示例
 
 ```bash
-bash run.sh train
-bash run.sh play
+# 标准 RSL-RL 双杆
+bash run.sh cartpole-rsl train --max_updates 2 --num_envs 4
+bash run.sh cartpole-rsl play
+
+# 手写 PPO 双杆
+bash run.sh cartpole-ppo --control train --num_envs 64 --viz none --max_updates 300
+bash run.sh cartpole-ppo --control play --num_envs 1
+
+# 查看全部入口
+bash run.sh --help
 ```
 
-镜像名：`isaaclab-base:local`。移动项目目录无需重建镜像。
-构建文件仍是 [IsaacLab/docker/Dockerfile.base](IsaacLab/docker/Dockerfile.base)，
-具体命令见 [DOCKER_GUIDE.md](DOCKER_GUIDE.md)。
+## 文档
 
-## 旧实验与整理记录
+- [目录职责、阅读顺序与旧路径对照](docs/structure.md)
+- [Docker 构建、运行与服务器迁移](docs/docker.md)
+- [Go2 任务、参数及模型兼容规则](projects/go2_learning/README.md)
+- [Go2 后腿直立任务](projects/go2_learning/tasks/upright/README.md)
+- [Go2 MuJoCo sim2sim 验证](projects/go2_sim2sim/README.md)
+- [最小 RSL-RL 接入示例](examples/rsl_rl_version/README.md)
+- [手写 PPO 对照工程](examples/cartpole_ppo/README.md)
+- [归档文件用途](archive/README.md)
 
-- 手写 PPO、单杆备份及已有权重保留在 `IsaacLab/scripts/my_cartpole/`。
-- 旧实验日志保留在 `IsaacLab/logs/`。
-- 学习笔记：[docs/My_Learning.md](docs/My_Learning.md)。其中早期构建命令需在 `IsaacLab/` 下执行。
-- 归档位置和用途见 [archive/README.md](archive/README.md)。
+## 本地检查
 
-2026-10-13 整理时，将独立工程从 `IsaacLab/scripts/my_cartpole/rsl_rl_version/`
-整体移到根目录，并清理可重新生成的 Python 字节码缓存。
-训练结果被 Git 忽略，需要单独备份和迁移。
+在已有 torch 的 Python 环境执行：
+
+```bash
+python -m unittest discover -s tests -q
+python -m unittest discover -s projects/go2_learning/tests -t projects -q
+python examples/cartpole_ppo/test_double_cartpole.py -q
+```
+
+启动器检查使用命令替身；这些检查不验证实际 GPU 仿真。

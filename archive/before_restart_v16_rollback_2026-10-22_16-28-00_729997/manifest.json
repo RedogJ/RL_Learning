@@ -1,0 +1,18 @@
+{
+  "source_run": "projects/go2_learning/logs/upright/2026-10-21_21-24-22_524274_upright_restart_v16/run.json",
+  "checkpoint": "projects/go2_learning/logs/upright/2026-10-21_21-24-22_524274_upright_restart_v16/latest.pt",
+  "files": [
+    "tasks/upright/reward_cfg.py",
+    "tasks/upright/rewards.py",
+    "tasks/upright/task.py",
+    "tasks/upright/config.py",
+    "tasks/upright/agent_cfg.py",
+    "tasks/upright/command_cfg.py",
+    "tasks/upright/integral_cfg.py",
+    "tasks/upright/randomization_cfg.py",
+    "tasks/upright/README.md",
+    "simulation/env.py",
+    "tests/test_upright.py",
+    "tests/test_front_legs.py"
+  ]
+}

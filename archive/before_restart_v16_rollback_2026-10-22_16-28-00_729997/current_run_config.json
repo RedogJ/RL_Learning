@@ -1,0 +1,132 @@
+{
+  "task_name": "upright",
+  "task_version": "go2_rear_leg_upright_v1",
+  "env_cfg": {
+    "physics_dt": 0.008333333333333333,
+    "decimation": 4,
+    "episode_seconds": 15.0,
+    "reset_settle_seconds": 0.3,
+    "env_spacing": 3.0
+  },
+  "termination_cfg": {
+    "minimum_height": 0.14,
+    "maximum_tilt_degrees": 120.0
+  },
+  "agent_cfg": {
+    "num_steps_per_env": 24,
+    "save_interval": 50,
+    "logger": "tensorboard",
+    "obs_groups": {
+      "actor": [
+        "policy"
+      ],
+      "critic": [
+        "policy"
+      ]
+    },
+    "actor": {
+      "class_name": "MLPModel",
+      "hidden_dims": [
+        128,
+        128
+      ],
+      "activation": "tanh",
+      "obs_normalization": false,
+      "distribution_cfg": {
+        "class_name": "GaussianDistribution",
+        "init_std": 0.5,
+        "std_type": "log"
+      }
+    },
+    "critic": {
+      "class_name": "MLPModel",
+      "hidden_dims": [
+        128,
+        128
+      ],
+      "activation": "tanh",
+      "obs_normalization": false
+    },
+    "algorithm": {
+      "class_name": "PPO",
+      "num_learning_epochs": 4,
+      "num_mini_batches": 1,
+      "learning_rate": 0.0003,
+      "schedule": "fixed",
+      "desired_kl": null,
+      "gamma": 0.999,
+      "lam": 0.95,
+      "clip_param": 0.2,
+      "entropy_coef": 0.01,
+      "value_loss_coef": 0.5,
+      "use_clipped_value_loss": false,
+      "max_grad_norm": 0.5,
+      "normalize_advantage_per_mini_batch": false
+    }
+  },
+  "command_cfg": {
+    "forward_range": [
+      0.0,
+      0.0
+    ],
+    "lateral_range": [
+      0.0,
+      0.0
+    ],
+    "yaw_range": [
+      0.0,
+      0.0
+    ],
+    "resample_seconds": null,
+    "standing_probability": 1.0,
+    "keyboard_forward": 0.0,
+    "keyboard_backward": 0.0,
+    "keyboard_turn": 0.0
+  },
+  "reward_cfg": {
+    "reward_schema_version": 4,
+    "horizontal_velocity_sigma": 0.4,
+    "alive": 1.0,
+    "upright_hold_weight": 1400.0,
+    "upright_sigma": 0.6,
+    "height_weight": 500.0,
+    "target_height": 0.32,
+    "height_sigma": 0.5,
+    "rear_support_weight": 20.0,
+    "front_lift_weight": 20.0,
+    "front_foot_position_weight": 2000.0,
+    "front_foot_target_left": [
+      0.16,
+      0.142,
+      -0.15
+    ],
+    "front_foot_target_right": [
+      0.16,
+      -0.142,
+      -0.15
+    ],
+    "balance_weight": 20.0,
+    "vertical_velocity_weight": 20.0,
+    "angular_velocity_weight": 20.0,
+    "pitch_velocity_weight": 20.0,
+    "hip_rear_weight": 200.0,
+    "hip_rear_sigma": 1.0,
+    "rear_symmetry_weight": 30.0,
+    "rear_symmetry_sigma": 1.0,
+    "undesired_contact_weight": 300.0,
+    "rear_knee_contact_weight": 300.0,
+    "hip_contact_weight": 300.0,
+    "contact_force_threshold": 1.0,
+    "foot_slide_weight": 4.0,
+    "action_rate_weight": 30.0,
+    "action_limit_weight": 40.0,
+    "failure_penalty": 100.0
+  },
+  "integral_cfg": {
+    "enabled": false,
+    "limit": 0.5,
+    "height_limit": 0.2,
+    "decay_seconds": 5.0
+  },
+  "randomization_cfg": null
+}

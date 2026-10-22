@@ -20,3 +20,12 @@ wandb/
 
 # Desktop metadata
 .DS_Store
+
+# Keep previously tracked source/templates after repository reorganization.
+!/third_party/IsaacLab/docker/.env.base
+!/third_party/IsaacLab/docker/.env.cloudxr-runtime
+!/third_party/IsaacLab/docker/.env.kitless
+!/third_party/IsaacLab/docker/.env.ros2
+!/third_party/IsaacLab/docker/cluster/.env.cluster
+!/third_party/IsaacLab/tools/template/templates/external/docker/.env.base
+!/third_party/unitree_rl_lab/docker/.env.base

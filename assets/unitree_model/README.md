@@ -25,5 +25,5 @@ Go2/usd/
 该仓库已注明模型更新转移至 Hugging Face。
 
 本次完成下载及字节完整性检查，尚未在 Isaac Sim 中加载模型或核验其物理配置。
-新工程 [go2_learning](../../go2_learning/README.md) 的启动脚本已将本资产目录挂载到容器，
-可在工程根目录执行 `bash go2_learning/run.sh` 加载。宿主机路径不会自动出现在容器中。
+新工程 [go2_learning](../../projects/go2_learning/README.md) 的启动脚本已将本资产目录挂载到容器，
+可在工程根目录执行 `bash run.sh go2` 加载。宿主机路径不会自动出现在容器中。

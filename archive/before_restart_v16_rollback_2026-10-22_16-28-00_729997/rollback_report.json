@@ -1,0 +1,13 @@
+{
+  "source_run": "2026-10-21_21-24-22_524274_upright_restart_v16",
+  "scope": "upright reward parameters and formulas",
+  "restored_reward_fields": 26,
+  "reward_schema_version": 1,
+  "cpu_tests_passed": 70,
+  "preserved_features": [
+    "height display",
+    "mouse interaction",
+    "other task rewards"
+  ],
+  "gpu_training_started": false
+}

@@ -1,0 +1,6 @@
+Sat Oct 17 13:57:35 2026
+WARNING: OpenGL error 0x502 in or before mjr_makeContext
+
+Sat Oct 17 13:58:40 2026
+ERROR: could not initialize GLFW
+

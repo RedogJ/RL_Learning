@@ -1,0 +1,15 @@
+# Note: These files are kept for development purposes only.
+!tools/launch.template.json
+!tools/settings.template.json
+!extensions.json
+!tasks.json
+
+# Ignore all other files
+.python.env
+*.json
+
+# Keep previously tracked source/templates after repository reorganization.
+!/extensions.json
+!/tasks.json
+!/tools/launch.template.json
+!/tools/settings.template.json

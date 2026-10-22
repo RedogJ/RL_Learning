@@ -1,0 +1,218 @@
+{
+  "task_name": "upright",
+  "task_version": "go2_rear_leg_upright_v1",
+  "env_cfg": {
+    "physics_dt": 0.008333333333333333,
+    "decimation": 4,
+    "episode_seconds": 15.0,
+    "reset_settle_seconds": 0.3,
+    "env_spacing": 3.0
+  },
+  "termination_cfg": {
+    "minimum_height": 0.14,
+    "maximum_tilt_degrees": 120.0
+  },
+  "agent_cfg": {
+    "num_steps_per_env": 24,
+    "save_interval": 50,
+    "logger": "tensorboard",
+    "obs_groups": {
+      "actor": [
+        "policy"
+      ],
+      "critic": [
+        "policy"
+      ]
+    },
+    "actor": {
+      "class_name": "MLPModel",
+      "hidden_dims": [
+        128,
+        128
+      ],
+      "activation": "tanh",
+      "obs_normalization": false,
+      "distribution_cfg": {
+        "class_name": "GaussianDistribution",
+        "init_std": 0.5,
+        "std_type": "log"
+      }
+    },
+    "critic": {
+      "class_name": "MLPModel",
+      "hidden_dims": [
+        128,
+        128
+      ],
+      "activation": "tanh",
+      "obs_normalization": false
+    },
+    "algorithm": {
+      "class_name": "PPO",
+      "num_learning_epochs": 4,
+      "num_mini_batches": 1,
+      "learning_rate": 0.0003,
+      "schedule": "fixed",
+      "desired_kl": null,
+      "gamma": 0.999,
+      "lam": 0.95,
+      "clip_param": 0.2,
+      "entropy_coef": 0.01,
+      "value_loss_coef": 0.5,
+      "use_clipped_value_loss": false,
+      "max_grad_norm": 0.5,
+      "normalize_advantage_per_mini_batch": false
+    },
+    "multi_gpu": null
+  },
+  "command_cfg": {
+    "forward_range": [
+      0.0,
+      0.0
+    ],
+    "lateral_range": [
+      0.0,
+      0.0
+    ],
+    "yaw_range": [
+      0.0,
+      0.0
+    ],
+    "resample_seconds": null,
+    "standing_probability": 1.0,
+    "keyboard_forward": 0.0,
+    "keyboard_backward": 0.0,
+    "keyboard_turn": 0.0
+  },
+  "reward_cfg": {
+    "alive": 1.0,
+    "upright_hold_weight": 200.0,
+    "upright_sigma": 0.2,
+    "height_weight": 100.0,
+    "target_height": 0.45,
+    "height_sigma": 0.1,
+    "rear_support_weight": 5.0,
+    "rear_knee_clearance_weight": 70.0,
+    "rear_knee_clearance_sigma": 0.12,
+    "front_lift_weight": 5.0,
+    "balance_weight": 5.0,
+    "horizontal_velocity_sigma": 0.4,
+    "angular_velocity_weight": 0.1,
+    "pitch_velocity_weight": 2.0,
+    "hip_rear_weight": 200.0,
+    "hip_rear_sigma": 0.4,
+    "rear_symmetry_weight": 100.0,
+    "rear_symmetry_sigma": 0.8,
+    "action_rate_weight": 1.0,
+    "action_limit_weight": 40.0,
+    "undesired_contact_weight": 60.0,
+    "rear_knee_contact_weight": 150.0,
+    "hip_contact_weight": 60.0,
+    "contact_force_threshold": 1.0,
+    "foot_slide_weight": 4.0,
+    "failure_penalty": 100.0
+  },
+  "integral_cfg": {
+    "enabled": false,
+    "limit": 0.5,
+    "height_limit": 0.2,
+    "decay_seconds": 5.0
+  },
+  "randomization_cfg": null,
+  "seed": 42,
+  "num_envs": 2048,
+  "joint_names": [
+    "FL_hip_joint",
+    "FR_hip_joint",
+    "RL_hip_joint",
+    "RR_hip_joint",
+    "FL_thigh_joint",
+    "FR_thigh_joint",
+    "RL_thigh_joint",
+    "RR_thigh_joint",
+    "FL_calf_joint",
+    "FR_calf_joint",
+    "RL_calf_joint",
+    "RR_calf_joint"
+  ],
+  "default_joint_pos": [
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.800000011920929,
+    0.800000011920929,
+    0.800000011920929,
+    0.800000011920929,
+    -1.600000023841858,
+    -1.600000023841858,
+    -1.600000023841858,
+    -1.600000023841858
+  ],
+  "action_joint_limits": [
+    [
+      -1.0471998453140259,
+      1.0471998453140259
+    ],
+    [
+      -1.0471998453140259,
+      1.0471998453140259
+    ],
+    [
+      -1.0471998453140259,
+      1.0471998453140259
+    ],
+    [
+      -1.0471998453140259,
+      1.0471998453140259
+    ],
+    [
+      -1.5707999467849731,
+      3.4906997680664062
+    ],
+    [
+      -1.5707999467849731,
+      3.4906997680664062
+    ],
+    [
+      -0.5235999226570129,
+      4.537899494171143
+    ],
+    [
+      -0.5235999226570129,
+      4.537899494171143
+    ],
+    [
+      -2.7227001190185547,
+      -0.8377599120140076
+    ],
+    [
+      -2.7227001190185547,
+      -0.8377599120140076
+    ],
+    [
+      -2.7227001190185547,
+      -0.8377599120140076
+    ],
+    [
+      -2.7227001190185547,
+      -0.8377599120140076
+    ]
+  ],
+  "reset_settle_seconds": 0.3,
+  "reset_mode": "per_episode_delay",
+  "resumed_from": "/workspace/go2_learning/logs/upright/2026-10-21_21-02-43_937817_upright_restart_v15/latest.pt",
+  "resumed_from_relative": "upright/2026-10-21_21-02-43_937817_upright_restart_v15/latest.pt",
+  "resumed_from_task": "upright",
+  "log_relative_dir": "upright/2026-10-21_21-24-22_524274_upright_restart_v16",
+  "resume_mode": "weights_only",
+  "requested_updates": 500,
+  "command_source": "episode_random",
+  "start_round": 15001,
+  "end_round": 15500,
+  "completed_rounds": 15500,
+  "completed_updates": 500,
+  "planned_end_round": 15500,
+  "history_file": "history.json",
+  "last_checkpoint": "latest.pt"
+}

@@ -14,4 +14,4 @@
 存储迁移脚本会修改宿主机服务和系统配置，仅针对当时机器状态设计；
 当前训练、复制工程到服务器都不需要执行它。
 
-当前可运行的小工程见 [../rsl_rl_version/README.md](../rsl_rl_version/README.md)。
+当前可运行的小工程见 [../examples/rsl_rl_version/README.md](../examples/rsl_rl_version/README.md)。

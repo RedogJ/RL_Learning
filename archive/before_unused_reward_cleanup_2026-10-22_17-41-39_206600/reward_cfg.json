@@ -1,0 +1,41 @@
+{
+  "upright_hold_weight": 400.0,
+  "upright_sigma": 0.6,
+  "height_weight": 100.0,
+  "target_height": 0.45,
+  "height_sigma": 0.1,
+  "hip_rear_weight": 200.0,
+  "hip_rear_sigma": 0.4,
+  "rear_symmetry_weight": 100.0,
+  "rear_symmetry_sigma": 0.8,
+  "rear_support_weight": 5.0,
+  "front_lift_weight": 5.0,
+  "rear_knee_clearance_weight": 70.0,
+  "rear_knee_clearance_sigma": 0.12,
+  "foot_slide_weight": 4.0,
+  "balance_weight": 5.0,
+  "horizontal_velocity_sigma": 0.4,
+  "angular_velocity_weight": 0.1,
+  "pitch_velocity_weight": 2.0,
+  "contact_force_threshold": 1.0,
+  "undesired_contact_weight": 60.0,
+  "rear_knee_contact_weight": 150.0,
+  "hip_contact_weight": 60.0,
+  "action_rate_weight": 1.0,
+  "action_limit_weight": 40.0,
+  "alive": 1.0,
+  "failure_penalty": 100.0,
+  "reward_schema_version": 1,
+  "vertical_velocity_weight": 0.0,
+  "front_foot_position_weight": 0.0,
+  "front_foot_target_left": [
+    0.16,
+    0.142,
+    -0.15
+  ],
+  "front_foot_target_right": [
+    0.16,
+    -0.142,
+    -0.15
+  ]
+}

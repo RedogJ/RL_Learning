@@ -1,0 +1,14 @@
+{
+  "upright": {
+    "checkpoint": "mimic/experts/upright/expert.pt",
+    "source": "upright/2026-10-22_21-21-35_342854_upright_restart_v25/latest.pt",
+    "sha256": "4a30d112aa0384c16c19d0fc222215b46b25ed911fedf3105a809e00e4e221c8",
+    "config_sha256": "1d45d3aae31221780c783771eda9c4870c9b0c5f37008afc39c6112b9c554a2f"
+  },
+  "running": {
+    "checkpoint": "mimic/experts/running/expert.pt",
+    "source": "running/2026-10-17_15-07-50_097333_running_18/latest.pt",
+    "sha256": "fc8acb6a41fe9162038513a2f5459e6692f7d383db7d23b1834a8e57c06e6d79",
+    "config_sha256": "7546cf60ebf7ec2fac4b8e99fae24d1e3e0f3199f846405c4683f3e9df33ca6a"
+  }
+}
