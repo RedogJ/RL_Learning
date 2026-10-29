@@ -23,7 +23,9 @@ from go2_learning.training.checkpoints import (
     resolve_checkpoint as find_checkpoint, resolve_resume_checkpoint,
     validate_checkpoint_task, validate_resume_task,
 )
-from go2_learning.training.history import TrainingHistoryMixin, inherited_history, validate_network_config
+from go2_learning.training.history import (
+    TrainingHistoryMixin, inherited_history, validate_network_config, write_json,
+)
 
 from go2_learning.paths import LOG_ROOT
 LOG_TIMEZONE = timezone(timedelta(hours=8))  # 日志目录固定使用北京时间，不依赖 Docker 时区。
@@ -41,6 +43,8 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--resume", default=None, help="加载网络权重并继承训练历史；奖励和训练参数使用当前代码")
     parser.add_argument("--resume-task", dest="resume_task", choices=tuple(TASKS), default=None,
                         help="续训模型的来源任务；例如 --task running --resume-task standing --resume latest")
+    parser.add_argument("--adaptive-sigma", action=argparse.BooleanOptionalAction, default=None,
+                        help="upright train：开训前自动校准 sigma，本次训练中固定；默认开启")
     parser.add_argument("--run_name", default="baseline")
     parser.add_argument("--seed", type=int, default=None)
     parser.add_argument("--randomization", action=argparse.BooleanOptionalAction, default=None,
@@ -66,6 +70,8 @@ def parse_args() -> argparse.Namespace:
         parser.error("--resume 仅用于 train；播放请选择 --checkpoint")
     if args.resume_task is not None and (args.control != "train" or args.resume is None):
         parser.error("--resume-task 必须与 train --resume 一起使用")
+    if args.adaptive_sigma is not None and (args.task != "upright" or args.control != "train"):
+        parser.error("--adaptive-sigma / --no-adaptive-sigma 仅用于 upright train")
     if args.keyboard_test and args.control == "train":
         parser.error("键盘检测用于 view 或 play 模式")
     if args.keyboard and (args.control != "play" or args.keyboard_test):
@@ -105,6 +111,8 @@ def resolve_checkpoint(value: str, task_name="standing") -> Path:
 def main() -> None:
     args = parse_args()
     task = get_task(args.task)
+    if args.adaptive_sigma is not None:
+        task.cfg.sigma_calibration.enabled = args.adaptive_sigma
     run_cfg = None
     if args.control == "play" or args.resume is not None:
         if args.resume is not None:
@@ -147,6 +155,13 @@ def main() -> None:
                 terrain=args.terrain,
             )
             env.height_termination_enabled = args.control != "play"
+            env.failure_termination_enabled = args.control != "play"
+            if args.control == "train":
+                env.diagnostics_interval = (
+                    1 if args.verbose_logs else
+                    max(1, int(train_cfg.get("diagnostics_interval", train_cfg["num_steps_per_env"])))
+                )
+                env.detailed_diagnostics = args.verbose_logs
             if run_cfg is not None:
                 # 默认角决定观测和姿态奖励的参考，机械限位决定动作映射。
                 if list(env.robot.joint_names) != run_cfg["joint_names"]:
@@ -175,13 +190,17 @@ def main() -> None:
                   "等待期间维持任务重置姿态，不执行策略、不计奖励或回合时间")
             if task.name == "upright":
                 print(f"直立重置：机身前向轴仰角 {task.cfg.reset.forward_elevation_deg:g}°，"
-                      f"根节点高度 {task.cfg.reset.root_height:g}m；后脚支撑、前腿收起")
+                      f"根节点高度 {task.cfg.reset.root_height:g}m；后脚支撑、前腿收起；"
+                      f"策略接管时倾斜圆锥 {task.cfg.reset.orientation_cone_degrees:g}°")
+                if task.cfg.termination.reset_on_nonfoot_contact and args.control != "play":
+                    print(f"非脚掌接触重置：任一非脚掌刚体接触力超过 {task.contact_force_threshold:g} N 即失败；"
+                          "落地等待期间不判定")
             if env.fixed_joint_ids:
                 print("物理锁定关节：" + ", ".join(env.robot.joint_names[i] for i in env.fixed_joint_ids)
                       + "；保留 12 维网络输出，固定关节指令不参与执行")
             if args.control == "play":
-                print(f"播放重置：{task.tilt_description} 或回合达到 "
-                      f"{task.cfg.environment.episode_seconds:g}s；高度重置已关闭")
+                print(f"播放重置：仅回合达到 {task.cfg.environment.episode_seconds:g}s 时重置；"
+                      "跌倒及非脚掌接触不触发重置")
             env.finish_initial_settling()
             if args.control in ("view", "play"):
                 from go2_learning.ui.height_display import attach_height_display
@@ -215,7 +234,7 @@ def main() -> None:
             # 2. 读取配置：Python 字典和官方示例的 YAML 最终提供同样的接口。
             if args.control == "train":
                 run_id = datetime.now(LOG_TIMEZONE).strftime("%Y-%m-%d_%H-%M-%S_%f")
-                log_dir = LOG_ROOT / task.name / f"{run_id}_{args.run_name}"
+                log_dir = LOG_ROOT / task.name / f"{args.run_name}_{run_id}"
                 log_dir.mkdir(parents=True)
                 # 保存网络配置，使以后修改 agent_cfg.py 也能播放旧模型。
                 current_run_cfg = {
@@ -258,10 +277,22 @@ def main() -> None:
                 runner.alg = SettlingPPO(runner.alg, env)
                 runner.logger = SettlingLogger(runner.logger)
                 parent_history = []
+                checkpoint_infos = None
                 if args.resume is not None:
-                    checkpoint_infos = runner.load(str(checkpoint), map_location=str(sim.device), load_cfg={
-                        "actor": True, "critic": True, "optimizer": False, "iteration": True, "rnd": False,
-                    })
+                    if task.name == "upright":
+                        from go2_learning.training.critic_context import load_with_critic_context
+
+                        checkpoint_infos, migration = load_with_critic_context(
+                            runner, checkpoint, run_cfg["agent_cfg"], train_cfg, str(sim.device),
+                        )
+                        if migration:
+                            current_run_cfg["critic_input_migration"] = migration
+                            print(f"Critic 输入已迁移：{migration}；"
+                                  "当前 53 维（状态 52 + 剩余时间 1），Actor 权重完整继承")
+                    else:
+                        checkpoint_infos = runner.load(str(checkpoint), map_location=str(sim.device), load_cfg={
+                            "actor": True, "critic": True, "optimizer": False, "iteration": True, "rnd": False,
+                        })
                     # 轮号用于衔接历史，优化器不恢复。iter 是刚完成的零起始轮号。
                     runner.current_learning_iteration += 1
                     parent_history = inherited_history(
@@ -270,6 +301,14 @@ def main() -> None:
                     print(f"已加载 {source_task_name} → {task.name} 网络权重：{checkpoint}；"
                           f"继承 {runner.current_learning_iteration} 轮历史，"
                           f"本次再训练 {args.max_updates} 轮；优化器重新初始化")
+                prepare_rewards = getattr(task, "prepare_training_rewards", None)
+                if prepare_rewards is not None:
+                    calibration = prepare_rewards(runner, env, checkpoint_infos)
+                    calibration["source_checkpoint"] = str(checkpoint) if args.resume is not None else None
+                    # 必须在校准之后保存：记录的是本轮真正使用的固定 sigma。
+                    current_run_cfg.update(task.run_config(args.randomization))
+                    current_run_cfg["reward_calibration"] = calibration
+                    write_json(log_dir / "reward_calibration.json", calibration)
                 runner.configure_history(log_dir, current_run_cfg, parent_history)
                 print(f"本次奖励配置（当前代码）：{asdict(reward_cfg)}")
                 if not args.verbose_logs:

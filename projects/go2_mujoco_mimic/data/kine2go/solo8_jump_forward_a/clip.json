@@ -1,0 +1,14 @@
+{
+  "name": "solo8_jump_forward_a",
+  "source": "cassi - Solo8 robot motion data",
+  "source_url": "https://github.com/martius-lab/cassi",
+  "license": "BSD-3-Clause",
+  "attribution": "C. Li et al., 'Versatile Skill Control via Self-supervised Adversarial Imitation of Unlabeled Mixed Motions', ICRA 2023",
+  "fps": 60,
+  "n_frames": 571,
+  "duration_s": 9.517,
+  "description": "robot jumping forward, variant A",
+  "tags": [
+    "jump"
+  ]
+}

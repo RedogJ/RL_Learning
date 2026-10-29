@@ -1,0 +1,14 @@
+{
+  "name": "ai4_dog_canter",
+  "source": "AI4Animation - natural dog mocap (SIGGRAPH 2018 release)",
+  "source_url": "https://github.com/sebastianstarke/AI4Animation/tree/master/AI4Animation/SIGGRAPH_2018",
+  "license": "CC BY-NC 4.0",
+  "attribution": "H. Zhang et al., 'Mode-Adaptive Neural Networks for Quadruped Motion Control', SIGGRAPH 2018",
+  "fps": 60,
+  "n_frames": 571,
+  "duration_s": 9.517,
+  "description": "dog canter (AI4Animation paper eval set)",
+  "tags": [
+    "canter"
+  ]
+}

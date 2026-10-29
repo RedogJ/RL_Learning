@@ -9,26 +9,29 @@ class GraphSampler:
         self.guidance_cfg = guidance_cfg
         self.graph = None
 
-    def __call__(self, history, state, target):
+    def __call__(self, history, state, target, keyframes=None):
         if state.device.type != 'cuda':
             return self.model.sample(history, state, target, self.strength, guidance_mode=self.guidance_mode,
-                                     guidance_cfg=self.guidance_cfg)
+                                     guidance_cfg=self.guidance_cfg,keyframes=keyframes)
         if self.graph is None:
-            self.inputs = [x.clone() for x in (history, state, target)]
+            self.has_keyframes = keyframes is not None
+            self.inputs = [x.clone() for x in (history, state, target, *(keyframes or ()))]
             self.noise = state.new_empty((state.shape[0], self.model.length, self.model.dim))
             self.noise.normal_()
             stream = torch.cuda.Stream(device=state.device)
             stream.wait_stream(torch.cuda.current_stream(state.device))
             with torch.cuda.stream(stream), torch.no_grad():
                 for _ in range(3):
-                    self.model.sample(*self.inputs, self.strength, noise=self.noise, guidance_mode=self.guidance_mode,
-                                      guidance_cfg=self.guidance_cfg)
+                    self.model.sample(*self.inputs[:3], self.strength, noise=self.noise, guidance_mode=self.guidance_mode,
+                                      guidance_cfg=self.guidance_cfg, keyframes=tuple(self.inputs[3:]) if self.has_keyframes else None)
             torch.cuda.current_stream(state.device).wait_stream(stream)
             self.graph = torch.cuda.CUDAGraph()
             with torch.cuda.graph(self.graph, stream=stream), torch.no_grad():
-                self.output = self.model.sample(*self.inputs, self.strength, noise=self.noise, guidance_mode=self.guidance_mode,
-                                               guidance_cfg=self.guidance_cfg)
-        for dst, src in zip(self.inputs, (history, state, target)):
+                self.output = self.model.sample(*self.inputs[:3], self.strength, noise=self.noise, guidance_mode=self.guidance_mode,
+                                               guidance_cfg=self.guidance_cfg, keyframes=tuple(self.inputs[3:]) if self.has_keyframes else None)
+        if (keyframes is not None) != self.has_keyframes:
+            raise ValueError('同一个CUDA Graph不能在有/无关键帧接口间切换；使用全False掩码禁用约束')
+        for dst, src in zip(self.inputs, (history, state, target, *(keyframes or ()))):
             if dst.shape != src.shape or dst.device != src.device or dst.dtype != src.dtype:
                 raise ValueError('CUDA Graph 输入的形状/设备/类型不能在播放途中改变')
             dst.copy_(src)

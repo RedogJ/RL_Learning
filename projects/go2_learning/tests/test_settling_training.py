@@ -1,11 +1,16 @@
 """使用真实 RSL-RL 验证等待样本过滤，物理侧使用 CPU 替身。"""
 
 import unittest
+from contextlib import redirect_stdout
+from io import StringIO
+from tempfile import TemporaryDirectory
+from types import SimpleNamespace
 
 import torch
 
 from go2_learning.tasks.standing.agent_cfg import make_agent_cfg
 from go2_learning.training.settling import SettlingLogger, SettlingPPO
+from go2_learning.training.log import CompactTrainingLogger
 from go2_learning.tests.test_reset_settling import Scene, Sim, load_env_class
 
 try:
@@ -70,6 +75,7 @@ class SettlingTrainingTests(unittest.TestCase):
         # 第一步终止，收益不能包含下一回合的奖励或等待阶段的价值预测。
         st = adapter.storage
         torch.testing.assert_close(st.returns[0], st.rewards[0])
+        filtered_logger.flush_episodes()
         self.assertEqual(logger.lenbuffer[0], 1.)
         self.assertEqual(logger.cur_episode_length[0], 14.)
         self.assertEqual(logger.cur_episode_length[1], 0.)
@@ -97,6 +103,29 @@ class SettlingTrainingTests(unittest.TestCase):
         self.assertEqual(runner.current_learning_iteration, 1)
         self.assertEqual(runner.alg.storage.step, 0)
         self.assertIn("optimizer_state_dict", runner.alg.save())
+
+    def test_compact_logger_flushes_before_reading_completed_episodes(self):
+        runner, _ = self.make_runner()
+        logger = runner.logger
+        logger.writer = SimpleNamespace(add_scalar=lambda *args, **kwargs: None)
+        with TemporaryDirectory() as directory:
+            logger.log_dir = directory
+            batched = SettlingLogger(logger)
+            compact = CompactTrainingLogger(batched, runner.env.dt)
+            rewards = torch.tensor([2., 3., 4.])
+            batched.process_env_step(rewards, torch.tensor([True, False, True]), {
+                "policy_active": torch.tensor([True, False, True]),
+                "log": {"Task/failures_per_step": torch.tensor(2.)},
+            })
+            output = StringIO()
+            with redirect_stdout(output):
+                compact.log(it=0, start_it=0, total_it=1, collect_time=.1, learn_time=.01,
+                            loss_dict={"value": 0.}, learning_rate=3e-4,
+                            action_std=torch.ones(12), rnd_weight=None)
+            self.assertIn("reward=3.000", output.getvalue())
+            self.assertIn("fallen=2 (total=2)", output.getvalue())
+            self.assertEqual(list(logger.lenbuffer), [1., 1.])
+            self.assertFalse(batched._pending_episodes)
 
 
 if __name__ == "__main__":

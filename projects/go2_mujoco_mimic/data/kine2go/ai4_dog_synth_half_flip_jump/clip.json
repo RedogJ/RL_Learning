@@ -1,0 +1,15 @@
+{
+  "name": "ai4_dog_synth_half_flip_jump",
+  "source": "AI4Animation - synthetic, generated from the SIGGRAPH 2018 controller via a custom trajectory collector",
+  "source_url": "https://github.com/sebastianstarke/AI4Animation/tree/master/AI4Animation/SIGGRAPH_2018",
+  "license": "CC BY-NC 4.0",
+  "attribution": "H. Zhang et al., 'Mode-Adaptive Neural Networks for Quadruped Motion Control', SIGGRAPH 2018",
+  "fps": 60,
+  "n_frames": 300,
+  "duration_s": 5.0,
+  "description": "half-flipping forward jump",
+  "tags": [
+    "jump",
+    "flip"
+  ]
+}

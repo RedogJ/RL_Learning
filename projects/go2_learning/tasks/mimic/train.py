@@ -64,7 +64,7 @@ def train_vae(args):
         prediction, mean, logvar = model(train_data['intent'][ids],train_data['proprio'][ids])
         reconstruction = (prediction-train_data['teacher_action'][ids]).square().mean()
         kl = -.5 * (1+logvar-mean.square()-logvar.exp()).sum(-1).mean()
-        # 播放使用 encoder 均值，必须直接训练均值路径，避免只优化带噪 latent 的输出。
+        # 保留均值路径的辅助重建约束；带噪 latent 路径也参与训练，播放/采集使用实际采样。
         mean_action=model.decode(mean,train_data['proprio'][ids])
         mean_reconstruction=(mean_action-train_data['teacher_action'][ids]).square().mean()
         loss = .5*(reconstruction+mean_reconstruction) + cfg.kl_weight*kl
@@ -101,7 +101,9 @@ def train_diffusion(args):
     vae, _ = load_vae(args.vae, args.device)
     if fingerprints != {sha256(args.vae)}:
         raise ValueError('轨迹与指定的 VAE 不匹配')
-    cfg = replace(vae.cfg,emphasis=getattr(args,'emphasis',6.))
+    cfg = replace(vae.cfg,emphasis=getattr(args,'emphasis',6.),
+                  command_dim=6 if getattr(args,'command_conditioned',False) else 0,
+                  future_keyframe_prob=getattr(args,'future_keyframe_prob',0.))
     # 按完整片段划分验证集。
     training, validation = [], []
     for expert in ('running', 'upright'):
@@ -120,11 +122,14 @@ def train_diffusion(args):
     history_path.parent.mkdir(parents=True,exist_ok=True)
     history_path.write_text('')
     print(f'diffusion emphasis={cfg.emphasis:g}, physical_state_dim={model.state_dim}, '
-          f'model_state_dim={model.model_state_dim}; output={args.output}',flush=True)
+          f'model_state_dim={model.model_state_dim}; command_dim={cfg.command_dim}; output={args.output}',flush=True)
+    print(f'windows train={len(windows.indices)} valid={len(valid.indices)}; '
+          f'excluded future-command changes={windows.excluded_command_changes+valid.excluded_command_changes}',flush=True)
     for step in range(args.updates):
         ids = windows.sample_ids(args.batch_size,getattr(args,'transition_fraction',0.))
         batch = windows.batch(ids).to(args.device)
-        model.train();loss = model.loss(batch)
+        command=windows.commands(ids).to(args.device) if cfg.command_dim else None
+        model.train();loss = model.loss(batch,command=command)
         optimizer.zero_grad(set_to_none=True);loss.backward()
         torch.nn.utils.clip_grad_norm_(model.parameters(),1.);optimizer.step()
         if step%50==0 or step==args.updates-1:
@@ -133,7 +138,8 @@ def train_diffusion(args):
             with torch.random.fork_rng(devices=[torch.device(args.device).index or 0] if str(args.device).startswith('cuda') else []),torch.no_grad():
                 torch.manual_seed(100)
                 ids=balanced_indices(valid.labels,min(args.batch_size,128))
-                validation_loss,metrics=model.loss(valid.batch(ids).to(args.device),return_metrics=True)
+                validation_loss,metrics=model.loss(valid.batch(ids).to(args.device),return_metrics=True,
+                    command=valid.commands(ids).to(args.device) if cfg.command_dim else None)
                 value=float(validation_loss)
             row={'step':step+1,'loss':float(loss.detach()),'validation_loss':value,**metrics}
             with history_path.open('a') as log:log.write(json.dumps(row)+'\n')
@@ -146,4 +152,5 @@ def train_diffusion(args):
                     'state_dim':model.state_dim,'vae':vae_saved,'vae_sha256':sha256(args.vae),
                     'validation_loss':value,'validation_metrics':metrics,'training_step':step+1,
                     'requested_updates':args.updates,'data_provenance':provenance,
+                    'latent_mode':trajectories[0]['latent_mode'],
                     'stage':'state_latent_diffusion','experts':load_experts()})

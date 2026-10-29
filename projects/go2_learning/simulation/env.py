@@ -101,6 +101,14 @@ class Go2Env(VecEnv):
         self.hip_joint_ids, self.hip_log_order = leg_order("hip")
         self.thigh_joint_ids, self.thigh_log_order = leg_order("thigh")
         self.calf_joint_ids, self.calf_log_order = leg_order("calf")
+        self.hip_ordered_ids = [self.hip_joint_ids[i] for i in self.hip_log_order]
+        self.thigh_ordered_ids = [self.thigh_joint_ids[i] for i in self.thigh_log_order]
+        self.calf_ordered_ids = [self.calf_joint_ids[i] for i in self.calf_log_order]
+        self.diagnostics_interval = 1  # 训练入口默认设为每轮采样一次。
+        self.detailed_diagnostics = True
+        self._diagnostic_step = 0
+        self._pending_policy_selection = None
+        self._step_active_ids = None
         self.cfg = {}
         self.physics_dt = sim.get_physics_dt()
         self.decimation = env_cfg.decimation
@@ -129,10 +137,16 @@ class Go2Env(VecEnv):
         )
         self.max_episode_length = math.ceil(env_cfg.episode_seconds / self.dt)
         self.height_termination_enabled = True
+        self.failure_termination_enabled = True
         self.episode_length_buf = torch.zeros(self.num_envs, dtype=torch.long, device=self.device)
         self.actions = torch.zeros((self.num_envs, self.num_actions), device=self.device)
         self.raw_actions = torch.zeros_like(self.actions)
+        self.previous_raw_actions = torch.zeros_like(self.actions)
         self.previous_actions = torch.zeros_like(self.actions)
+        self.previous_target_delta = torch.zeros_like(self.actions)
+        self.action_filter_alpha = getattr(self.reward_cfg, "action_filter_alpha", 0.0)
+        if not 0.0 <= self.action_filter_alpha < 1.0:
+            raise ValueError("action_filter_alpha 必须在 [0, 1) 范围内")
         self.default_joint_pos = self.robot.data.default_joint_pos.torch.clone()
         # 按运行时关节顺序读取 USD 的完整机械限位，单位为 rad。
         self.action_joint_limits = self.robot.data.joint_pos_limits.torch.clone()
@@ -176,6 +190,8 @@ class Go2Env(VecEnv):
         self.reset_settle_seconds = env_cfg.reset_settle_seconds
         self.settle_steps = math.ceil(self.reset_settle_seconds / self.dt)
         self.settle_steps_remaining = torch.zeros(self.num_envs, dtype=torch.long, device=self.device)
+        factory = getattr(self.task, "make_reset_orientation_sampler", None)
+        self.reset_orientation_sampler = factory(self, seed + 2) if factory is not None else None
         self.reset()
 
     @torch.no_grad()
@@ -203,11 +219,22 @@ class Go2Env(VecEnv):
              - self.task.target_height).unsqueeze(-1),       # 1：瞬时高度误差，m
             self.attitude_integral.observations(),           # 3：归一化 roll/pitch/height 积分
         ), dim=-1)
-        return TensorDict({"policy": obs}, batch_size=[self.num_envs])
+        observations = {"policy": obs}
+        critic_observations = getattr(self.task, "critic_observations", None)
+        if critic_observations is not None:
+            observations.update(critic_observations(self))
+        return TensorDict(observations, batch_size=[self.num_envs])
+
+    def cache_policy_selection(self, active, ids):
+        """策略采样后仅供紧接着的一次 step 使用，不能跨重置或控制步缓存。"""
+        self._pending_policy_selection = (active, ids)
 
     def step(self, actions, auto_reset=True, evaluate=True):
         """执行一次控制步：动作 → 仿真 → 评估 → 重置 → 返回观测。"""
-        active = self.policy_active
+        selection = self._pending_policy_selection
+        self._pending_policy_selection = None
+        active = self.policy_active if selection is None else selection[0]
+        self._step_active_ids = None if selection is None else selection[1]
         self._set_action(actions)
         self._advance_simulation(active)
         if evaluate and self.contacts is not None and (getattr(self.reward_cfg, "foot_air_time_weight", 0.0) != 0
@@ -217,7 +244,12 @@ class Go2Env(VecEnv):
                                           or getattr(self, "contact_diagnostics", False)):
             self.contacts.update_air_time(
                 self.physics_dt, active, getattr(self.reward_cfg, "foot_contact_ratio_tau", 0.5))
-        self.settle_steps_remaining.sub_((self.settle_steps_remaining > 0).long())
+        was_waiting = self.settle_steps_remaining > 0
+        self.settle_steps_remaining.sub_(was_waiting.long())
+        if self.reset_orientation_sampler is not None:
+            ready = (was_waiting & (self.settle_steps_remaining == 0)).nonzero().flatten()
+            if ready.numel():
+                self.reset_orientation_sampler.apply(ready)
         self.episode_length_buf += active.long()
 
         state = self._read_state() if evaluate else self._read_state(minimal=True)
@@ -237,16 +269,30 @@ class Go2Env(VecEnv):
         if auto_reset:
             self._reset_finished_envs(dones)
         observations = self.get_observations()
+        self._step_active_ids = None
         return observations, rewards, dones.long(), extras
 
     def _set_action(self, actions):
         """[-1, 1] 分别对应每个关节机械下限/上限，0 对应中点。"""
+        if getattr(self.reward_cfg, "action_rate_derivative_weight", 0.0) != 0:
+            # 必须在 previous_actions 被覆盖前保存上一个控制步的目标角变化量。
+            self.previous_target_delta.copy_((self.actions - self.previous_actions) * self.action_half_range)
         self.previous_actions.copy_(self.actions)
+        if (getattr(self.reward_cfg, "action_rate_weight", 0.0) != 0
+                and getattr(self.reward_cfg, "reward_schema_version", 11) < 11):
+            self.previous_raw_actions.copy_(self.raw_actions)
         self.raw_actions.copy_(torch.where(self.policy_active[:, None], actions.detach(), self.standing_actions))
         if self.fixed_joint_ids:
             # 先替换固定关节指令，再计算执行动作与超界日志/惩罚。
             self.raw_actions[:, self.fixed_joint_ids] = self.standing_actions[:, self.fixed_joint_ids]
-        self.actions.copy_(self.raw_actions.clamp(-1.0, 1.0))
+        clipped = self.raw_actions.clamp(-1.0, 1.0)
+        if self.action_filter_alpha:
+            self.actions.copy_(self.action_filter_alpha * self.previous_actions
+                               + (1.0 - self.action_filter_alpha) * clipped)
+            # 等待期间立即回到重置目标，避免滤波残留。
+            self.actions.copy_(torch.where(self.policy_active[:, None], self.actions, self.standing_actions))
+        else:
+            self.actions.copy_(clipped)
         if self.action_activity is not None:
             self.action_activity.update(self.actions, self.previous_actions, self.policy_active)
         target = self.action_center + self.action_half_range * self.actions
@@ -275,13 +321,16 @@ class Go2Env(VecEnv):
         height = data.root_link_pos_w.torch[:, 2] - self.scene.env_origins[:, 2]
         if minimal:
             # 播放仍保留相同的积分观测、跌倒和超时判定，只跳过奖励/训练统计。
-            return {"height": height, "height_error": height - self.task.target_height,
-                    "gravity": data.projected_gravity_b.torch, "roll": roll, "pitch": pitch}
+            state = {"height": height, "height_error": height - self.task.target_height,
+                     "gravity": data.projected_gravity_b.torch, "roll": roll, "pitch": pitch}
+            if getattr(self.task.cfg.termination, "reset_on_nonfoot_contact", False):
+                state["undesired_contact_count"] = self.contacts.read()["undesired_contact_count"]
+            return state
         world_velocity = data.root_com_vel_w.torch  # 机身质心：世界线速度 XYZ + 世界角速度 XYZ。
         # 三类腿关节统一按 FL、FR、RL、RR 排列，奖励可按前后两组直接切片。
-        hip_joint_pos = data.joint_pos.torch[:, self.hip_joint_ids][:, self.hip_log_order]
-        thigh_joint_pos = data.joint_pos.torch[:, self.thigh_joint_ids][:, self.thigh_log_order]
-        calf_joint_pos = data.joint_pos.torch[:, self.calf_joint_ids][:, self.calf_log_order]
+        hip_joint_pos = data.joint_pos.torch[:, self.hip_ordered_ids]
+        thigh_joint_pos = data.joint_pos.torch[:, self.thigh_ordered_ids]
+        calf_joint_pos = data.joint_pos.torch[:, self.calf_ordered_ids]
         state = {
             "height": height,
             "height_error": height - self.task.target_height,
@@ -299,6 +348,15 @@ class Go2Env(VecEnv):
             "attitude_integral": self.attitude_integral.values,
             "previous_actions": self.previous_actions,
             "raw_actions": self.raw_actions,
+            **({"joint_target_delta": (self.actions - self.previous_actions) * self.action_half_range}
+               if getattr(self.reward_cfg, "action_rate_weight", 0.0) != 0
+               and getattr(self.reward_cfg, "reward_schema_version", 11) >= 11 else {}),
+            **({"joint_target_delta_derivative": (
+                (self.actions - self.previous_actions) * self.action_half_range - self.previous_target_delta
+            ) / self.dt} if getattr(self.reward_cfg, "action_rate_derivative_weight", 0.0) != 0 else {}),
+            **({"previous_raw_actions": self.previous_raw_actions}
+               if getattr(self.reward_cfg, "action_rate_weight", 0.0) != 0
+               and getattr(self.reward_cfg, "reward_schema_version", 11) < 11 else {}),
             "commands": self.commands.values,
         }
         if getattr(self.reward_cfg, "joint_velocity_weight", 0.0) != 0:
@@ -318,7 +376,8 @@ class Go2Env(VecEnv):
         rewards = torch.zeros(self.num_envs, device=self.device)
         self._reward_components = {}
         # 布尔索引会重复求有效索引；每步只求一次，奖励和日志共用。
-        self._active_ids = active.nonzero(as_tuple=False).flatten()
+        self._active_ids = (self._step_active_ids if self._step_active_ids is not None
+                            else active.nonzero(as_tuple=False).flatten())
         ids = self._active_ids
         self._active_state = {}
         if ids.numel():
@@ -333,13 +392,27 @@ class Go2Env(VecEnv):
 
     def _compute_termination(self, state):
         """区分跌倒和超时，跌倒优先；供 PPO 正确处理超时补偿。"""
-        failed = (self.task.failures(state) if self.height_termination_enabled
-                  else self.task.tilt_failures(state))
+        if not self.failure_termination_enabled:
+            failed = torch.zeros_like(self.episode_length_buf, dtype=torch.bool)
+        elif self.height_termination_enabled:
+            failed = self.task.failures(state)
+        else:
+            failed = self.task.tilt_failures(state)
+            contact_failures = getattr(self.task, "contact_failures", None)
+            if contact_failures is not None:
+                failed = failed | contact_failures(state)
         timed_out = (self.episode_length_buf >= self.max_episode_length) & ~failed
         return failed, timed_out
 
     def _make_extras(self, state, failed, timed_out, active):
         """组织 RSL-RL 使用的超时标志和日志指标。"""
+        sample = self._diagnostic_step % self.diagnostics_interval == 0
+        self._diagnostic_step += 1
+        if not sample:
+            return {"time_outs": timed_out, "log": {
+                "Task/failures_per_step": failed.float().sum(),
+                "Reward/active_samples": active.sum(),
+            }}
         ids = self._active_ids
         if not ids.numel():
             return {"time_outs": timed_out, "log": {"Task/failures_per_step": failed.float().sum()}}
@@ -362,12 +435,9 @@ class Go2Env(VecEnv):
                 "Task/height": state["height"].mean(),
                 "Task/height_abs_error_m": state["height_error"].abs().mean(),
                 "Task/hip_abs_angle_rad": state["hip_joint_pos"].abs().mean(),
-                **{f"Task/hip_{leg}_rad": state["hip_joint_pos"][:, index].mean()
-                   for index, leg in enumerate(LEGS)},
-                **{f"Task/thigh_{leg}_rad": state["thigh_joint_pos"][:, index].mean()
-                   for index, leg in enumerate(LEGS)},
-                **{f"Task/calf_{leg}_rad": state["calf_joint_pos"][:, index].mean()
-                   for index, leg in enumerate(LEGS)},
+                **({f"Task/{kind}_{leg}_rad": state[f"{kind}_joint_pos"][:, index].mean()
+                    for kind in ("hip", "thigh", "calf") for index, leg in enumerate(LEGS)}
+                   if self.detailed_diagnostics else {}),
                 "Task/joint_posture_rms_rad": state["joint_offset"].square().mean(dim=-1).sqrt().mean(),
                 "Task/roll_abs_rad": state["roll"].abs().mean(),
                 "Task/pitch_abs_rad": state["pitch"].abs().mean(),
@@ -375,9 +445,9 @@ class Go2Env(VecEnv):
                 "Task/pitch_velocity_abs_radps": state["angular_velocity"][:, 1].abs().mean(),
                 "Task/horizontal_speed_mps": state["linear_velocity_w"][:, :2].norm(dim=-1).mean(),
                 "Task/yaw_velocity_abs_radps": state["angular_velocity_w"][:, 2].abs().mean(),
-                "Task/roll_integral_abs_rad_s": state["attitude_integral"][:, 0].abs().mean(),
-                "Task/pitch_integral_abs_rad_s": state["attitude_integral"][:, 1].abs().mean(),
-                "Task/height_integral_abs_m_s": state["attitude_integral"][:, 2].abs().mean(),
+                **({f"Task/{name}_integral_abs_{unit}": state["attitude_integral"][:, index].abs().mean()
+                    for index, name, unit in ((0, "roll", "rad_s"), (1, "pitch", "rad_s"), (2, "height", "m_s"))}
+                   if self.detailed_diagnostics else {}),
                 "Task/linear_tracking_error_mps": linear_error.sqrt().mean(),
                 "Task/yaw_tracking_error_radps": yaw_error.sqrt().mean(),
                 "Task/command_vx": commands[:, 0].mean(),
@@ -387,6 +457,9 @@ class Go2Env(VecEnv):
                 **self.task.metrics(state),
                 **({"Task/rear_knee_height": state["rear_knee_height"].mean()}
                    if "rear_knee_height" in state else {}),
+                **({
+                    "Contact/foot_support_fraction": state["foot_support_fraction"].mean(),
+                } if self.contacts is not None else {}),
                 **({
                     "Contact/undesired_body_count": state["undesired_contact_count"].mean(),
                     "Contact/undesired_env_fraction": (state["undesired_contact_count"] > 0).float().mean(),
@@ -400,9 +473,8 @@ class Go2Env(VecEnv):
                     "Contact/rear_leg_supported_fraction": state["rear_leg_supported_fraction"].mean(),
                     "Contact/rear_both_unsupported_fraction": state["rear_both_unsupported_fraction"].mean(),
                     "Contact/rear_both_airborne_fraction": state["rear_feet_airborne_fraction"].mean(),
-                    "Contact/foot_support_fraction": state["foot_support_fraction"].mean(),
                     "Contact/all_feet_support_fraction": state["all_feet_support_fraction"].mean(),
-                } if self.contacts is not None else {}),
+                } if self.contacts is not None and self.detailed_diagnostics else {}),
             },
         }
 
@@ -413,6 +485,7 @@ class Go2Env(VecEnv):
             self.reset(done_ids)
 
     def reset(self, env_ids=None):
+        self._pending_policy_selection = None
         if self.on_reset is not None:
             self.on_reset()
         if env_ids is None:
@@ -446,6 +519,10 @@ class Go2Env(VecEnv):
         self.robot.actuators.target_command.set_position_index(value=self.reset_joint_target[env_ids], env_ids=env_ids)
         self.actions[env_ids] = self.standing_actions[env_ids]
         self.raw_actions[env_ids] = self.standing_actions[env_ids]
+        self.previous_raw_actions[env_ids] = self.standing_actions[env_ids]
         self.previous_actions[env_ids] = self.standing_actions[env_ids]
+        self.previous_target_delta[env_ids] = 0.0
         self.episode_length_buf[env_ids] = 0
         self.settle_steps_remaining[env_ids] = self.settle_steps
+        if self.settle_steps == 0 and self.reset_orientation_sampler is not None:
+            self.reset_orientation_sampler.apply(env_ids)

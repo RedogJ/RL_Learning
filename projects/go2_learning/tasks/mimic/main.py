@@ -41,6 +41,11 @@ def parse_args():
     parser.add_argument('--orientation_guidance_weight',type=float,default=defaults.orientation)
     parser.add_argument('--height_guidance_weight',type=float,default=defaults.height)
     parser.add_argument('--yaw_guidance_weight',type=float,default=defaults.yaw)
+    parser.add_argument('--future_keyframe_prob',type=float,default=0.,help='训练时随机可见未来状态的概率')
+    parser.add_argument('--keyframes',default=None,help='播放时使用的关键帧库.pt')
+    parser.add_argument('--keyframe_entry',type=float,default=.5,help='切upright后首关键帧的时间，秒')
+    parser.add_argument('--keyframe_interval',type=float,default=.2,help='关键帧间隔，秒')
+    parser.add_argument('--command_conditioned',action='store_true',help='训练六维当前指令条件扩散；输出需指定独立路径')
     parser.add_argument('--emphasis',type=float,default=6.,help='新 diffusion 的根特征强调；0 可训练旧结构')
     parser.add_argument('--eager',action='store_true',help='关闭扩散 CUDA Graph，供数值和性能对照')
     parser.add_argument('--skill_switch',action='store_true',help='播放同一 diffusion 时用 Tab/1/2 切换技能目标')
@@ -58,6 +63,15 @@ def parse_args():
         GuidanceCfg(args.cost_mode,args.velocity_guidance_weight,args.orientation_guidance_weight,
                     args.height_guidance_weight,args.yaw_guidance_weight)
     except ValueError as error:parser.error(str(error))
+    if not 0<=args.future_keyframe_prob<=1:parser.error('future_keyframe_prob 必须在[0,1]')
+    if args.future_keyframe_prob and (args.command!='train-diffusion' or args.output is None):
+        parser.error('关键帧训练请使用train-diffusion并指定独立output路径')
+    if args.keyframes and (args.command not in ('play','evaluate') or args.controller!='diffusion'):
+        parser.error('keyframes 仅用于 diffusion play/evaluate')
+    if not math.isfinite(args.keyframe_entry) or args.keyframe_entry<=0:parser.error('keyframe_entry 必须有限且>0')
+    if not math.isfinite(args.keyframe_interval) or args.keyframe_interval<=0:parser.error('keyframe_interval 必须有限且>0')
+    if args.command_conditioned and args.command!='train-diffusion':
+        parser.error('command_conditioned 只用于 train-diffusion；播放自动读取模型结构')
     if not math.isfinite(args.emphasis) or args.emphasis<0:parser.error('emphasis 必须有限且非负')
     if not 0<=args.transition_fraction<=1:parser.error('transition_fraction 必须在 [0,1]')
     if args.command_profile=='transitions':
@@ -66,8 +80,10 @@ def parse_args():
         if args.skill_switch or args.keyboard:parser.error('自动切换指令不能与键盘控制同时使用')
     if args.keyboard is None:args.keyboard=args.skill_switch
     if args.skill_switch or args.keyboard:
-        if args.command!='play' or args.controller!='diffusion':
-            parser.error('技能/方向键控制仅用于 play --controller diffusion')
+        if args.command!='play' or args.controller not in ('vae','diffusion'):
+            parser.error('方向键控制仅用于 play --controller vae 或 diffusion')
+        if args.skill_switch and args.controller!='diffusion':
+            parser.error('技能切换仅用于 play --controller diffusion')
         visualizers=getattr(args,'visualizer',None) or []
         if isinstance(visualizers,str):visualizers=visualizers.split(',')
         if 'newton_gl' not in visualizers:
@@ -80,7 +96,8 @@ def parse_args():
         parser.error('扩散训练数据应由固定 VAE 采集')
     if args.output is None:
         args.output=str(ROOT/'models/vae.pt' if args.command=='train-vae' else
-                        ROOT/('models/diffusion_emphasis.pt' if args.emphasis else 'models/diffusion.pt')
+                        ROOT/('models/diffusion_command_v1.pt' if args.command_conditioned else
+                              'models/diffusion_emphasis.pt' if args.emphasis else 'models/diffusion.pt')
                         if args.command=='train-diffusion' else
                         ROOT/'evaluation' if args.command=='evaluate' else ROOT/'data')
     return args

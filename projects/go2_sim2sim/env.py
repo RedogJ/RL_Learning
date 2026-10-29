@@ -22,6 +22,18 @@ class Go2Sim:
         if self.substeps < 1 or not math.isclose(self.substeps * self.model.opt.timestep, policy.control_dt):
             raise ValueError("物理频率必须是策略频率的整数倍")
         self.observations = Observations(policy)
+        self.reset_q = policy.default_q.copy()
+        self.hold_q = policy.default_q.copy()
+        if policy.task == "upright":
+            cfg = policy.cfg.get("reset_cfg")
+            if not cfg:
+                raise ValueError("upright 检查点缺少 reset_cfg，不能推断初始姿态")
+            for i, name in enumerate(policy.joint_names):
+                leg, part, _ = name.split("_")
+                prefix = "front" if leg.startswith("F") else "rear"
+                self.reset_q[i] = cfg[f"{prefix}_{part}"]
+                self.hold_q[i] = self.reset_q[i] + cfg[f"{prefix}_hold_offset"][("hip", "thigh", "calf").index(part)]
+        self.hold_action = np.clip((self.hold_q - policy.center) / policy.half_range, -1., 1.)
         self.command = np.zeros(3)
         self.last_action = policy.standing_action.copy()
         self.reset_count = 0
@@ -37,13 +49,15 @@ class Go2Sim:
 
     def reset(self):
         mujoco.mj_resetData(self.model, self.data)
-        self.data.qpos[:3] = [0., 0., INITIAL_HEIGHT]
-        self.data.qpos[3:7] = [1., 0., 0., 0.]  # MuJoCo 四元数 wxyz。
-        self.data.qpos[self.qpos_ids] = self.policy.default_q
+        cfg = self.policy.cfg.get("reset_cfg", {}) if self.policy.task == "upright" else {}
+        angle = math.radians(cfg.get("forward_elevation_deg", 0.))
+        self.data.qpos[:3] = [0., 0., cfg.get("root_height", INITIAL_HEIGHT)]
+        self.data.qpos[3:7] = [math.cos(angle / 2), 0., -math.sin(angle / 2), 0.]  # wxyz
+        self.data.qpos[self.qpos_ids] = self.reset_q
         self.data.qvel[:] = 0.
         self.data.ctrl[:] = 0.
         self.data.xfrc_applied[:] = 0.
-        self.last_action[:] = self.policy.standing_action
+        self.last_action[:] = self.hold_action
         self.last_raw_action[:] = self.last_action
         self.observations.reset()
         self.settling_remaining = math.ceil(self.policy.cfg["env_cfg"]["reset_settle_seconds"] / self.policy.control_dt)
@@ -67,10 +81,12 @@ class Go2Sim:
 
     def step(self, raw_action):
         active = self.active
-        self.last_raw_action = np.asarray(raw_action if active else self.policy.standing_action).copy()
+        self.last_raw_action = np.asarray(raw_action if active else self.hold_action).copy()
         if not np.isfinite(self.last_raw_action).all():
             raise FloatingPointError("非有限动作")
-        self.last_action[:] = np.clip(self.last_raw_action, -1., 1.)
+        clipped = np.clip(self.last_raw_action, -1., 1.)
+        self.last_action[:] = (self.policy.filter_alpha * self.last_action + (1 - self.policy.filter_alpha) * clipped
+                               if active else self.hold_action)
         target = self.policy.target(self.last_action)
         for _ in range(self.substeps):
             torque = KP * (target - self.data.qpos[self.qpos_ids]) - KD * self.data.qvel[self.dof_ids]
@@ -87,7 +103,8 @@ class Go2Sim:
         else:
             self.settling_remaining -= 1
         self.total_steps += 1
-        limit = -math.cos(math.radians(self.policy.cfg["termination_cfg"]["maximum_tilt_degrees"]))
-        fallen = active and state["gravity"][2] > limit
+        limit = math.cos(math.radians(self.policy.cfg["termination_cfg"]["maximum_tilt_degrees"]))
+        alignment = -state["gravity"][0 if self.policy.task == "upright" else 2]
+        fallen = active and alignment < limit
         timeout = active and self.episode_steps * self.policy.control_dt >= self.policy.cfg["env_cfg"]["episode_seconds"]
         return state, "tilt" if fallen else "timeout" if timeout else None

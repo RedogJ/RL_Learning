@@ -32,7 +32,9 @@ def clip_history(segments, completed_rounds):
 def make_segment(run_cfg, run_id, start_round, end_round, origin):
     keys = ("task_name", "task_version", "env_cfg", "termination_cfg", "reward_cfg", "agent_cfg",
             "command_cfg", "command_source", "integral_cfg", "randomization_cfg", "reset_cfg",
-            "front_legs_fixed", "front_lock_solver_iterations", "num_envs", "seed")
+            "front_legs_fixed", "front_lock_solver_iterations", "finite_horizon",
+            "critic_input_migration", "num_envs", "seed")
+    keys += ("sigma_calibration_cfg", "reward_calibration")
     return {
         "run_id": run_id,
         "source_checkpoint": run_cfg.get("resumed_from"),
@@ -136,5 +138,9 @@ class TrainingHistoryMixin:
         document = self._history_document(completed_rounds)
         payload = {**(infos or {}), "training_history": document,
                    "reward_cfg": deepcopy(self._history_cfg["reward_cfg"])}
+        buffer = getattr(self, "reward_error_buffer", None)
+        if buffer is not None:
+            # 该快照与这个具体 model_N.pt 同时保存；选旧轮数不会误读最新模型的数据。
+            payload["reward_error_buffer"] = buffer.state_dict()
         super().save(path, infos=payload)
         self._write_history(completed_rounds, Path(path).name)

@@ -27,6 +27,7 @@ class TrainingLogTests(unittest.TestCase):
                      "Task/upright_alignment": .9, "Task/rear_support_count": 2., "Task/front_support_count": 0.,
                      "Reward/height": -.01, "Reward/action_limit": -.2, "Reward/failure": -1.,
                      "Reward/foot_slide": -.08, "Reward/foot_time_variance": -.06},
+                    {"Reward/active_samples": 100, "Task/failures_per_step": 0.},  # 未采样诊断的步不进贡献分母。
                     {"Task/failures_per_step": 0.},  # 全部环境在等待，不进入分母。
                 ],
             )

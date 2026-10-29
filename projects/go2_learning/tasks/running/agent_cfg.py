@@ -11,6 +11,8 @@ def make_agent_cfg() -> dict:
     return {
         # Runner：每轮采多少步、何时保存、网络读取哪组观测。
         "num_steps_per_env": 24,
+        "check_for_nan": False,  # 稳定训练关闭逐步同步检查；数值排错时设为 True。
+        "diagnostics_interval": 24,  # 纯诊断指标按控制步抽样，奖励和失败统计仍逐步计算。
         "save_interval": 50,
         "logger": "tensorboard",
         "obs_groups": {"actor": ["policy"], "critic": ["policy"]},

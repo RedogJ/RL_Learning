@@ -6,6 +6,7 @@ import torch
 def load_trajectories(folder, latent_only=False):
     trajectories = []
     manifests = set()
+    latent_modes = set()
     signature = None
     for path in sorted(Path(folder).glob('*.pt')):
         data = torch.load(path, map_location='cpu', weights_only=False)
@@ -34,10 +35,16 @@ def load_trajectories(folder, latent_only=False):
             manifests.add(data['vae_sha256'])
         if latent_only and data.get('supervision_only',False):
             continue
+        if latent_only:
+            mode=data.get('latent_mode','mean')
+            if mode not in ('mean','posterior_sample'):
+                raise ValueError(f'{path} 的 latent_mode 无效：{mode}')
+            latent_modes.add(mode)
         for trajectory_index, trajectory in enumerate(data['trajectories']):
             if latent_only and trajectory['failed']:
                 continue
             trajectory = dict(trajectory, expert=data['expert'],
+                              latent_mode=data.get('latent_mode','mean'),
                               command_profile=data.get('command_profile','episode'),
                               trajectory_id=trajectory.get('trajectory_id',f'{path.name}#{trajectory_index}'))
             if not latent_only:
@@ -46,6 +53,8 @@ def load_trajectories(folder, latent_only=False):
             trajectories.append(trajectory)
     if latent_only and len(manifests) > 1:
         raise ValueError('不能混用不同 VAE 的潜变量轨迹，请为每个 VAE 使用独立数据目录')
+    if latent_only and len(latent_modes)>1:
+        raise ValueError('不能混用均值和分布采样的潜变量轨迹，请使用独立数据目录')
     if not trajectories:
         raise ValueError(f'{folder} 没有可用轨迹')
     return trajectories, manifests
@@ -83,6 +92,9 @@ class Windows:
     def __init__(self, trajectories, cfg):
         self.trajectories = trajectories
         self.length = cfg.history + 1 + cfg.horizon
+        self.history = cfg.history
+        self.command_conditioned = bool(cfg.command_dim)
+        self.excluded_command_changes = 0
         self.indices, labels, transitions = [], [], []
         for i, trajectory in enumerate(trajectories):
             intent=trajectory.get('intent')
@@ -90,6 +102,15 @@ class Windows:
             if intent is not None:changed[1:]=((intent[1:,2:5]-intent[:-1,2:5]).abs().amax(-1)>.1).long()
             prefix=torch.cat((changed.new_zeros(1),changed.cumsum(0))).tolist()
             for start in range(len(trajectory['state'])-self.length+1):
+                if self.command_conditioned:
+                    if intent is None or intent.shape[-1] != 6:
+                        raise ValueError('条件扩散数据必须保存六维 intent')
+                    current = start + cfg.history
+                    # 只检查当前之后的指令；保留当前帧刚收到停车/反向命令的样本。
+                    if not torch.allclose(intent[current: start+self.length],
+                                          intent[current].expand(self.length-cfg.history, -1), atol=1e-6, rtol=0):
+                        self.excluded_command_changes += 1
+                        continue
                 self.indices.append((i, start))
                 labels.append(0 if trajectory['expert'] == 'running' else 1)
                 transitions.append(prefix[start+self.length]>prefix[start+1])
@@ -101,6 +122,10 @@ class Windows:
     def batch(self, ids):
         return torch.stack([torch.cat((self.trajectories[i]['state'][start:start+self.length],
                                       self.trajectories[i]['latent'][start:start+self.length]), -1)
+                            for i, start in (self.indices[j] for j in ids.tolist())])
+
+    def commands(self, ids):
+        return torch.stack([self.trajectories[i]['intent'][start+self.history]
                             for i, start in (self.indices[j] for j in ids.tolist())])
 
     def sample_ids(self, batch_size, transition_fraction=0.):

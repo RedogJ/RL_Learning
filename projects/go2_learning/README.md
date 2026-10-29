@@ -203,7 +203,13 @@ bash run.sh go2 train --task standing --resume "projects/go2_learning/logs/stand
 - `raw_max` / `clip` / `excess`：原始动作峰值、超界比例、超界平方和。
 - `top`：负惩罚项中的最大贡献及占比，不代表失败环境比例或 PPO 梯度占比。
 
-完整日志还记录关节站姿 RMS、髋角、四足同时支撑比例以及全部奖励分项。
+常规训练默认每 24 个控制步采样一次诊断指标（各任务 `agent_cfg.py` 的
+`diagnostics_interval`）。奖励、失败次数和回合收益/长度仍完整累计；诊断均值和
+各奖励贡献是抽样统计。回合数据在 GPU 上累计，每轮集中回传 CPU。
+
+`--verbose_logs` 恢复每步诊断，并开启各关节角、详细接触指标和完整终端表格。
+逐步 NaN 检查默认关闭，数值排错时将 `agent_cfg.py` 中的 `check_for_nan` 改为 `True`。
+这些开关不改变物理步长、接触检测、随机推力、奖励或逐回合等待规则，无需重新 build。
 
 ## 后续添加任务
 

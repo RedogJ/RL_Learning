@@ -78,6 +78,13 @@ bash run.sh go2 mimic play --expert running --controller vae --num_envs 1 --step
 bash run.sh go2 mimic play --expert upright --controller vae --num_envs 1 --steps 900 --viz newton_gl
 ```
 
+纯 VAE 播放 running 可加 `--keyboard`，方向键给速度、松开停车，不经过扩散或 guidance。
+例如使用当前固定解码器：
+
+```bash
+bash run.sh go2 mimic play --expert running --controller vae --vae /workspace/go2_learning/logs/mimic/models/vae_braking.pt --keyboard --num_envs 1 --steps 18000 --viz newton_gl
+```
+
 ### 3. DAgger：学生执行，专家标注
 
 ```bash
@@ -98,6 +105,14 @@ bash run.sh go2 mimic collect --expert upright --controller vae --num_envs 16 --
 ```
 
 这时不要继续更新 VAE；不同 VAE 的潜变量轨迹禁止混用。
+
+VAE 播放与采集现在每个控制步从 `q(z|intent)` 抽样：
+`z = mean + exp(0.5 * logvar) * randn_like(mean)`。
+动作由这个实际 `z` 解码，轨迹中的 `latent` 也保存同一个 `z`，不是分布均值。
+新文件标记 `latent_mode=posterior_sample`；旧文件无此字段时视为 `mean`。
+扩散训练禁止将两种采集方式混在同一数据目录。采样方式变化不需要改写 VAE 权重，
+但需要重新采集真实闭环轨迹并训练新的扩散模型，不能只给旧轨迹补随机数。
+建议新数据使用独立目录 `logs/mimic/latent_sampled`；现有扩散权重仍对应旧的均值数据。
 
 ### 5. 训练扩散模型
 
@@ -149,8 +164,11 @@ CUDA 播放默认用 CUDA Graph 提交完整的 20 步去噪，首次推理会�
 | `--yaw_guidance_weight` | 1 | 键盘 yaw 角速度平方误差时间均值 |
 
 权重设为 0 可关闭对应项，总体 `--guidance` 仍控制更新步长。
-直立目标的向上轴为 body X，独立速度项因此使用 body YZ；四足目标使用 body XY。
-这是现有完整机身坐标表示的适配，并未切换为论文的混合 yaw 坐标表示。
+水平速度项现在按每个预测时刻的重力方向投影：
+`e_horizontal = e - dot(e, g_hat) * g_hat`，其中 `g_hat` 是归一化预测重力。
+四足、倾斜与直立过程统一使用同一公式，不再按目标技能固定选择 XY/YZ。
+这修正了起身前漏罚 body X 后退、误罚 body Z 上升的问题。
+它仍使用完整机身坐标，并未切换为论文的混合 yaw 坐标表示。
 
 `projection.py` 对归一化后的物理状态构造 `[AB; I]`，B 在 v/w/gravity/height 维度取 c=6，
 其余维度取 1。A 为固定种子的高斯矩阵，行数取原状态维数，并对整个矩阵作共同 RMS 缩放，
@@ -220,3 +238,86 @@ DAgger 每轮自动重新生成该监督集，旧重标注文件归档，不重�
 KL 系数从 0.01 调至 0.001；训练同时优化随机 latent 与播放实际使用的均值 latent，
 各占一半动作 MSE；验证按 running/upright 各占一半，避免样本较多的技能主导模型选择。
 这些是适配两个无参考轨迹专家的训练措施，不宣称与原文 VAE 训练完全相同。
+
+
+### 当前速度指令条件扩散（command v1）
+
+`--command_conditioned` 在训练时启用独立指令 MLP。六维条件顺序与 VAE intent 一致：
+`[running_onehot, upright_onehot, vx, vy, wz, target_height]`。
+固定尺度归一化后，将指令 embedding 加到每个时刻的 Transformer token；条件不加噪、不参与输出重建。
+播放从检查点自动识别结构，不需要再次加此开关；CUDA Graph 每帧更新目标，因此键盘改指令立即进入下一次采样。
+旧模型 `command_dim=0` 保持原结构和加载方式。
+
+训练采用当前指令在未来 16 帧保持不变的假设：剔除未来窗口再次换指令的样本，
+保留当前帧刚换指令、历史仍为旧指令的启停窗口。不会向网络提供未来未知的键盘输入。
+沿用已有 posterior_sample 数据与冻结 VAE，重新训练 diffusion：
+
+```bash
+bash run.sh go2 mimic train-diffusion \
+  --data /workspace/go2_learning/logs/mimic/latent_sampled_v1 \
+  --vae /workspace/go2_learning/logs/mimic/models/vae_braking.pt \
+  --output /workspace/go2_learning/logs/mimic/models/diffusion_command_v1.pt \
+  --command_conditioned --updates 8000 --batch_size 128 \
+  --emphasis 6 --transition_fraction 0.5 --seed 42
+```
+
+先关闭代价梯度引导，单独检验网络指令条件（`guidance=0` 仍会读取指令）：
+
+```bash
+bash run.sh go2 mimic play --expert running --controller diffusion \
+  --model /workspace/go2_learning/logs/mimic/models/diffusion_command_v1.pt \
+  --guidance 0 --keyboard --num_envs 1 --steps 18000 --viz newton_gl
+```
+
+现有训练指令只覆盖前进、后退、停车，未覆盖转弯/侧移；键盘转向接口存在不代表已学会转向。
+指令条件不等于 classifier-free guidance，也未引入条件 dropout 或 CFG 双路采样。
+实验记录：`logs/mimic/experiments/command_conditioned_v1/`。
+
+
+### 播放时右键施力
+
+`mimic play --viz newton_gl` 自动接入现有 `ui/mouse.py` 官方 Viewer 拾取交互，
+可与 Tab 技能切换和方向键共用。右键按住机器人表面拖拽，在实际点击点施加弹簧阻尼力，
+显示力箭头，最大 150 N；松开、窗口失焦或环境 reset 时清除拖拽。
+无窗口模式不挂接鼠标，离线训练与 evaluate/collect 不接入此交互。
+
+
+### 实验：未来关键帧补全（keyframes v1）
+
+新增 `keyframes.py`，在未来指定控制时刻固定完整物理状态，网络补全其余状态和全部latent。
+每一步去噪都写回关键帧并将对应state噪声等级设0；不把目标状态直接写进物理仿真。
+未来latent仍由扩散生成，经冻结VAE解码后正常执行，技能切换不reset。
+由于强调投影混合全部状态特征，这一版约束完整state，不支持任意单个关节的局部硬掩码。
+
+现有旧模型没有未来已知状态训练，不应直接用硬条件评估其能力。
+独立训练参数 `--future_keyframe_prob 0.2`：随机20%的未来状态作为已知，未来latent仍未知。
+独立输出 `logs/mimic/models/diffusion_keyframes_v1.pt`；旧指令模型保留。
+
+训练命令：
+
+```bash
+bash run.sh go2 mimic train-diffusion \
+  --data /workspace/go2_learning/logs/mimic/latent_sampled_v1 \
+  --vae /workspace/go2_learning/logs/mimic/models/vae_braking.pt \
+  --output /workspace/go2_learning/logs/mimic/models/diffusion_keyframes_v1.pt \
+  --command_conditioned --future_keyframe_prob 0.2 \
+  --updates 8000 --batch_size 128 --emphasis 6 --transition_fraction 0.5 --seed 42
+```
+
+播放入口（先检验guidance=0的关键帧影响）：
+
+```bash
+bash run.sh go2 mimic play --expert running --controller diffusion \
+  --model /workspace/go2_learning/logs/mimic/models/diffusion_keyframes_v1.pt \
+  --keyframes /workspace/go2_learning/logs/mimic/keyframes/upright_v1.pt \
+  --keyframe_entry 0.5 --keyframe_interval 0.2 \
+  --guidance 0 --skill_switch --keyboard --num_envs 1 --steps 18000 --viz newton_gl
+```
+
+running时关闭关键帧；切upright后启动参考片段。首个关键帧延迟0.5秒，其后每0.2秒一帧；
+片段结束后撤掉关键帧约束，仍保留upright技能目标。时间按真实控制步前移，reset等待时暂停，每个环境reset独立重启计时，Tab重启片段时间。
+关键帧取自成功的真实VAE upright保持轨迹，库中记录源文件SHA、轨迹编号、状态顺序与周期。
+参考片段没有已经验证的四足起身过程；不能将预测关键帧误差为0解释为机器人实际到达了目标。
+这是参考论文未来姿态补全思想的Go2实现；随机掩码概率、完整状态硬约束与指令条件属于本地设计，
+没有公开作者diffusion源码可用于逐项核验，不能声称数值等同原文。
+复现与物理评估记录：`logs/mimic/experiments/keyframes_v1/`。

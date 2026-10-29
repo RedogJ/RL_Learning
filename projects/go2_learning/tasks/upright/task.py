@@ -1,17 +1,22 @@
-"""从近直立姿态开始，以两后脚支撑保持机身纵轴朝上。"""
+"""从近直立姿态开始，学习用两后脚支撑直立。"""
 
 from copy import deepcopy
 from dataclasses import asdict
 import math
+import torch
 
 from go2_learning.tasks.base import Task
 from . import TASK_NAME, TASK_VERSION
 from .config import UprightTaskCfg, EnvCfg, TerminationCfg
 from .command_cfg import CommandCfg
 from .integral_cfg import IntegralCfg
-from .reward_cfg import RewardCfg
+from .reward_compat import CURRENT_REWARD_SCHEMA, load_reward_config
 from .reset_cfg import ResetCfg
-from .rewards import rear_support_fraction, rear_symmetry_error, reward_components, upright_alignment
+from .tracking_errors import continuous_errors
+from .rewards import (
+    rear_posture_error_squared, rear_support_fraction, rear_symmetry_error,
+    reward_components, upright_alignment,
+)
 
 
 class UprightTask(Task):
@@ -20,6 +25,8 @@ class UprightTask(Task):
 
     def __init__(self, cfg=None):
         self.cfg = cfg or UprightTaskCfg()
+        self.reward_error_buffer = None  # 只由 train 入口接入；播放不维护误差缓冲。
+        self._tracking_errors = None
 
     @property
     def target_height(self):
@@ -42,18 +49,58 @@ class UprightTask(Task):
         return upright_alignment(state) < limit
 
     def failures(self, state):
-        return (state["height"] < self.cfg.termination.minimum_height) | self.tilt_failures(state)
+        return self.tilt_failures(state) | self.contact_failures(state)
+
+    def contact_failures(self, state):
+        if not self.cfg.termination.reset_on_nonfoot_contact:
+            return torch.zeros_like(state["height"], dtype=torch.bool)
+        # 使用原始接触数；奖励中的膝部支撑扣除规则不影响终止判定。
+        return state["undesired_contact_count"] > 0
 
     def reward_components(self, state, actions, failed, dt):
-        return reward_components(state, actions, failed, dt, self.cfg.rewards)
+        self._tracking_errors = (continuous_errors(state, self.cfg.rewards)
+                                 if getattr(self.cfg.rewards, "reward_schema_version", CURRENT_REWARD_SCHEMA) >= 8
+                                 else None)
+        return reward_components(state, actions, failed, dt, self.cfg.rewards,
+                                 self.reward_error_buffer, self._tracking_errors)
+
+    def prepare_training_rewards(self, runner, env, checkpoint_infos):
+        from go2_learning.training.reward_calibration import prepare_reward_stage
+
+        return prepare_reward_stage(self, runner, env, checkpoint_infos)
+
+    def critic_observations(self, env):
+        remaining = (env.max_episode_length - env.episode_length_buf).clamp_min(0)
+        time = (remaining / env.max_episode_length).unsqueeze(-1)
+        groups = self.cfg.agent["obs_groups"]["critic"]
+        if "critic_time" in groups:
+            return {"critic_time": time}
+        if "critic_context" in groups:
+            # 仅供旧 54 维模型播放时匹配形状；废弃列恒为 0，不维护低通状态。
+            return {"critic_context": torch.cat((torch.zeros_like(time), time), dim=-1)}
+        return {}
 
     def metrics(self, state):
         support = state["foot_support_per_foot"]
+        raw_metrics = {}
+        if self._tracking_errors is not None:
+            squared, valid = self._tracking_errors
+            for name, value in squared.items():
+                error = value.sqrt()
+                if name in valid:
+                    mask = valid[name]
+                    raw_metrics[f"Error/{name}"] = torch.where(mask, error, 0.0).sum() / mask.sum().clamp_min(1)
+                    raw_metrics[f"Error/{name}_valid_fraction"] = mask.float().mean()
+                else:
+                    raw_metrics[f"Error/{name}"] = error.mean()
         return {
+            **raw_metrics,  # 固定物理单位的原始误差，不受 sigma/weight 改变影响。
             "Task/upright_alignment": upright_alignment(state).mean(),
             "Task/rear_support_count": rear_support_fraction(state, self.cfg.rewards).sum(-1).mean(),
             "Task/front_support_count": support[:, :2].sum(-1).mean(),
             "Task/rear_symmetry_error_rad": rear_symmetry_error(state).mean(),
+            **({"Task/rear_posture_rms_rad": rear_posture_error_squared(state, self.cfg.rewards).sqrt().mean()}
+               if self.cfg.rewards.rear_posture_weight != 0.0 else {}),
         }
 
     def reset_state(self, root_pose, joint_pos, joint_names):
@@ -74,6 +121,16 @@ class UprightTask(Task):
                 hold_target[:, index] = joint_pos[:, index] + offsets[part_id]
         return root_pose, joint_pos, hold_target
 
+    def make_reset_orientation_sampler(self, env, seed):
+        cone = self.cfg.reset.orientation_cone_degrees
+        if cone == 0:
+            return None
+        if abs(self.cfg.reset.forward_elevation_deg - 90) + cone >= self.cfg.termination.maximum_tilt_degrees:
+            raise ValueError("初态倾斜分布必须在 upright 失败角阈值以内")
+        from go2_learning.control.reset_orientation import ResetOrientationSampler
+
+        return ResetOrientationSampler(env, cone, seed)
+
     def fixed_joint_positions(self):
         if not self.cfg.lock_front_legs:
             return {}
@@ -86,54 +143,37 @@ class UprightTask(Task):
         props.solver_velocity_iteration_count = self.cfg.front_lock_velocity_iterations
 
     def run_config(self, randomization_enabled):
-        return {**super().run_config(randomization_enabled), "reset_cfg": asdict(self.cfg.reset),
+        config = super().run_config(randomization_enabled)
+        # 公式编号是运行记录元数据，不是训练时需要调节的奖励参数。
+        config["reward_cfg"]["reward_schema_version"] = getattr(
+            self.cfg.rewards, "reward_schema_version", CURRENT_REWARD_SCHEMA)
+        return {**config, "reset_cfg": asdict(self.cfg.reset),
+                "sigma_calibration_cfg": asdict(self.cfg.sigma_calibration),
+                "finite_horizon": self.cfg.finite_horizon,
                 "front_legs_fixed": self.cfg.lock_front_legs,
                 "front_lock_solver_iterations": [self.cfg.front_lock_position_iterations,
                                                  self.cfg.front_lock_velocity_iterations]}
 
     def load_playback_config(self, run_cfg):
-        # 新模型恢复保存的重置姿态；旧记录没有此字段时使用当前近直立初始姿态。
-        self.cfg.reset = ResetCfg(**run_cfg["reset_cfg"]) if run_cfg.get("reset_cfg") else ResetCfg()
+        # 播放旧模型时也使用当前任务的初始姿态。
+        self.cfg.reset = ResetCfg()
         # 当前播放也交还前腿控制权，不恢复旧模型的机械锁定。
         self.cfg.lock_front_legs = False
-        # 当前任务恢复常规 8/4 精度；旧播放记录也使用与之配套的等待期预载。
+        # 当前任务使用常规 8/4 求解精度。
         self.cfg.front_lock_position_iterations = 8
         self.cfg.front_lock_velocity_iterations = 4
-        self.cfg.reset.rear_hold_offset = ResetCfg().rear_hold_offset
         self.cfg.agent = deepcopy(run_cfg["agent_cfg"])
+        self.cfg.finite_horizon = run_cfg.get("finite_horizon", False)
         self.cfg.commands = CommandCfg(**run_cfg["command_cfg"])
-        reward_cfg = dict(run_cfg["reward_cfg"])
-        # 已移除的奖励项；旧配置仍可加载，原始历史文件不重写。
-        for name in ("upright_progress_weight", "hip_weight", "hip_sigma",
-                     "thigh_rear_weight", "thigh_rear_target", "thigh_rear_sigma",
-                     "hip_front_weight", "hip_front_sigma",
-                     "hip_knee_lift_weight", "hip_knee_lift_sigma",
-                     "rear_airborne_weight", "rear_both_airborne_weight",
-                     "rear_knee_and_foot_support_weight",
-                     "front_pose_weight", "front_pose_target_x", "front_pose_target_y",
-                     "front_pose_target_z", "front_pose_sigma",
-                     "front_foot_position_weight", "front_foot_target_left", "front_foot_target_right",
-                     "vertical_velocity_weight", "action_rate_weight"):
-            reward_cfg.pop(name, None)
-        self.cfg.rewards = RewardCfg(**{
-            # 无版本字段的旧记录沿用原来的角速度/接触叠加公式。
-            "reward_schema_version": 1,
-            "hip_contact_weight": {1: 60.0, 2: 120.0}.get(
-                reward_cfg.get("reward_schema_version", 1), RewardCfg.hip_contact_weight),
-            # 更早的模型没有这些奖励时按 0 加载；续训使用当前配置。
-            "pitch_velocity_weight": 0.0,
-            "rear_knee_contact_weight": 0.0,
-            "rear_knee_clearance_weight": 0.0,
-            # 旧动作变化权重不能按原数值解释为关节速度权重；旧模型缺少新项时关闭。
-            "joint_velocity_weight": 0.0,
-            "front_target_weight": 0.0,
-            "rear_feet_airborne_weight": 0.0,
-            **reward_cfg,
-        })
+        self.cfg.rewards = load_reward_config(run_cfg["reward_cfg"])
+        # 支持之前保存在顶层的系数；更早没有滤波字段的模型保持关闭。
+        self.cfg.rewards.action_filter_alpha = run_cfg["reward_cfg"].get(
+            "action_filter_alpha", run_cfg.get("action_filter_alpha", 0.0))
         self.cfg.integral = IntegralCfg(**run_cfg["integral_cfg"])
         self.cfg.environment = EnvCfg(**run_cfg["env_cfg"])
-        # 当前任务从近直立重置，播放旧权重也使用当前倾倒阈值，避免旧 120° 覆盖配置。
+        # 播放旧权重使用当前倾倒阈值和接触终止设置。
         self.cfg.termination = TerminationCfg(**{
             **run_cfg["termination_cfg"],
             "maximum_tilt_degrees": self.cfg.termination.maximum_tilt_degrees,
+            "reset_on_nonfoot_contact": self.cfg.termination.reset_on_nonfoot_contact,
         })

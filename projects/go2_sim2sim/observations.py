@@ -10,6 +10,7 @@ class Observations:
         self.default_q = policy.default_q
         self.target_height = policy.cfg["reward_cfg"]["target_height"]
         cfg = policy.cfg["integral_cfg"]
+        self.enabled = cfg.get("enabled", True)
         self.dt = policy.control_dt
         self.decay = math.exp(-self.dt / cfg["decay_seconds"])
         self.limits = np.array([cfg["limit"], cfg["limit"], cfg["height_limit"]])
@@ -25,6 +26,8 @@ class Observations:
         self.integrals[:] = 0.
 
     def update(self, state):
+        if not self.enabled:
+            return
         roll, pitch = self.angles(state["gravity"])
         errors = np.array([roll, pitch, state["height"] - self.target_height])
         self.integrals[:] = np.clip(self.integrals * self.decay + errors * self.dt,

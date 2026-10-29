@@ -25,7 +25,7 @@ def run(args):
     checkpoint = expert_path(args.expert)
     run_cfg = json.loads(checkpoint.with_name('run.json').read_text())
     task = get_task(args.expert);task.load_playback_config(run_cfg)
-    switch_task=None;keyboard=None;velocity_keyboard=None;switches=0
+    switch_task=None;keyboard=None;velocity_keyboard=None;mouse_push=None;keyframe_timeline=None;switches=0
     if args.skill_switch:
         from .switching import SwitchingTask
         tasks={args.expert:task}
@@ -62,6 +62,13 @@ def run(args):
                 model_cfg=ModelCfg(**saved['config'])
                 diffusion=TrajectoryDiffusion(saved['state_dim'],model_cfg).to(env.device)
                 diffusion.load_state_dict(saved['model']);diffusion.eval()
+                diffusion.vae_sha256=saved.get('vae_sha256')
+                if args.keyframes:
+                    from .keyframes import KeyframeTimeline
+                    keyframe_timeline=KeyframeTimeline(args.keyframes,diffusion,args.num_envs,env.device,
+                        env.dt,args.expert,args.keyframe_entry,args.keyframe_interval)
+                    print(f'[关键帧] 切upright后首帧={keyframe_timeline.entry*env.dt:.3f}s，'
+                          f'间隔={keyframe_timeline.interval*env.dt:.3f}s；真实参考状态硬条件。',flush=True)
                 vae=ConditionalVAE(model_cfg).to(env.device)
                 vae.load_state_dict(saved['vae']['model']);vae.eval()
                 # 引导对输入求导，无需计算网络参数梯度。
@@ -70,8 +77,15 @@ def run(args):
                     from .inference import GraphSampler
                     sampler=GraphSampler(diffusion,args.guidance,args.guidance_mode,guidance_cfg)
                     print('扩散推理：CUDA Graph（首次准备后复用）；去噪次数不变。',flush=True)
-                print(f'状态强调={model_cfg.emphasis:g}；引导代价={guidance_cfg}',flush=True)
+                print(f'状态强调={model_cfg.emphasis:g}；当前指令条件={bool(model_cfg.command_dim)}；'
+                      f'引导代价={guidance_cfg}',flush=True)
             env.finish_initial_settling()
+            if args.command=='play':
+                from go2_learning.ui.mouse import attach_mouse_push
+                mouse_push=attach_mouse_push(env)
+                if mouse_push is not None:
+                    env.before_physics_step=mouse_push.apply
+                    env.on_reset=mouse_push.clear
             command_schedule=None
             if args.command_profile=='transitions':
                 from .commands import TransitionCommands
@@ -115,7 +129,8 @@ def run(args):
                     latent=state.new_zeros((args.num_envs,16))
                     actions=label
                     if args.controller=='vae':
-                        actions,latent,_=vae(intent,proprio,sample=False)
+                        latent,_,_=vae.sample_latent(intent)
+                        actions=vae.decode(latent,proprio)
                         if args.teacher_mix:
                             mask=torch.rand(args.num_envs,1,device=env.device)<args.teacher_mix
                             actions=torch.where(mask,label,actions)
@@ -129,9 +144,16 @@ def run(args):
                     target[:,3:6]=state.new_tensor((-1.,0.,0.) if skill=='upright' else (0.,0.,-1.))
                     target[:,6]=task.target_height
                     if args.keyboard:target[:,7]=env.commands.values[:,2]
-                    prediction=(sampler(history,state,target) if sampler is not None
-                                else diffusion.sample(history,state,target,args.guidance,
-                                                      guidance_mode=args.guidance_mode,guidance_cfg=guidance_cfg))
+                    keyframes=None
+                    if keyframe_timeline is not None:
+                        keyframe_timeline.select(skill)
+                        keyframes=keyframe_timeline.future()
+                    if sampler is not None:
+                        prediction=(sampler(history,state,target,keyframes) if keyframes is not None
+                                    else sampler(history,state,target))
+                    else:
+                        prediction=diffusion.sample(history,state,target,args.guidance,
+                            guidance_mode=args.guidance_mode,guidance_cfg=guidance_cfg,keyframes=keyframes)
                     latent=prediction[:,c.history,diffusion.state_dim:]
                     with torch.no_grad():actions=vae.decode(latent,proprio)
                     history=torch.cat((history[:,1:],torch.cat((state,latent),-1)[:,None]),1).detach()
@@ -153,6 +175,7 @@ def run(args):
                              'state':state.detach().clone(),'teacher_action':label.clone(),
                              'latent':latent.detach().clone(),'executed_action':env.actions.clone(),
                              'active':active.clone()})
+                    if keyframe_timeline is not None:keyframe_timeline.advance(active)
                     speeds.append(proprio[:,:2].norm(dim=-1).detach())
                     if done.any():
                         ids=done.nonzero(as_tuple=False).flatten()
@@ -166,6 +189,7 @@ def run(args):
                             if args.command=='collect':segments.append((i,starts[i],step+1,failed))
                             starts[i]=step+1
                         env.reset(ids);ou[ids]=0
+                        if keyframe_timeline is not None:keyframe_timeline.reset(ids)
                         if command_schedule is not None:command_schedule.reset(ids)
                         if history is not None:
                             _,_,fresh=extract(env,skill)
@@ -196,6 +220,7 @@ def run(args):
                 path=Path(args.output)/f'{args.expert}_{datetime.now().strftime("%Y%m%d_%H%M%S_%f")}.pt'
                 save_atomic(path,{'format':'go2_mimic_v1','expert':args.expert,'controller':args.controller,
                     'experts':load_experts(),'vae_sha256':latent_sha,'control_dt':env.dt,
+                    'latent_mode':'posterior_sample' if args.controller=='vae' else None,
                     'joint_names':list(env.robot.joint_names),'body_names':list(env.robot.body_names),
                     'noise':args.noise,'teacher_mix':args.teacher_mix,'command_profile':args.command_profile,
                     'running_response':response,'trajectories':trajectories})
@@ -206,9 +231,11 @@ def run(args):
             if diffusion is not None:
                 report.update(emphasis=diffusion.cfg.emphasis,guidance=args.guidance,
                               guidance_mode=args.guidance_mode,guidance_cost=asdict(guidance_cfg),
-                              model=str(args.model))
+                              model=str(args.model),keyframes=args.keyframes,
+                              keyframe_entry=args.keyframe_entry,keyframe_interval=args.keyframe_interval)
             report.update(command_profile=args.command_profile,seed=args.seed,num_envs=args.num_envs,
                           noise=args.noise,teacher_mix=args.teacher_mix,vae_sha256=latent_sha)
+            if args.controller=='vae':report['latent_mode']='posterior_sample'
             if args.command=='evaluate':
                 from .response import braking_metrics
                 trace={key:torch.stack([row[key] for row in evaluation_rows]).cpu()
@@ -225,6 +252,7 @@ def run(args):
             print(json.dumps(report,ensure_ascii=False),flush=True)
             if args.command=='evaluate':(Path(args.output)/'summary.json').write_text(json.dumps(report,indent=2,ensure_ascii=False))
         finally:
+            if mouse_push is not None:mouse_push.close()
             if velocity_keyboard is not None:velocity_keyboard.close()
             if keyboard is not None:keyboard.close()
             SimulationContext.clear_instance()

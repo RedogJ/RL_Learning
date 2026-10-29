@@ -2,6 +2,7 @@
 
 import statistics
 import math
+import sys
 from contextlib import redirect_stdout
 from pathlib import Path
 
@@ -32,6 +33,9 @@ class CompactTrainingLogger:
         return result if as_tensor else result.item()
 
     def log(self, **kwargs):
+        flush = getattr(self.logger, "flush_episodes", None)
+        if flush is not None:
+            flush()
         if self.logger.writer is None:
             return self.logger.log(**kwargs)
 
@@ -73,6 +77,10 @@ class CompactTrainingLogger:
         fallen_text = f"{int(round(fallen))} (total={self.fallen_total})" if fallen is not None else "--"
         reward_text = f"{reward:.3f}" if reward is not None else "--"
         episode_text = f"{episode_seconds:.2f}s" if episode_seconds is not None else "--"
+        # 只在交互终端加粗，重定向到文件时保留纯文本。
+        if sys.stdout.isatty():
+            reward_text = f"\033[1m{reward_text}\033[22m"
+            episode_text = f"\033[1m{episode_text}\033[22m"
         roll_text = f"{math.degrees(roll):.2f}deg" if roll is not None else "--"
         pitch_text = f"{math.degrees(pitch):.2f}deg" if pitch is not None else "--"
         height_text = f"{height:.3f}m" if height is not None else "--"
@@ -99,7 +107,8 @@ class CompactTrainingLogger:
 
     def _reward_breakdown(self):
         """按正式控制样本数加权，避免重置等待使每步活动环境数变化而偏置。"""
-        infos = [info for info in self.logger.ep_extras if "Reward/active_samples" in info]
+        infos = [info for info in self.logger.ep_extras if "Reward/active_samples" in info
+                 and any(key.startswith("Reward/") and key != "Reward/active_samples" for key in info)]
         if not infos:
             return {}
         counts = torch.stack([torch.as_tensor(info["Reward/active_samples"]).detach() for info in infos])

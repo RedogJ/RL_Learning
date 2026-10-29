@@ -19,13 +19,15 @@ class ModelCfg:
     kl_weight: float = 0.001  # 简化意图编码的 KL，避免微弱指令信息被正则项抹去
     learning_rate: float = 0.0001
     emphasis: float = 0.0  # 0 保持旧权重结构；新 diffusion 训练默认设为 6。
+    future_keyframe_prob: float = 0.0  # 新模型训练时随机可见的完整未来状态比例。
+    command_dim: int = 0  # 0 兼容旧模型；6 为技能 one-hot、vx/vy/wz、目标高度。
     projection_seed: int = 42
 
 
 @dataclass(frozen=True)
 class GuidanceCfg:
     mode: str = 'separate'
-    velocity: float = 1.0  # 0.5 * sum_t ||v_horizontal - command||²，m/s；直立目标用 body YZ。
+    velocity: float = 1.0  # 0.5 * sum_t ||v_horizontal - command||²，m/s；按每帧预测重力投影水平面。
     orientation: float = 1.0  # 重力方向误差平方的时间均值。
     height: float = 4.0  # 高度误差平方的时间均值。
     yaw: float = 1.0  # 角速度误差平方的时间均值。

@@ -11,7 +11,7 @@ import mujoco
 import numpy as np
 import torch
 
-from .config import DEFAULT_CHECKPOINT, KD, KP, MODEL_ROOT, PHYSICS_HZ, PROJECT_ROOT, TORQUE_LIMIT
+from .config import DEFAULT_CHECKPOINT, KD, KP, MODEL_ROOT, PHYSICS_HZ, PROJECT_ROOT, REPO_ROOT, TORQUE_LIMIT
 from .env import Go2Sim
 from .keyboard import Keyboard
 from .policy import Policy
@@ -19,7 +19,8 @@ from .policy import Policy
 
 def parse_args():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--checkpoint", type=Path, default=DEFAULT_CHECKPOINT)
+    parser.add_argument("--task", choices=("running", "upright"), default="running")
+    parser.add_argument("--checkpoint", type=Path, default=None)
     parser.add_argument("--headless", action="store_true", help="无窗口加速测试")
     parser.add_argument("--duration", type=float, default=0., help="仿真秒数；窗口默认持续，无窗口默认 30 秒")
     parser.add_argument("--vx", type=float, default=0.)
@@ -37,12 +38,23 @@ def parse_args():
         parser.error("run-name 只能包含字母、数字、下划线和连字符")
     if args.headless and args.duration == 0:
         args.duration = 30.
+    if args.checkpoint is None:
+        if args.task == "upright":
+            candidates = [p for p in (REPO_ROOT / "projects/go2_learning/logs/upright").glob("*/latest.pt")
+                          if p.with_name("run.json").is_file() and json.loads(p.with_name("run.json").read_text()).get("task_name") == "upright"]
+            if not candidates:
+                parser.error("没有找到 upright 的 latest.pt，请用 --checkpoint 指定")
+            args.checkpoint = max(candidates, key=lambda p: p.stat().st_mtime_ns)
+        else:
+            args.checkpoint = DEFAULT_CHECKPOINT
     return args
 
 
 def run(args):
     torch.set_num_threads(1)
     policy = Policy(args.checkpoint)
+    if policy.task != args.task and not (args.task == "running" and policy.task == "standing"):
+        raise ValueError(f"检查点任务为 {policy.task}，请使用 --task {policy.task}")
     env = Go2Sim(policy, args.physics_hz)
     keyboard = Keyboard([args.vx, args.vy, args.yaw], policy.cfg["command_cfg"])
     timestamp = datetime.now(timezone(timedelta(hours=8))).strftime("%Y-%m-%d_%H-%M-%S_%f")
@@ -61,9 +73,12 @@ def run(args):
                 },
                 "model_manifest": json.loads((MODEL_ROOT / "download_manifest.json").read_text())}
     (log_dir / "run.json").write_text(json.dumps(metadata, indent=2) + "\n")
-    print(f"MuJoCo {mujoco.__version__} | Actor {policy.path}\n"
+    print(f"MuJoCo {mujoco.__version__} | 任务 {policy.task} | Actor {policy.path}\n"
           f"控制 {1 / policy.control_dt:g} Hz / 物理 {args.physics_hz} Hz | PD={KP:g}/{KD:g} | "
           f"力矩上限 {TORQUE_LIMIT:g} N·m\n结果：{log_dir}", flush=True)
+    if policy.task == "upright":
+        print(f"upright：固定初始方向（不采样姿态分布），动作滤波 alpha={policy.filter_alpha:g}；"
+              "仅倾角及超时重置，未实现非脚掌接触重置。", flush=True)
     viewer = None
     viewer_thread = None
     if not args.headless:
@@ -99,7 +114,7 @@ def run(args):
                 tilt_seen = timeout_seen = False
             obs = env.observation()
             active = env.active
-            action = policy(obs) if active and not args.pd_only else policy.standing_action
+            action = policy(obs) if active and not args.pd_only else env.hold_action
             state, done = env.step(action)
             elapsed_steps += 1
             sim_time = elapsed_steps * policy.control_dt
@@ -112,12 +127,15 @@ def run(args):
             record = {"t": sim_time, "active": active, "height": state["height"],
                       "roll_deg": float(np.degrees(roll)), "pitch_deg": float(np.degrees(pitch)),
                       "velocity": state["linear_velocity"].tolist(), "command": env.command.tolist(),
+                      "upright_alignment": float(-state["gravity"][0]),
                       "raw_action_max": float(np.abs(action).max()),
                       "clipped_fraction": float(np.mean(np.abs(action) > 1.)),
                       "max_torque": float(np.abs(env.last_torque).max()), "done": done}
             if sim_time >= next_print:
+                attitude = (f"upright={record['upright_alignment']:+.3f}" if policy.task == "upright"
+                            else f"roll={np.degrees(roll):6.1f}° pitch={np.degrees(pitch):6.1f}°")
                 print(f"t={sim_time:5.1f}s | z={state['height']:.3f}m | "
-                      f"roll={np.degrees(roll):6.1f}° pitch={np.degrees(pitch):6.1f}° | "
+                      f"{attitude} | "
                       f"vx={state['linear_velocity'][0]:+.2f}/{env.command[0]:+.2f}m/s | "
                       f"fallen={fallen} timeout={timeouts}", flush=True)
                 metrics_file.write(json.dumps(record) + "\n")
@@ -126,7 +144,7 @@ def run(args):
             if trace_file is not None:
                 trace_file.write(json.dumps({**record, "observation": obs.tolist(), "raw_action": action.tolist(),
                                              "q": state["q"].tolist(), "dq": state["dq"].tolist(),
-                                             "target": policy.target(action).tolist(),
+                                             "target": policy.target(env.last_action).tolist(),
                                              "torque": env.last_torque.tolist()}) + "\n")
             if done:
                 if done == "tilt" and not tilt_seen:

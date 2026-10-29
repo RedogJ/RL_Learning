@@ -46,9 +46,9 @@ def load_model(policy, physics_hz):
         raise ValueError("当前 PD 控制要求电机 gear=1")
     model.actuator_ctrlrange[actuator_ids] = [-TORQUE_LIMIT, TORQUE_LIMIT]
     model.actuator_ctrllimited[actuator_ids] = True
-    # 与 enabled_self_collisions=False 对应：机器人只与地面碰撞。
+    # upright 的 Isaac 场景启用自碰撞；running 沿用原来的无自碰撞设置。
     for geom in range(model.ngeom):
         if model.geom_bodyid[geom] != 0 and (model.geom_contype[geom] or model.geom_conaffinity[geom]):
-            model.geom_contype[geom], model.geom_conaffinity[geom] = 1, 2
+            model.geom_contype[geom], model.geom_conaffinity[geom] = 1, 3 if policy.task == "upright" else 2
             model.geom_friction[geom] = [FRICTION, .005, .0001]
     return model, joint_ids, actuator_ids

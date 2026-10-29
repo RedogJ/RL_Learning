@@ -14,6 +14,8 @@ class SettlingPPO:
         if algorithm.rnd or algorithm.symmetry:
             raise ValueError("逐回合等待适配尚未接入 RND 或对称增强")
         self.algorithm, self.env = algorithm, env
+        task_cfg = getattr(getattr(env, "task", None), "cfg", None)
+        self.finite_horizon = getattr(task_cfg, "finite_horizon", False)
         st = algorithm.storage
         self.valid = torch.zeros((st.num_transitions_per_env, st.num_envs),
                                  dtype=torch.bool, device=algorithm.device)
@@ -28,6 +30,9 @@ class SettlingPPO:
         transition = self.algorithm.transition
         # 一次生成整数索引，避免每个布尔切片触发动态形状同步。
         ids = active.nonzero(as_tuple=False).flatten()
+        cache_selection = getattr(self.env, "cache_policy_selection", None)
+        if cache_selection is not None and active.device == torch.device(self.env.device):
+            cache_selection(active, ids)
         if ids.numel():
             actions[ids] = self.algorithm.act(obs[ids])
             self.distribution_shapes = [p.shape[1:] for p in transition.distribution_params]
@@ -61,6 +66,9 @@ class SettlingPPO:
     def process_env_step(self, obs, rewards, dones, extras):
         step = self.algorithm.storage.step
         self.valid[step] = extras["policy_active"].to(self.algorithm.device)
+        if self.finite_horizon:
+            # 日志仍保留超时标志；只关闭算法对真正终点的 bootstrap。
+            extras = {**extras, "time_outs": torch.zeros_like(dones, dtype=torch.bool)}
         self.algorithm.process_env_step(obs, rewards, dones, extras)
 
     @torch.no_grad()
@@ -115,16 +123,57 @@ class SettlingPPO:
 
 
 class SettlingLogger:
-    """保留原 Logger，只让 episode 长度累计正式控制步。"""
+    """GPU 累计完整回合，按轮批量回传；等待步不计入回合长度。"""
 
     def __init__(self, logger):
         self.logger = logger
+        self._pending_episodes = []
+        self._has_intrinsic = None
 
     def __getattr__(self, name):
         return getattr(self.logger, name)
 
     def process_env_step(self, rewards, dones, extras, intrinsic_rewards=None):
-        self.logger.process_env_step(rewards, dones, extras, intrinsic_rewards)
-        if self.logger.writer is not None:
-            waiting = ~extras["policy_active"].to(self.logger.cur_episode_length.device)
-            self.logger.cur_episode_length.sub_(waiting.to(self.logger.cur_episode_length.dtype))
+        logger = self.logger
+        if logger.writer is None:
+            return
+        if "episode" in extras:
+            logger.ep_extras.append(extras["episode"])
+        elif "log" in extras:
+            logger.ep_extras.append(extras["log"])
+        self._has_intrinsic = intrinsic_rewards is not None
+        if self._has_intrinsic:
+            logger.cur_ereward_sum.add_(rewards)
+            logger.cur_ireward_sum.add_(intrinsic_rewards)
+            logger.cur_reward_sum.add_(rewards + intrinsic_rewards)
+        else:
+            logger.cur_reward_sum.add_(rewards)
+        logger.cur_episode_length.add_(extras["policy_active"].to(logger.cur_episode_length.dtype))
+        ended = dones.reshape(-1).bool()
+        columns = [logger.cur_reward_sum, logger.cur_episode_length, ended]
+        if self._has_intrinsic:
+            columns.extend((logger.cur_ereward_sum, logger.cur_ireward_sum))
+        # stack 拍下重置前的值；每步只使用固定形状张量，不查询 GPU 上的结束数量。
+        self._pending_episodes.append(torch.stack(columns, dim=-1))
+        logger.cur_reward_sum.masked_fill_(ended, 0)
+        logger.cur_episode_length.masked_fill_(ended, 0)
+        if self._has_intrinsic:
+            logger.cur_ereward_sum.masked_fill_(ended, 0)
+            logger.cur_ireward_sum.masked_fill_(ended, 0)
+
+    def flush_episodes(self):
+        """按时间、环境编号顺序更新原库的最近回合队列，每轮仅回传一次。"""
+        if not self._pending_episodes:
+            return
+        rows = torch.stack(self._pending_episodes).flatten(0, 1)
+        completed = rows[rows[:, 2].bool()].cpu().tolist()
+        self._pending_episodes.clear()
+        self.logger.rewbuffer.extend(row[0] for row in completed)
+        self.logger.lenbuffer.extend(row[1] for row in completed)
+        if self._has_intrinsic:
+            self.logger.erewbuffer.extend(row[3] for row in completed)
+            self.logger.irewbuffer.extend(row[4] for row in completed)
+
+    def log(self, **kwargs):
+        self.flush_episodes()
+        return self.logger.log(**kwargs)

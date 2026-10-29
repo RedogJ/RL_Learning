@@ -13,6 +13,12 @@ class Policy:
     def __init__(self, checkpoint):
         self.path = Path(checkpoint).expanduser().resolve()
         self.cfg = json.loads(self.path.with_name("run.json").read_text())
+        self.task = self.cfg.get("task_name", "running")
+        if self.task not in ("standing", "running", "upright"):
+            raise ValueError(f"不支持的任务: {self.task}")
+        self.filter_alpha = self.cfg.get("reward_cfg", {}).get("action_filter_alpha", 0.0)
+        if not 0 <= self.filter_alpha < 1:
+            raise ValueError("action_filter_alpha 必须在 [0, 1) 范围内")
         actor_cfg = self.cfg["agent_cfg"]["actor"]
         if (actor_cfg["class_name"] != "MLPModel" or actor_cfg["activation"] != "tanh"
                 or actor_cfg.get("obs_normalization", False)):

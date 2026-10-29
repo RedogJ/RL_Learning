@@ -19,6 +19,24 @@ bash run.sh go2-sim2sim play
 bash run.sh go2-sim2sim fetch-model
 ```
 
+### upright 后腿直立
+
+```bash
+bash run.sh go2-sim2sim play --task upright
+```
+
+默认选 upright 日志中最近修改的 `latest.pt`，启动时打印完整模型路径。指定模型：
+
+```bash
+bash run.sh go2-sim2sim play --task upright --checkpoint "projects/go2_learning/logs/upright/某次训练/model_XXXXX.pt"
+```
+
+播放使用模型保存的直立初始高度、关节姿态、等待期偏置与动作滤波；R 重置。
+当前使用固定初始姿态，不采样 Isaac 的姿态分布。按保存的倾角阈值及超时重置，
+尚未实现 Isaac 的非脚掌接触终止；开启 MuJoCo 自碰撞，但碰撞几何和排除规则并不保证与 Isaac 相同。
+`upright` 是机身前向轴与世界向上的点积，接近 1 表示直立。
+运行结果仅写入本工程 `logs/`，不修改源权重或训练日志。
+
 只下载 Go2 MJCF 及引用的 16 个 OBJ 网格，约 27.1 MiB；校验通过的文件不重复下载。
 默认权重固定为：
 

@@ -1,5 +1,7 @@
 """后腿直立任务：目标方向、支撑足区分、终止、环境接入与配置隔离。"""
 
+from dataclasses import asdict
+
 import argparse
 import ast
 import json
@@ -16,6 +18,7 @@ import torch
 from go2_learning.simulation.contacts import Go2Contacts, REQUIRED_BODY_NAMES
 from go2_learning.tasks import TASKS, get_task
 from go2_learning.tasks.upright.reward_cfg import RewardCfg
+from go2_learning.tasks.upright.reward_compat import PlaybackRewardCfg
 from go2_learning.tasks.upright.reset_cfg import ResetCfg
 from go2_learning.tasks.upright.rewards import rear_symmetry_error, upright_alignment
 from go2_learning.tests.test_reset_settling import load_env_class, Scene, Sim
@@ -103,6 +106,7 @@ class UprightTests(unittest.TestCase):
         fraction = contact_counts(forces, [0, 1, 2, 3], [], 1., rear_ids=[2, 3])["rear_feet_airborne_fraction"]
         torch.testing.assert_close(fraction, torch.tensor([0., .5, 1.]))
         task = get_task("upright")
+        task.cfg.rewards = PlaybackRewardCfg(**asdict(task.cfg.rewards))
         state = self.state(3)
         state["rear_feet_airborne_fraction"] = fraction
         r = task.reward_components(state, torch.zeros(3, 12), torch.zeros(3, dtype=torch.bool), .1)
@@ -214,6 +218,7 @@ class UprightTests(unittest.TestCase):
     def test_fore_and_rear_support_are_not_interchangeable(self):
         task = get_task("upright")
         task.cfg.rewards.rear_support_weight = 5.
+        task.cfg.rewards.front_lift_weight = 5.
         state = self.state(2)
         state["gravity"][:] = torch.tensor([-1., 0., 0.])
         state["foot_support_per_foot"] = torch.tensor([[0., 0., 1., 1.], [1., 1., 0., 0.]])
@@ -237,7 +242,7 @@ class UprightTests(unittest.TestCase):
 
     def test_rear_support_excludes_same_leg_knee_support_at_each_physics_frame(self):
         task = get_task("upright")
-        task.cfg.rewards.reward_schema_version = 4
+        task.cfg.rewards = PlaybackRewardCfg(**{**asdict(task.cfg.rewards), "reward_schema_version": 4})
         names = list(reversed(REQUIRED_BODY_NAMES))
         history = torch.zeros(6, 4, len(names), 3)
         def force(env_id, body, frames=slice(None)):
@@ -275,6 +280,7 @@ class UprightTests(unittest.TestCase):
 
     def test_version_three_playback_retains_original_foot_support_scoring(self):
         task = get_task("upright")
+        task.cfg.rewards = PlaybackRewardCfg(**asdict(task.cfg.rewards))
         saved = task.run_config(False)
         saved["reward_cfg"]["reward_schema_version"] = 3
         task.load_playback_config(saved)
@@ -284,7 +290,7 @@ class UprightTests(unittest.TestCase):
         actions, failed = torch.zeros(1, 12), torch.zeros(1, dtype=torch.bool)
         old_terms = task.reward_components(state, actions, failed, .1)
         torch.testing.assert_close(old_terms["rear_support"], torch.tensor([task.cfg.rewards.rear_support_weight * .1]))
-        task.cfg.rewards.reward_schema_version = 4
+        task.cfg.rewards = PlaybackRewardCfg(**{**asdict(task.cfg.rewards), "reward_schema_version": 4})
         new_terms = task.reward_components(state, actions, failed, .1)
         torch.testing.assert_close(new_terms["rear_support"], torch.zeros(1))
 
@@ -421,7 +427,7 @@ class UprightTests(unittest.TestCase):
 
     def test_hip_contact_is_separate_from_other_nonfoot_contacts(self):
         task = get_task("upright")
-        task.cfg.rewards.reward_schema_version = 4
+        task.cfg.rewards = PlaybackRewardCfg(**{**asdict(task.cfg.rewards), "reward_schema_version": 4})
         state = self.state(3)
         state["undesired_contact_count"] = torch.tensor([0., 2., 3.])
         state["hip_contact_count"] = torch.tensor([0., 1., 3.])
@@ -440,6 +446,7 @@ class UprightTests(unittest.TestCase):
 
     def test_knee_clearance_is_restored_from_saved_reward_configuration(self):
         task = get_task("upright")
+        task.cfg.rewards = PlaybackRewardCfg(**asdict(task.cfg.rewards))
         saved = task.run_config(False)
         saved["reward_cfg"].update(rear_knee_clearance_weight=70., rear_knee_clearance_sigma=.12)
         task.load_playback_config(saved)
@@ -464,7 +471,7 @@ class UprightTests(unittest.TestCase):
 
     def test_all_rear_calf_contacts_are_excluded_from_generic_penalty(self):
         task = get_task("upright")
-        task.cfg.rewards.reward_schema_version = 4
+        task.cfg.rewards = PlaybackRewardCfg(**{**asdict(task.cfg.rewards), "reward_schema_version": 4})
         state = self.state(2)
         state["undesired_contact_count"] = torch.tensor([2., 1.])
         state["rear_knee_contact_count"] = torch.tensor([2., 1.])
@@ -476,7 +483,7 @@ class UprightTests(unittest.TestCase):
 
     def test_rear_knee_contact_penalizes_support_and_side_contact(self):
         task = get_task("upright")
-        task.cfg.rewards.reward_schema_version = 4
+        task.cfg.rewards = PlaybackRewardCfg(**{**asdict(task.cfg.rewards), "reward_schema_version": 4})
         task.cfg.rewards.rear_knee_contact_weight = 60.
         state = self.state(4)
         state["rear_knee_contact_count"] = torch.tensor([0., 1., 2., 1.])
@@ -497,7 +504,7 @@ class UprightTests(unittest.TestCase):
     def test_mixed_sensor_contacts_count_each_body_once(self):
         scene = Scene()
         task = get_task("upright")
-        task.cfg.rewards.reward_schema_version = 4
+        task.cfg.rewards = PlaybackRewardCfg(**{**asdict(task.cfg.rewards), "reward_schema_version": 4})
         env = load_env_class()(Sim(scene), scene, task=task)
         env.finish_initial_settling()
         # 同时有机身、髋、后小腿、脚掌接触；脚掌不属于非足部。
@@ -527,6 +534,7 @@ class UprightTests(unittest.TestCase):
 
     def test_rear_knee_contact_config_round_trip_and_legacy_playback(self):
         task = get_task("upright")
+        task.cfg.rewards = PlaybackRewardCfg(**asdict(task.cfg.rewards))
         task.cfg.rewards.rear_knee_contact_weight = 123.
         saved = task.run_config(False)
         restored = get_task("upright")
@@ -616,6 +624,7 @@ class UprightTests(unittest.TestCase):
 
     def test_removed_thigh_rear_fields_in_old_model_do_not_break_loading(self):
         task = get_task("upright")
+        task.cfg.rewards = PlaybackRewardCfg(**asdict(task.cfg.rewards))
         saved = task.run_config(False)
         saved["reward_cfg"].update(thigh_rear_weight=.5, thigh_rear_target=-.35, thigh_rear_sigma=3.0)
         task.load_playback_config(saved)  # 不抛 TypeError 即通过。
@@ -625,6 +634,7 @@ class UprightTests(unittest.TestCase):
 
     def test_removed_reward_fields_in_old_model_do_not_break_loading(self):
         task = get_task("upright")
+        task.cfg.rewards = PlaybackRewardCfg(**asdict(task.cfg.rewards))
         saved = task.run_config(False)
         removed = {
             "hip_front_weight": 45., "hip_front_sigma": .5,
@@ -642,6 +652,7 @@ class UprightTests(unittest.TestCase):
 
     def test_removed_progress_field_in_old_model_does_not_break_loading(self):
         task = get_task("upright")
+        task.cfg.rewards = PlaybackRewardCfg(**asdict(task.cfg.rewards))
         saved = task.run_config(False)
         self.assertNotIn("upright_progress_weight", saved["reward_cfg"])
         saved["reward_cfg"]["upright_progress_weight"] = 20.
@@ -652,7 +663,7 @@ class UprightTests(unittest.TestCase):
 
     def test_pitch_velocity_penalizes_body_y_both_signs_without_orientation_gating(self):
         task = get_task("upright")
-        task.cfg.rewards.reward_schema_version = 5
+        task.cfg.rewards = PlaybackRewardCfg(**{**asdict(task.cfg.rewards), "reward_schema_version": 5})
         task.cfg.rewards.pitch_velocity_weight = 2.
         state = self.state(5)
         state["angular_velocity"] = torch.tensor([[9., 0., 9.], [0., 2., 0.], [0., -2., 0.],
@@ -669,7 +680,7 @@ class UprightTests(unittest.TestCase):
 
     def test_body_xz_and_pitch_penalties_do_not_overlap(self):
         task = get_task("upright")
-        task.cfg.rewards.reward_schema_version = 4
+        task.cfg.rewards = PlaybackRewardCfg(**{**asdict(task.cfg.rewards), "reward_schema_version": 4})
         state = self.state(4)
         # 直立时 body X 朝世界 Z，body Z 朝世界 -X；两坐标系速度一致。
         state["gravity"][:] = torch.tensor([-1., 0., 0.])
@@ -692,7 +703,7 @@ class UprightTests(unittest.TestCase):
 
     def test_horizontal_velocity_penalty_uses_world_xy_and_ignores_z(self):
         task = get_task("upright")
-        task.cfg.rewards.reward_schema_version = 5
+        task.cfg.rewards = PlaybackRewardCfg(**{**asdict(task.cfg.rewards), "reward_schema_version": 5})
         state = self.state(5)
         state["linear_velocity_w"] = torch.tensor([[0., 0., 0.], [1., 2., 0.],
                                                    [-1., -2., 0.], [0., 0., 2.], [1., 2., -2.]])
@@ -715,7 +726,7 @@ class UprightTests(unittest.TestCase):
 
     def test_version_five_changes_only_horizontal_balance(self):
         task = get_task("upright")
-        task.cfg.rewards.reward_schema_version = 5
+        task.cfg.rewards = PlaybackRewardCfg(**{**asdict(task.cfg.rewards), "reward_schema_version": 5})
         state = self.state(2)
         state["gravity"] = torch.tensor([[0., 0., -1.], [-1., 0., 0.]])
         state["linear_velocity_w"][:] = torch.tensor([.3, .4, 2.])
@@ -730,7 +741,7 @@ class UprightTests(unittest.TestCase):
         actions, failed = torch.zeros(2, 12), torch.zeros(2, dtype=torch.bool)
         current = task.reward_components(state, actions, failed, .1)
         torch.testing.assert_close(current["balance"], torch.full((2,), -task.cfg.rewards.balance_weight * .25 * .1))
-        task.cfg.rewards.reward_schema_version = 1
+        task.cfg.rewards = PlaybackRewardCfg(**{**asdict(task.cfg.rewards), "reward_schema_version": 1})
         legacy = task.reward_components(state, actions, failed, .1)
         self.assertGreater(legacy["balance"][1], 0.)
         for name in current:
@@ -739,6 +750,7 @@ class UprightTests(unittest.TestCase):
 
     def test_version_two_playback_keeps_exponential_balance_and_angular_gate(self):
         task = get_task("upright")
+        task.cfg.rewards = PlaybackRewardCfg(**asdict(task.cfg.rewards))
         saved = task.run_config(False)
         saved["reward_cfg"]["reward_schema_version"] = 2
         saved["reward_cfg"]["horizontal_velocity_sigma"] = .8
@@ -756,6 +768,7 @@ class UprightTests(unittest.TestCase):
 
     def test_old_playback_keeps_legacy_angular_and_contact_formulas(self):
         task = get_task("upright")
+        task.cfg.rewards = PlaybackRewardCfg(**asdict(task.cfg.rewards))
         saved = task.run_config(False)
         saved["reward_cfg"].pop("reward_schema_version")
         saved["reward_cfg"]["hip_contact_weight"] = 60.
@@ -780,10 +793,11 @@ class UprightTests(unittest.TestCase):
         task.load_playback_config(saved)
         self.assertEqual(task.cfg.rewards.hip_contact_weight, 60.)
         with self.assertRaises(ValueError):
-            RewardCfg(reward_schema_version=6)
+            PlaybackRewardCfg(reward_schema_version=7)
 
     def test_deleted_reward_fields_are_ignored_when_loading_saved_config(self):
         task = get_task("upright")
+        task.cfg.rewards = PlaybackRewardCfg(**asdict(task.cfg.rewards))
         saved = task.run_config(False)
         removed = {"front_foot_position_weight": 1000., "vertical_velocity_weight": 30.,
                    "front_foot_target_left": [.16, .142, -.15],
@@ -805,6 +819,7 @@ class UprightTests(unittest.TestCase):
 
     def test_pitch_velocity_config_round_trip_and_old_model_playback(self):
         task = get_task("upright")
+        task.cfg.rewards = PlaybackRewardCfg(**asdict(task.cfg.rewards))
         task.cfg.rewards.pitch_velocity_weight = 3.
         saved = task.run_config(False)
         restored = get_task("upright")
@@ -852,6 +867,7 @@ class UprightTests(unittest.TestCase):
 
     def test_old_action_rate_weight_is_not_misinterpreted_as_joint_speed_weight(self):
         task = get_task("upright")
+        task.cfg.rewards = PlaybackRewardCfg(**asdict(task.cfg.rewards))
         saved = task.run_config(False)
         saved["reward_cfg"].pop("joint_velocity_weight")
         saved["reward_cfg"]["action_rate_weight"] = 10.
@@ -861,6 +877,39 @@ class UprightTests(unittest.TestCase):
         scene = Scene()
         env = load_env_class()(Sim(scene), scene, task=task)
         self.assertNotIn("joint_velocity", env._read_state())
+
+    def test_six_motion_axes_are_independent_and_use_explicit_frames(self):
+        task = get_task("upright")
+        cfg = task.cfg.rewards
+        state = self.state(2)
+        state["linear_velocity_w"] = torch.tensor([[1., 2., 3.], [-1., -2., -3.]])
+        state["angular_velocity"] = torch.tensor([[4., 5., 6.], [-4., -5., -6.]])
+        state["angular_velocity_w"] = torch.full((2, 3), 99.)
+        state["linear_velocity"] = torch.full((2, 3), 99.)
+        # 每个轴使用不同权重，避免把轴顺序或坐标系写反。
+        for index, axis in enumerate("xyz"):
+            setattr(cfg, f"linear_velocity_{axis}_weight", index + 1.)
+            setattr(cfg, f"angular_velocity_{axis}_weight", index + 4.)
+        actions, failed = torch.zeros(2, 12), torch.zeros(2, dtype=torch.bool)
+        terms = task.reward_components(state, actions, failed, .1)
+        for index, axis in enumerate("xyz"):
+            torch.testing.assert_close(terms[f"linear_velocity_{axis}"], torch.full((2,), -.1 * (index+1)**3))
+            torch.testing.assert_close(terms[f"angular_velocity_{axis}"], torch.full((2,), -.1 * (index+4)**3))
+        state["gravity"][:] = torch.tensor([-1., 0., 0.])
+        upright = task.reward_components(state, actions, failed, .2)
+        for name in terms:
+            if name.startswith(("linear_velocity_", "angular_velocity_")):
+                torch.testing.assert_close(upright[name], 2 * terms[name])
+        cfg.linear_velocity_z_weight = 0.
+        self.assertEqual(task.reward_components(state, actions, failed, .1)["linear_velocity_z"].sum(), 0.)
+        saved = task.run_config(False)
+        restored = get_task("upright")
+        restored.load_playback_config(saved)
+        self.assertEqual(restored.run_config(False), saved)
+        for name in ("balance_weight", "angular_velocity_weight", "pitch_velocity_weight"):
+            self.assertNotIn(name, saved["reward_cfg"])
+        with self.assertRaises(ValueError):
+            RewardCfg(linear_velocity_z_weight=-1.)
 
 
 if __name__ == "__main__":

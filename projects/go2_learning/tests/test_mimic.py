@@ -11,6 +11,50 @@ from go2_learning.tasks.mimic.experts import load_experts
 
 
 class MimicTests(unittest.TestCase):
+    def test_partial_denoising_keeps_default_results_and_known_state(self):
+        model=TrajectoryDiffusion(34,self.cfg()).eval()
+        h=torch.randn(2,model.cfg.history,model.raw_dim);s=torch.randn(2,34)
+        target=torch.tensor([[0.,0.,0.,0.,0.,-1.,.3]]).repeat(2,1)
+        noise=torch.randn(2,model.length,model.dim)
+        full=model.sample(h,s,target,0.,noise=noise)
+        explicit=model.sample(h,s,target,0.,noise=noise,start_step=model.cfg.noise_steps-1)
+        torch.testing.assert_close(full,explicit,atol=0,rtol=0)
+        clean=model.encode(full);alpha=model.alpha_bar[1]
+        partial=model.sample(h,s,target,0.,noise=alpha.sqrt()*clean+(1-alpha).sqrt()*noise,start_step=1)
+        torch.testing.assert_close(partial[:,:model.cfg.history],h,atol=0,rtol=0)
+        torch.testing.assert_close(partial[:,model.cfg.history,:34],s,atol=0,rtol=0)
+        self.assertTrue(torch.isfinite(partial).all())
+        with self.assertRaises(ValueError):model.sample(h,s,target,start_step=model.cfg.noise_steps)
+
+    def test_vae_sampled_latent_matches_executed_decoder_input(self):
+        model=ConditionalVAE(self.cfg()).eval()
+        intent=torch.randn(4,6);proprio=torch.randn(4,49)
+        with torch.no_grad(),torch.random.fork_rng():
+            torch.manual_seed(71)
+            latent,mean,logvar=model.sample_latent(intent)
+            torch.manual_seed(71)
+            action,returned_mean,returned_logvar=model(intent,proprio,sample=True)
+            torch.testing.assert_close(action,model.decode(latent,proprio))
+            torch.testing.assert_close(returned_mean,mean)
+            torch.testing.assert_close(returned_logvar,logvar)
+            self.assertGreater(float((latent-mean).abs().max()),.1)
+            deterministic,_,_=model.sample_latent(intent,sample=False)
+            torch.testing.assert_close(deterministic,mean)
+
+    def test_latent_loader_rejects_mixing_mean_and_sampled_data(self):
+        from go2_learning.tasks.mimic.data import load_trajectories
+        with tempfile.TemporaryDirectory() as folder:
+            payload={'format':'go2_mimic_v1','expert':'upright','experts':load_experts(),
+                     'vae_sha256':'same-vae','joint_names':['test'],'body_names':['test'],
+                     'control_dt':1/30,'trajectories':[{'state':torch.zeros(3,34),'failed':False}]}
+            torch.save(payload,Path(folder)/'old.pt')
+            rows,_=load_trajectories(folder,latent_only=True)
+            self.assertEqual(rows[0]['latent_mode'],'mean')
+            payload['latent_mode']='posterior_sample'
+            torch.save(payload,Path(folder)/'new.pt')
+            with self.assertRaisesRegex(ValueError,'均值和分布采样'):
+                load_trajectories(folder,latent_only=True)
+
     def test_emphasis_projection_roundtrip_and_root_weighting(self):
         from go2_learning.tasks.mimic.projection import EmphasisProjection
         projection=EmphasisProjection(34,6.,42)
@@ -27,7 +71,8 @@ class MimicTests(unittest.TestCase):
         from go2_learning.tasks.mimic.config import GuidanceCfg
         model=TrajectoryDiffusion(34,self.cfg())
         trajectory=torch.zeros(1,model.length,model.raw_dim)
-        trajectory[:,:,2]=20.  # vz 不混入平面速度项。
+        trajectory[:,:,2]=20.  # 当前四足姿态下 vz 为竖直速度。
+        trajectory[:,:,8]=-1.
         target=torch.tensor([[1.,0.,0.,0.,0.,0.,10.,.6]])
         cfg=GuidanceCfg(velocity=2.,orientation=0.,height=0.,yaw=0.)
         terms=model.guidance_terms(model.encode(trajectory),target,cfg)
@@ -35,6 +80,10 @@ class MimicTests(unittest.TestCase):
         self.assertEqual(float(terms['height']+terms['orientation']+terms['yaw']),0.)
         upright=target.clone();upright[:,0]=0.;upright[:,3]=-1.
         upright_terms=model.guidance_terms(model.encode(trajectory),upright,cfg)
+        # 只切目标不应改变当前预测姿态的水平面：此时vz仍不计入。
+        self.assertAlmostEqual(float(upright_terms['velocity']),0.)
+        standing=trajectory.clone();standing[:,:,6]=-1.;standing[:,:,8]=0.
+        upright_terms=model.guidance_terms(model.encode(standing),upright,cfg)
         self.assertAlmostEqual(float(upright_terms['velocity']),400*(model.cfg.horizon+1))
         doubled=torch.cat((trajectory,trajectory),0)
         self.assertAlmostEqual(float(model.guidance_cost(model.encode(doubled),target.repeat(2,1),cfg)),
