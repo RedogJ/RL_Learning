@@ -11,7 +11,7 @@ from pathlib import Path
 
 import torch
 import torch.nn.functional as F
-from .train import Replay
+from .replay import Replay
 from .networks import MotionPolicy
 from .adaptive_rsi import AdaptiveRSI
 from .backflip_reward_cfg import make_backflip_reward_cfg

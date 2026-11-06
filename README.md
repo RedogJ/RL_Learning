@@ -1,84 +1,94 @@
-# RL Learning
+# RL Learning · Go2 SuperMimic
 
-用 Isaac Lab 和 RSL-RL 学习机器人强化学习。当前主工程包含 **Go2 站立抗扰动、速度跟踪与后腿直立**。
+机器人强化学习实验仓库。当前组内分享重点是 **Go2 的 SuperMimic 风格世界模型训练**：用 MuJoCo Warp 采集真实仿真数据，学习可微动力学，再通过闭环想象更新 Actor/Critic，已完成侧空翻和后空翻参考动作训练。
 
-## 目录
+**从这里开始：[SuperMimic 工程说明](projects/go2_mujoco_mimic/README.md)**
+
+| 内容 | 入口 |
+| --- | --- |
+| 算法结构、输入输出和论文差异 | [架构说明](projects/go2_mujoco_mimic/docs/architecture.md) |
+| Docker、依赖、路径和检查 | [环境说明](projects/go2_mujoco_mimic/docs/environment.md) |
+| 训练、续训、参数与日志 | [训练指南](projects/go2_mujoco_mimic/docs/training.md) |
+| 演示、模型来源与学习过程 | [实验结果](projects/go2_mujoco_mimic/docs/results.md) |
+| 参考格式与数据来源 | [参考轨迹](projects/go2_mujoco_mimic/data/README.md) |
+
+## 演示
+
+- [侧空翻：最新5800轮，正常速度＋半速](projects/go2_mujoco_mimic/videos/sideflip_latest_cycle5800_20261106.mp4)
+- [后空翻：最新5250轮，正常速度＋半速](projects/go2_mujoco_mimic/videos/backflip_latest_cycle5250_20261106.mp4)
+
+白色机器人由策略闭环控制，透明蓝色为参考动作；录制使用固定起点、关闭观测噪声。
+
+## 运行 SuperMimic
+
+在仓库根目录执行，已有 `isaaclab-base:local` 镜像可直接复用。
+独立MuJoCo镜像与新机器安装见工程环境说明。
+
+```bash
+# GPU物理检查
+bash run.sh supermimic --num-envs 16 --steps 30 \
+  --motion /workspace/go2_mujoco_mimic/data/go2_flip_to/sideflip_left_30hz/motion.npy
+
+# 从当前配置开始新的训练
+bash projects/go2_mujoco_mimic/scripts/train_sideflip.sh --cycles 1000
+bash projects/go2_mujoco_mimic/scripts/train_backflip.sh --cycles 1000
+
+# 拿到演示权重或分享包后回放
+bash run.sh supermimic play \
+  --checkpoint /workspace/go2_mujoco_mimic/checkpoints/sideflip_policy_5800.pt --no-noise
+```
+
+演示权重由完整训练检查点导出；Git默认不携带日志和权重。
+最新训练模型可完整续训，Actor演示权重仅供回放。演示模型经历了多阶段调参，当前从零训练配置不等于历史训练过程的逐步重演。
+
+## 给同事的轻量分享包
+
+```bash
+bash projects/go2_mujoco_mimic/scripts/export_demo_policies.sh
+python scripts/export_supermimic.py \
+  --output share_exports/go2_supermimic_20261106 --with-demo-policies --archive
+```
+
+分享包保留运行所需的相对目录：SuperMimic代码、Go2 MJCF/mesh、参考轨迹、最新演示视频与可选Actor权重；排除日志、缓存、历史诊断及其他机器人项目，附带文件校验清单。
+第三方来源见[THIRD_PARTY_NOTICES.md](projects/go2_mujoco_mimic/THIRD_PARTY_NOTICES.md)。自有代码的统一开源许可证尚待确定。
+
+## 仓库其他工程
 
 ```text
 RL_Learning/
-├── run.sh                      # 统一运行入口
+├── run.sh                       # 统一入口；bash run.sh --help
 ├── projects/
-│   ├── go2_learning/           # Go2 主工程：standing / running / upright
-│   └── go2_sim2sim/            # Go2 的 MuJoCo 独立播放与验证
-├── examples/
-│   ├── rsl_rl_version/         # 最小 RSL-RL 双杆示例
-│   ├── cartpole_ppo/           # 手写 PPO 双杆及单杆备份
-│   └── cartpole_compare.py     # 官方单杆奖励对照
-├── third_party/
-│   ├── IsaacLab/              # 框架源码和 Docker 构建上下文
-│   └── unitree_rl_lab/        # Unitree 参考工程
-├── assets/                    # 本地 Go2 USD、地面及贴图
-├── scripts/                   # Docker 共用启动器与官方例程入口
-├── tests/                     # 启动参数与挂载检查，不启动 Docker
-├── docs/                      # 使用说明、目录与迁移指南
-└── archive/                   # 早期示例与一次性维护脚本
+│   ├── go2_mujoco_mimic/         # 当前重点：MuJoCo Warp世界模型模仿RL
+│   ├── go2_learning/             # Isaac Lab + RSL-RL：standing/running/upright等
+│   └── go2_sim2sim/              # Isaac策略的MuJoCo验证
+├── examples/                    # PPO及RSL-RL倒立摆学习示例
+├── assets/                      # Go2模型和原Isaac地面资源
+├── third_party/                 # Isaac Lab、Unitree参考源码
+├── beyondmimic/                 # 参考源码
+├── scripts/                     # 启动器与分享包导出
+├── docs/                        # 原工程目录、Docker与迁移说明
+└── archive/                     # 早期示例和维护脚本
 ```
 
-## 运行 Go2
-
-在本目录执行，复用已有的 `isaaclab-base:local` 镜像：
+原Isaac工程仍可用：
 
 ```bash
 bash run.sh go2 view
 bash run.sh go2 train --task standing --max_updates 1000 --run_name stand
-bash run.sh go2 play --task standing
+bash run.sh go2 play --task running
 ```
 
-继续训练最近完成的模型：
+- [Isaac Go2工程](projects/go2_learning/README.md)
+- [MuJoCo sim2sim](projects/go2_sim2sim/README.md)
+- [最小RSL-RL示例](examples/rsl_rl_version/README.md)
+- [手写PPO示例](examples/cartpole_ppo/README.md)
+- [原仓库目录说明](docs/structure.md)
+- [原Isaac Docker与服务器迁移](docs/docker.md)
 
-```bash
-bash run.sh go2 train --task standing --resume latest --max_updates 1000 --run_name continue_stand
-```
-
-训练默认无窗口，查看与播放默认使用 `newton_gl`。参数说明见 [Go2 工程](projects/go2_learning/README.md)。
-奖励、PPO、扰动及任务配置集中在 [tasks/standing](projects/go2_learning/tasks/standing/)。
-移动任务使用 `--task running`，训练与键盘播放见 [running 说明](projects/go2_learning/tasks/running/README.md)。
-日志和权重保存在 `projects/go2_learning/logs/`，已被 Git 忽略，需要单独备份。
-
-## 学习示例
-
-```bash
-# 标准 RSL-RL 双杆
-bash run.sh cartpole-rsl train --max_updates 2 --num_envs 4
-bash run.sh cartpole-rsl play
-
-# 手写 PPO 双杆
-bash run.sh cartpole-ppo --control train --num_envs 64 --viz none --max_updates 300
-bash run.sh cartpole-ppo --control play --num_envs 1
-
-# 查看全部入口
-bash run.sh --help
-```
-
-## 文档
-
-- [目录职责、阅读顺序与旧路径对照](docs/structure.md)
-- [Docker 构建、运行与服务器迁移](docs/docker.md)
-- [Go2 任务、参数及模型兼容规则](projects/go2_learning/README.md)
-- [Go2 后腿直立任务](projects/go2_learning/tasks/upright/README.md)
-- [Go2 MuJoCo sim2sim 验证](projects/go2_sim2sim/README.md)
-- [最小 RSL-RL 接入示例](examples/rsl_rl_version/README.md)
-- [手写 PPO 对照工程](examples/cartpole_ppo/README.md)
-- [归档文件用途](archive/README.md)
-
-## 本地检查
-
-在已有 torch 的 Python 环境执行：
+## 检查
 
 ```bash
 python -m unittest discover -s tests -q
-python -m unittest discover -s projects/go2_learning/tests -t projects -q
-python examples/cartpole_ppo/test_double_cartpole.py -q
 ```
 
-启动器检查使用命令替身；这些检查不验证实际 GPU 仿真。
+SuperMimic的奖励、Critic、Replay和运动学梯度检查见工程[环境说明](projects/go2_mujoco_mimic/docs/environment.md#本地检查)。

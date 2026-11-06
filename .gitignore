@@ -29,3 +29,13 @@ wandb/
 !/third_party/IsaacLab/docker/cluster/.env.cluster
 !/third_party/IsaacLab/tools/template/templates/external/docker/.env.base
 !/third_party/unitree_rl_lab/docker/.env.base
+
+# Simulator dumps and local sharing bundles
+MJDATA.TXT
+MJMODEL.TXT
+MUJOCO_LOG.TXT
+.cache/
+share_exports/
+
+# Local PyTorch tensors and model weights
+*.pt

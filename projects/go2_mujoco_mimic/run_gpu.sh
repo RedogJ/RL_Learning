@@ -1,6 +1,8 @@
 #!/usr/bin/env bash
 set -euo pipefail
 root="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/../.." && pwd)"
+image="${SUPERMIMIC_IMAGE:-isaaclab-base:local}"
+python_bin="${SUPERMIMIC_PYTHON:-/opt/isaaclab-venv/bin/python}"
 module=go2_mujoco_mimic.smoke
 if [[ "${1:-}" == train-state ]]; then
   module=go2_mujoco_mimic.tasks.mimic.state_train
@@ -39,10 +41,10 @@ if [[ ( "$module" == go2_mujoco_mimic.play_policy || "$module" == go2_mujoco_mim
   fi
 fi
 exec docker run --rm "${extra[@]}" --pull=never --gpus all --network none \
-  --entrypoint /opt/isaaclab-venv/bin/python \
+  --entrypoint "$python_bin" \
   -e PYTHONPATH=/workspace \
   -e GO2_PHYSICS_GRAPH="${GO2_PHYSICS_GRAPH:-0}" \
   -v "$root/projects/go2_mujoco_mimic:/workspace/go2_mujoco_mimic" \
   -v "$root/projects/go2_mujoco_mimic/.cache/warp:/root/.cache/warp" \
   -v "$root/assets:/assets:ro" \
-  isaaclab-base:local -m "$module" "$@"
+  "$image" -m "$module" "$@"

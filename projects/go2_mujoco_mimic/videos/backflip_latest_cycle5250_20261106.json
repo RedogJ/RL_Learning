@@ -618,7 +618,7 @@
       "root_rotation_error_deg": 3.45059871673584
     }
   ],
-  "output_video": "/home/redog-j/桌面/RL_Learning/projects/go2_mujoco_mimic/videos/backflip_latest_cycle5250_20261106.mp4",
+  "output_video": "videos/backflip_latest_cycle5250_20261106.mp4",
   "playback_segments": [
     {
       "speed": 1.0

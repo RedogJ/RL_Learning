@@ -1,5 +1,7 @@
 # 工程目录与阅读顺序
 
+当前组内分享重点见 [Go2 SuperMimic](../projects/go2_mujoco_mimic/README.md)；下文保留原Isaac工程的阅读路径。
+
 ## 各层放什么
 
 | 目录 | 内容 |
