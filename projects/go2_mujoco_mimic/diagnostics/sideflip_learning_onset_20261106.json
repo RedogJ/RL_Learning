@@ -1,0 +1,222 @@
+{
+  "settings": {
+    "num_envs": 16,
+    "seed": 123,
+    "noise": false,
+    "start_frame": 0,
+    "note": "各环境同一起点，完整率不是独立随机扰动试验成功率"
+  },
+  "cases": {
+    "900": {
+      "completed_fraction": 0.0,
+      "return": 5.100553512573242,
+      "duration_s": 1.1,
+      "peak_height_m": 0.3324264883995056,
+      "peak_upward_velocity_m_s": 0.7219964861869812,
+      "phases": {
+        "all": {
+          "root_position_mean_m": 0.035834088921546936,
+          "root_rotation_rms_deg": 11.163972854614258,
+          "joint_rms_deg": 8.557086944580078
+        },
+        "flight": {
+          "root_position_mean_m": 0.1373797357082367,
+          "root_rotation_rms_deg": 29.563623428344727,
+          "joint_rms_deg": 20.631935119628906
+        }
+      }
+    },
+    "1000": {
+      "completed_fraction": 1.0,
+      "return": 11.796030044555664,
+      "duration_s": 2.533333333333333,
+      "peak_height_m": 0.6018543839454651,
+      "peak_upward_velocity_m_s": 2.0154623985290527,
+      "phases": {
+        "all": {
+          "root_position_mean_m": 0.1267443746328354,
+          "root_rotation_rms_deg": 12.66584300994873,
+          "joint_rms_deg": 13.457176208496094
+        },
+        "flight": {
+          "root_position_mean_m": 0.1373048573732376,
+          "root_rotation_rms_deg": 18.83803367614746,
+          "joint_rms_deg": 20.53078842163086
+        },
+        "landing_settle": {
+          "root_position_mean_m": 0.2170168161392212,
+          "root_rotation_rms_deg": 13.04963493347168,
+          "joint_rms_deg": 12.956865310668945
+        }
+      }
+    },
+    "1100": {
+      "completed_fraction": 0.0,
+      "return": 6.0123138427734375,
+      "duration_s": 1.9,
+      "peak_height_m": 0.7373949289321899,
+      "peak_upward_velocity_m_s": 2.294285774230957,
+      "phases": {
+        "all": {
+          "root_position_mean_m": 0.1493130773305893,
+          "root_rotation_rms_deg": 30.85266876220703,
+          "joint_rms_deg": 15.868392944335938
+        },
+        "flight": {
+          "root_position_mean_m": 0.2160583883523941,
+          "root_rotation_rms_deg": 28.831396102905273,
+          "joint_rms_deg": 22.104822158813477
+        },
+        "landing_settle": {
+          "root_position_mean_m": 0.34556785225868225,
+          "root_rotation_rms_deg": 58.6893310546875,
+          "joint_rms_deg": 20.208227157592773
+        }
+      }
+    },
+    "1200": {
+      "completed_fraction": 1.0,
+      "return": 11.203696250915527,
+      "duration_s": 2.533333333333333,
+      "peak_height_m": 0.7082117199897766,
+      "peak_upward_velocity_m_s": 2.254016876220703,
+      "phases": {
+        "all": {
+          "root_position_mean_m": 0.099945567548275,
+          "root_rotation_rms_deg": 17.241092681884766,
+          "joint_rms_deg": 14.394171714782715
+        },
+        "flight": {
+          "root_position_mean_m": 0.11390397697687149,
+          "root_rotation_rms_deg": 21.577470779418945,
+          "joint_rms_deg": 21.357999801635742
+        },
+        "landing_settle": {
+          "root_position_mean_m": 0.15064431726932526,
+          "root_rotation_rms_deg": 21.13100814819336,
+          "joint_rms_deg": 13.80024242401123
+        }
+      }
+    },
+    "1500": {
+      "completed_fraction": 1.0,
+      "return": 12.59180736541748,
+      "duration_s": 2.533333333333333,
+      "peak_height_m": 0.6704237461090088,
+      "peak_upward_velocity_m_s": 2.037867307662964,
+      "phases": {
+        "all": {
+          "root_position_mean_m": 0.0360526517033577,
+          "root_rotation_rms_deg": 9.77011489868164,
+          "joint_rms_deg": 12.759796142578125
+        },
+        "flight": {
+          "root_position_mean_m": 0.03908482566475868,
+          "root_rotation_rms_deg": 13.676379203796387,
+          "joint_rms_deg": 19.473995208740234
+        },
+        "landing_settle": {
+          "root_position_mean_m": 0.05177207291126251,
+          "root_rotation_rms_deg": 10.401071548461914,
+          "joint_rms_deg": 13.070897102355957
+        }
+      }
+    },
+    "2200": {
+      "completed_fraction": 1.0,
+      "return": 13.328266143798828,
+      "duration_s": 2.533333333333333,
+      "peak_height_m": 0.6628493070602417,
+      "peak_upward_velocity_m_s": 1.9773751497268677,
+      "phases": {
+        "all": {
+          "root_position_mean_m": 0.03235408663749695,
+          "root_rotation_rms_deg": 8.732226371765137,
+          "joint_rms_deg": 10.913318634033203
+        },
+        "flight": {
+          "root_position_mean_m": 0.0346803180873394,
+          "root_rotation_rms_deg": 12.052803039550781,
+          "joint_rms_deg": 17.8356990814209
+        },
+        "landing_settle": {
+          "root_position_mean_m": 0.05044953152537346,
+          "root_rotation_rms_deg": 10.02205753326416,
+          "joint_rms_deg": 10.40973949432373
+        }
+      }
+    },
+    "3000": {
+      "completed_fraction": 1.0,
+      "return": 13.571889877319336,
+      "duration_s": 2.533333333333333,
+      "peak_height_m": 0.640667200088501,
+      "peak_upward_velocity_m_s": 1.8795374631881714,
+      "phases": {
+        "all": {
+          "root_position_mean_m": 0.04738922044634819,
+          "root_rotation_rms_deg": 7.192849159240723,
+          "joint_rms_deg": 9.644196510314941
+        },
+        "flight": {
+          "root_position_mean_m": 0.04882906749844551,
+          "root_rotation_rms_deg": 12.821745872497559,
+          "joint_rms_deg": 16.656055450439453
+        },
+        "landing_settle": {
+          "root_position_mean_m": 0.07924840599298477,
+          "root_rotation_rms_deg": 5.63821268081665,
+          "joint_rms_deg": 7.862254619598389
+        }
+      }
+    },
+    "3800": {
+      "completed_fraction": 1.0,
+      "return": 13.981840133666992,
+      "duration_s": 2.533333333333333,
+      "peak_height_m": 0.6293678283691406,
+      "peak_upward_velocity_m_s": 1.9051655530929565,
+      "phases": {
+        "all": {
+          "root_position_mean_m": 0.016862813383340836,
+          "root_rotation_rms_deg": 6.192139148712158,
+          "joint_rms_deg": 8.795568466186523
+        },
+        "flight": {
+          "root_position_mean_m": 0.021066434681415558,
+          "root_rotation_rms_deg": 8.092694282531738,
+          "joint_rms_deg": 14.980165481567383
+        },
+        "landing_settle": {
+          "root_position_mean_m": 0.021308908239006996,
+          "root_rotation_rms_deg": 7.290878772735596,
+          "joint_rms_deg": 7.6482672691345215
+        }
+      }
+    },
+    "5800": {
+      "completed_fraction": 1.0,
+      "return": 13.755311965942383,
+      "duration_s": 2.533333333333333,
+      "peak_height_m": 0.6590507626533508,
+      "peak_upward_velocity_m_s": 2.0425052642822266,
+      "phases": {
+        "all": {
+          "root_position_mean_m": 0.04502496495842934,
+          "root_rotation_rms_deg": 7.152818202972412,
+          "joint_rms_deg": 8.32012939453125
+        },
+        "flight": {
+          "root_position_mean_m": 0.04299517348408699,
+          "root_rotation_rms_deg": 8.844073295593262,
+          "joint_rms_deg": 13.161322593688965
+        },
+        "landing_settle": {
+          "root_position_mean_m": 0.07714863121509552,
+          "root_rotation_rms_deg": 8.897430419921875,
+          "joint_rms_deg": 7.8753838539123535
+        }
+      }
+    }
+  }
+}

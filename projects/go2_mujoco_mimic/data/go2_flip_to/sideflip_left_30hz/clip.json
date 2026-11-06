@@ -1,0 +1,8 @@
+{
+  "fps": 30.0,
+  "source": "projects/go2_mujoco_mimic/data/go2_flip_to/quad_sideflip_50hz.txt",
+  "mode": "kinematic_reference",
+  "frames": 77,
+  "duration_s": 2.533333333333333,
+  "notes": "Root and joints define reference; current Warp environment computes body poses and velocities from them."
+}

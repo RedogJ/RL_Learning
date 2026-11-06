@@ -1,0 +1,57 @@
+Warp 1.17.0 initialized:
+   CUDA Toolkit 12.9, Driver 13.2
+   Devices:
+     "cpu"      : "x86_64"
+     "cuda:0"   : "NVIDIA GeForce RTX 4060 Laptop GPU" (8 GiB, sm_89, mempool enabled)
+   Kernel cache:
+     /root/.cache/warp/1.17.0
+Module reset_data__locals__reset_xfrc_applied_352ea78a 352ea78 load on device 'cuda:0' took 24.67 ms  (cached)
+Module reset_data__locals__reset_M_eec0f906 eec0f90 load on device 'cuda:0' took 11.16 ms  (cached)
+Module reset_data__locals__reset_mocap_fc232d6e fc232d6 load on device 'cuda:0' took 14.28 ms  (cached)
+Module reset_data__locals__reset_contact_43eedcb5 43eedcb load on device 'cuda:0' took 17.09 ms  (cached)
+Module reset_data__locals__reset_sleep_992f6739 992f673 load on device 'cuda:0' took 12.63 ms  (cached)
+Module reset_data__locals__reset_nworld_235276b7 235276b load on device 'cuda:0' took 37.15 ms  (cached)
+Module mujoco_warp._src.smooth d04e5a7 load on device 'cuda:0' took 1147.33 ms  (cached)
+Module _nxn_broadphase__locals__kernel_04e59282 04e5928 load on device 'cuda:0' took 27.77 ms  (cached)
+Module ccd_kernel_builder__locals__ccd_kernel_32ef18fb 32ef18f load on device 'cuda:0' took 1035.22 ms  (cached)
+Module ccd_kernel_builder__locals__ccd_kernel_32ef18fb 3405702 load on device 'cuda:0' took 1066.05 ms  (cached)
+Module ccd_kernel_builder__locals__ccd_kernel_d64d6db3 d64d6db load on device 'cuda:0' took 887.94 ms  (cached)
+Module ccd_kernel_builder__locals__ccd_kernel_d64d6db3 4f2bfae load on device 'cuda:0' took 866.03 ms  (cached)
+Module _primitive_narrowphase__locals__primitive_narrowphase_77b1fe81 77b1fe8 load on device 'cuda:0' took 1041.12 ms  (cached)
+Module mujoco_warp._src.constraint 8d4d513 load on device 'cuda:0' took 17.10 ms  (cached)
+Module _friction_dof__locals__kernel_22ded5f6 22ded5f load on device 'cuda:0' took 39.47 ms  (cached)
+Module _limit_slide_hinge__locals__kernel_24a318de 24a318d load on device 'cuda:0' took 41.58 ms  (cached)
+Module _efc_contact_init__locals__kernel_54f1cc8c 54f1cc8 load on device 'cuda:0' took 22.86 ms  (cached)
+Module _efc_contact_jac_dense__locals__kernel_6b457580 747ee66 load on device 'cuda:0' took 28.33 ms  (cached)
+Module _efc_contact_update__locals__kernel_212e1c0a 212e1c0 load on device 'cuda:0' took 43.91 ms  (cached)
+Module mujoco_warp._src.sensor 830d16a load on device 'cuda:0' took 595.13 ms  (cached)
+Module mujoco_warp._src.forward 4b55789 load on device 'cuda:0' took 360.08 ms  (cached)
+Module mujoco_warp._src.passive 80f3681 load on device 'cuda:0' took 442.14 ms  (cached)
+Module mujoco_warp._src.forward a1745d1 load on device 'cuda:0' took 353.95 ms  (cached)
+Module _qfrc_smooth__locals__kernel_8b823980 8b82398 load on device 'cuda:0' took 22.98 ms  (cached)
+Module mujoco_warp._src.support a59a7bc load on device 'cuda:0' took 32.10 ms  (cached)
+Module _tile_cholesky_factorize_solve_block__locals__kernel_3c544b6e 564f1e2 load on device 'cuda:0' took 325.17 ms  (cached)
+Module _solve_init_dof__locals__kernel_021c7a0e 021c7a0 load on device 'cuda:0' took 18.16 ms  (cached)
+Module mujoco_warp._src.solver 357f443 load on device 'cuda:0' took 236.16 ms  (cached)
+Module _solve_init_jaref_kernel__locals__kernel_f7cae18b f7cae18 load on device 'cuda:0' took 22.86 ms  (cached)
+Module mul_m_kernel__locals___mul_m_f3de1cc7 f3de1cc load on device 'cuda:0' took 29.27 ms  (cached)
+Module _update_constraint_efc__locals__kernel_0539aa50 0539aa5 load on device 'cuda:0' took 24.91 ms  (cached)
+Module _update_constraint_init_qfrc_constraint_dense__locals__kernel_bd7ca2ec bd7ca2e load on device 'cuda:0' took 18.03 ms  (cached)
+Module _update_gradient_zero_grad_dot__locals__kernel_b20934d7 b20934d load on device 'cuda:0' took 10.07 ms  (cached)
+Module _update_gradient_grad__locals__kernel_c876081d c876081 load on device 'cuda:0' took 11.66 ms  (cached)
+Module _update_gradient_JTDAJ_dense_tiled__locals__kernel_fd1fee95 f5f296f load on device 'cuda:0' took 50.74 ms  (cached)
+Module _update_gradient_cholesky__locals__kernel_5d37b712 3092a2d load on device 'cuda:0' took 289.63 ms  (cached)
+Module _linesearch_iterative_kernel__locals__kernel_2d893bc5 60ea4d1 load on device 'cuda:0' took 320.79 ms  (cached)
+Module _solve_done__locals__kernel_0c4a4b4d 0c4a4b4 load on device 'cuda:0' took 26.64 ms  (cached)
+Module go2_mujoco_mimic.warp_env 73f3a65 load on device 'cuda:0' took 59.01 ms  (cached)
+Module mujoco_warp._src.derivative 8222a58 load on device 'cuda:0' took 212.38 ms  (cached)
+Module _next_time_builder__locals___next_time_f604e0b3 f604e0b load on device 'cuda:0' took 22.00 ms  (cached)
+采集旧策略3270的固定探针轨迹：0.6–1.4s；随后交叉评估各历史WM，无参数更新。
+HISTORY 3270 {"old_policy_3270": {"samples": 512, "root_position_rms_cm": 7.1932196617126465, "root_rotation_rms_deg": 19.53154182434082, "joint_position_rmse_deg": 10.155430908940316, "linear_velocity_rmse_m_s": 0.306347519159317, "angular_velocity_rmse_rad_s": 1.8431886434555054, "joint_velocity_rmse_rad_s": 2.9752097129821777}, "recent_policy_3330": {"samples": 483, "root_position_rms_cm": 10.48620492219925, "root_rotation_rms_deg": 30.952709197998047, "joint_position_rmse_deg": 12.002420782217545, "linear_velocity_rmse_m_s": 0.4109753668308258, "angular_velocity_rmse_rad_s": 1.990736961364746, "joint_velocity_rmse_rad_s": 3.070772886276245}}
+HISTORY 3280 {"old_policy_3270": {"samples": 512, "root_position_rms_cm": 7.050471752882004, "root_rotation_rms_deg": 17.781490325927734, "joint_position_rmse_deg": 9.536833482416956, "linear_velocity_rmse_m_s": 0.2769044041633606, "angular_velocity_rmse_rad_s": 1.5975300073623657, "joint_velocity_rmse_rad_s": 2.7261812686920166}, "recent_policy_3330": {"samples": 483, "root_position_rms_cm": 9.961383789777756, "root_rotation_rms_deg": 34.46620559692383, "joint_position_rmse_deg": 16.538669575140357, "linear_velocity_rmse_m_s": 0.3849254250526428, "angular_velocity_rmse_rad_s": 2.25091290473938, "joint_velocity_rmse_rad_s": 3.5256423950195312}}
+HISTORY 3290 {"old_policy_3270": {"samples": 512, "root_position_rms_cm": 8.474227041006088, "root_rotation_rms_deg": 13.778332710266113, "joint_position_rmse_deg": 11.334385592707985, "linear_velocity_rmse_m_s": 0.29498738050460815, "angular_velocity_rmse_rad_s": 1.6765128374099731, "joint_velocity_rmse_rad_s": 3.044083833694458}, "recent_policy_3330": {"samples": 483, "root_position_rms_cm": 6.702834367752075, "root_rotation_rms_deg": 14.116864204406738, "joint_position_rmse_deg": 8.332357796815533, "linear_velocity_rmse_m_s": 0.26086753606796265, "angular_velocity_rmse_rad_s": 1.2396259307861328, "joint_velocity_rmse_rad_s": 2.2929635047912598}}
+HISTORY 3300 {"old_policy_3270": {"samples": 512, "root_position_rms_cm": 5.844931676983833, "root_rotation_rms_deg": 7.767129898071289, "joint_position_rmse_deg": 6.479744970304091, "linear_velocity_rmse_m_s": 0.17039047181606293, "angular_velocity_rmse_rad_s": 0.9135014414787292, "joint_velocity_rmse_rad_s": 1.979009985923767}, "recent_policy_3330": {"samples": 483, "root_position_rms_cm": 7.471419125795364, "root_rotation_rms_deg": 10.656627655029297, "joint_position_rmse_deg": 7.083651086809577, "linear_velocity_rmse_m_s": 0.22221913933753967, "angular_velocity_rmse_rad_s": 1.0460509061813354, "joint_velocity_rmse_rad_s": 1.935842514038086}}
+HISTORY 3310 {"old_policy_3270": {"samples": 512, "root_position_rms_cm": 6.148764491081238, "root_rotation_rms_deg": 8.857963562011719, "joint_position_rmse_deg": 6.302771353814475, "linear_velocity_rmse_m_s": 0.20210076868534088, "angular_velocity_rmse_rad_s": 0.9281044602394104, "joint_velocity_rmse_rad_s": 1.922148585319519}, "recent_policy_3330": {"samples": 483, "root_position_rms_cm": 6.740023195743561, "root_rotation_rms_deg": 12.190473556518555, "joint_position_rmse_deg": 7.980447667756258, "linear_velocity_rmse_m_s": 0.2020651400089264, "angular_velocity_rmse_rad_s": 1.1753615140914917, "joint_velocity_rmse_rad_s": 2.022813558578491}}
+HISTORY 3320 {"old_policy_3270": {"samples": 512, "root_position_rms_cm": 5.153781175613403, "root_rotation_rms_deg": 8.332144737243652, "joint_position_rmse_deg": 6.237547316109085, "linear_velocity_rmse_m_s": 0.181839719414711, "angular_velocity_rmse_rad_s": 0.8554725050926208, "joint_velocity_rmse_rad_s": 1.8760461807250977}, "recent_policy_3330": {"samples": 483, "root_position_rms_cm": 5.279965326189995, "root_rotation_rms_deg": 11.196806907653809, "joint_position_rmse_deg": 6.573174274187049, "linear_velocity_rmse_m_s": 0.15557736158370972, "angular_velocity_rmse_rad_s": 0.9870426654815674, "joint_velocity_rmse_rad_s": 1.8090745210647583}}
+HISTORY 3330 {"old_policy_3270": {"samples": 512, "root_position_rms_cm": 9.32954028248787, "root_rotation_rms_deg": 20.02287483215332, "joint_position_rmse_deg": 11.117296567675593, "linear_velocity_rmse_m_s": 0.26032742857933044, "angular_velocity_rmse_rad_s": 1.8342500925064087, "joint_velocity_rmse_rad_s": 2.9830853939056396}, "recent_policy_3330": {"samples": 483, "root_position_rms_cm": 8.871804922819138, "root_rotation_rms_deg": 34.634971618652344, "joint_position_rmse_deg": 15.911297916854469, "linear_velocity_rmse_m_s": 0.32964977622032166, "angular_velocity_rmse_rad_s": 2.2098114490509033, "joint_velocity_rmse_rad_s": 3.3053483963012695}}
+DONE /workspace/go2_mujoco_mimic/diagnostics/wm_retention_20261105/history.json

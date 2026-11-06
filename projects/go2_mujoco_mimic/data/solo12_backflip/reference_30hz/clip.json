@@ -1,0 +1,9 @@
+{
+  "name": "go2_solo12_backflip_kinematic_preview",
+  "fps": 30.0,
+  "mode": "once",
+  "motion_duration_s": 1.3499999999999972,
+  "hold_s": 0.4,
+  "notes": "Kinematic approximation; no dynamic feasibility validation.",
+  "source": "projects/go2_mujoco_mimic/data/solo12_backflip/go2_landing_preview.npz"
+}

@@ -1,0 +1,102 @@
+{
+  "checkpoint": "/workspace/go2_mujoco_mimic/logs/backflip_tail_0.5_2026-11-05_07-41-15_227013/model_3400.pt",
+  "state_max_pairwise_spread": 0.07250815629959106,
+  "goal_max_pairwise_spread": 0.0,
+  "history_max_pairwise_spread": 0.07250815629959106,
+  "critic_min": 0.6133294701576233,
+  "critic_max": 0.6164932250976562,
+  "actual_return_min": 0.5211142897605896,
+  "actual_return_max": 5.9876837730407715,
+  "failures": 0,
+  "frames": {
+    "41": {
+      "n": 4,
+      "remaining_steps": 12,
+      "critic": 0.6133294701576233,
+      "actual_return": 5.987683296203613,
+      "actual_return_std": 1.6858739115832577e-07
+    },
+    "42": {
+      "n": 7,
+      "remaining_steps": 11,
+      "critic": 0.6164932250976562,
+      "actual_return": 5.534966945648193,
+      "actual_return_std": 0.0
+    },
+    "43": {
+      "n": 8,
+      "remaining_steps": 10,
+      "critic": 0.6164932250976562,
+      "actual_return": 5.067248821258545,
+      "actual_return_std": 0.0
+    },
+    "44": {
+      "n": 16,
+      "remaining_steps": 9,
+      "critic": 0.6164932250976562,
+      "actual_return": 4.592467308044434,
+      "actual_return_std": 1.1205039299966302e-05
+    },
+    "45": {
+      "n": 12,
+      "remaining_steps": 8,
+      "critic": 0.6164932250976562,
+      "actual_return": 4.110797882080078,
+      "actual_return_std": 8.601445188105572e-06
+    },
+    "46": {
+      "n": 8,
+      "remaining_steps": 7,
+      "critic": 0.6164932250976562,
+      "actual_return": 3.621443748474121,
+      "actual_return_std": 2.230201658903752e-07
+    },
+    "47": {
+      "n": 7,
+      "remaining_steps": 6,
+      "critic": 0.6164932250976562,
+      "actual_return": 3.1239371299743652,
+      "actual_return_std": 1.6858739115832577e-07
+    },
+    "48": {
+      "n": 12,
+      "remaining_steps": 5,
+      "critic": 0.6164932250976562,
+      "actual_return": 2.6173436641693115,
+      "actual_return_std": 1.0513271320178319e-07
+    },
+    "49": {
+      "n": 16,
+      "remaining_steps": 4,
+      "critic": 0.6164932250976562,
+      "actual_return": 2.1012167930603027,
+      "actual_return_std": 1.3978528556890524e-07
+    },
+    "50": {
+      "n": 11,
+      "remaining_steps": 3,
+      "critic": 0.6164932250976562,
+      "actual_return": 1.5827245712280273,
+      "actual_return_std": 1.2220924361372454e-07
+    },
+    "51": {
+      "n": 13,
+      "remaining_steps": 2,
+      "critic": 0.6164932250976562,
+      "actual_return": 1.0525825023651123,
+      "actual_return_std": 0.0
+    },
+    "52": {
+      "n": 14,
+      "remaining_steps": 1,
+      "critic": 0.6164932250976562,
+      "actual_return": 0.5211142897605896,
+      "actual_return_std": 0.0
+    }
+  },
+  "frames_42_through_52": {
+    "state_max_pairwise_spread": 0.0,
+    "goal_max_pairwise_spread": 0.0,
+    "history_max_pairwise_spread": 0.0
+  }
+}

@@ -14,7 +14,7 @@ import warp as wp
 from .environment import Go2Environment
 from .tasks.mimic.config import MimicTaskCfg
 from .tasks.mimic.task import MimicTask
-from .tasks.mimic.rewards import gravity_local, rotation_vector, quat_mul
+from .tasks.mimic.rewards import gravity_local, rotation_vector, quat_mul, heading_error_features
 
 
 def warp_stream_ordered(fn):
@@ -48,10 +48,30 @@ def warp_stream_ordered(fn):
 def pd_control(qpos: wp.array2d(dtype=wp.float32), qvel: wp.array2d(dtype=wp.float32),
                ctrl: wp.array2d(dtype=wp.float32), target: wp.array2d(dtype=wp.float32),
                qids: wp.array(dtype=wp.int64), vids: wp.array(dtype=wp.int64), aids: wp.array(dtype=wp.int64),
-               kp: float, kd: float, limit: float):
+               kp: float, kd: float, limit: float, torque_squared_sum: wp.array2d(dtype=wp.float32)):
     world, joint = wp.tid()
     torque = kp * (target[world, joint] - qpos[world, qids[joint]]) - kd * qvel[world, vids[joint]]
     ctrl[world, aids[joint]] = wp.clamp(torque, -limit, limit)
+    torque_squared_sum[world, joint] += ctrl[world, aids[joint]] * ctrl[world, aids[joint]]
+
+
+@wp.kernel
+def flag_nonfoot_ground_contact(nacon: wp.array(dtype=wp.int32), geom: wp.array(dtype=wp.vec2i),
+                                worldid: wp.array(dtype=wp.int32), foot_mask: wp.array(dtype=wp.int32),
+                                ground: int, flag: wp.array(dtype=wp.int32)):
+    # 任一非脚掌几何体与地面接触时，把对应世界的标志置 1；标志由调用方在每个控制步前清零。
+    i = wp.tid()
+    if i >= nacon[0]:
+        return
+    g = geom[i]
+    if g[0] == ground:
+        if g[1] >= 0:
+            if foot_mask[g[1]] == 0:
+                flag[worldid[i]] = 1
+    elif g[1] == ground:
+        if g[0] >= 0:
+            if foot_mask[g[0]] == 0:
+                flag[worldid[i]] = 1
 
 
 @dataclass
@@ -61,6 +81,9 @@ class EnvCfg:
     control_hz: int = 30
     episode_seconds: float = 5.0
     action_scale: float = 1.0  # rad：目标角 = 默认角 + action_scale * action，action ∈ [-1, 1]
+    action_joint_scales: tuple[float, ...] | None = None  # None 保留旧的统一映射
+    clamp_joint_targets: bool = False  # 新映射可限制目标角在机械范围内
+    wm_foot_features: bool = False  # 世界模型额外使用脚掌距地高度和竖直速度
     kp: float = 25.0
     kd: float = 0.5
     torque_limit: float = 23.7
@@ -68,7 +91,8 @@ class EnvCfg:
 
 
 class Reference:
-    def __init__(self, path, device, cpu, body_ids):
+    def __init__(self, path, device, cpu, body_ids, loop=True):
+        self.loop = loop
         path = Path(path)
         frames = np.load(path, allow_pickle=False)
         if frames.ndim != 2 or frames.shape[1] != 61 or not np.isfinite(frames).all():
@@ -110,6 +134,11 @@ class Reference:
     def sample(self, absolute_frame):
         """首尾接续：每周期累计根部水平位移和航向，包含根部与所有跟踪刚体。"""
         period = len(self.frames) - 1
+        if not self.loop:
+            frame = absolute_frame.clamp(0, period).long()
+            return {'joints': self.joints[frame], 'pos': self.position[frame],
+                    'quat': self.quaternion[frame], 'body_pos': self.body_pos[frame],
+                    'body_quat': self.body_quat[frame]}
         frame = absolute_frame.remainder(period).long()
         cycle = torch.div(absolute_frame, period, rounding_mode='floor').to(self.position.dtype)
         first, last = self.quaternion[0], self.quaternion[-1]
@@ -140,6 +169,21 @@ class Reference:
                 'body_quat': quat_mul(yaw_q.unsqueeze(-2), self.body_quat[frame])}
 
 
+def longitudinal_features(ref, frame, frame_limit, position, velocity_world, dt):
+    """参考前向的 (参考-实体) 位置 m、速度 m/s；参考速度按下个控制步差分。"""
+    current = ref.sample(frame)
+    advance = max(1, int(round(dt * ref.fps)))
+    next_frame = torch.minimum(frame + advance, frame_limit)
+    future = ref.sample(next_frame)
+    ref_velocity = (future['pos'] - current['pos']) / dt
+    w, x, y, z = current['quat'].unbind(-1)
+    yaw = torch.atan2(2*(w*z+x*y), 1-2*(y*y+z*z))
+    forward = torch.stack((yaw.cos(), yaw.sin()), dim=-1)
+    pos_error = ((current['pos'][..., :2]-position[..., :2])*forward).sum(-1)
+    vel_error = ((ref_velocity[..., :2]-velocity_world[..., :2])*forward).sum(-1)
+    return torch.stack((pos_error, vel_error), dim=-1)
+
+
 class WarpGo2Env:
     def __init__(self, cfg, motion):
         if cfg.num_envs <= 0 or cfg.episode_seconds <= 0:
@@ -167,6 +211,17 @@ class WarpGo2Env:
         self.qids = torch.tensor(cpu.qpos_ids, device=self.device, dtype=torch.long)
         self.vids = torch.tensor(cpu.dof_ids, device=self.device, dtype=torch.long)
         self.aids = torch.tensor(cpu.actuator_ids, device=self.device, dtype=torch.long)
+        # 非脚掌接触判定：地面 geom 与四个脚掌 geom（FL、FR、RL、RR）。
+        self.ground_geom = mujoco.mj_name2id(cpu.model, mujoco.mjtObj.mjOBJ_GEOM, 'ground')
+        foot_geoms = [mujoco.mj_name2id(cpu.model, mujoco.mjtObj.mjOBJ_GEOM, leg) for leg in ('FL', 'FR', 'RL', 'RR')]
+        if self.ground_geom < 0 or min(foot_geoms) < 0:
+            raise ValueError('模型缺少地面或脚掌 geom')
+        self.foot_mask = torch.zeros(cpu.model.ngeom, dtype=torch.int32, device=self.device)
+        self.foot_mask[foot_geoms] = 1
+        self.foot_mask_wp = wp.from_torch(self.foot_mask, dtype=wp.int32)
+        self.contact_flag = torch.zeros(cfg.num_envs, dtype=torch.int32, device=self.device)
+        self.contact_flag_wp = wp.from_torch(self.contact_flag, dtype=wp.int32)
+        self.contact_fall = torch.zeros(cfg.num_envs, dtype=torch.bool, device=self.device)
         names = ['base_link'] + [f'{leg}_{part}' for leg in ('FL', 'FR', 'RL', 'RR')
                                  for part in ('hip', 'thigh', 'calf', 'foot')]
         body_ids = [mujoco.mj_name2id(cpu.model, mujoco.mjtObj.mjOBJ_BODY, name) for name in names]
@@ -179,17 +234,24 @@ class WarpGo2Env:
         self.xquat = wp.to_torch(self.data.xquat)
         self.default_q = torch.tensor(cpu.default_q, device=self.device, dtype=torch.float32)
         self.joint_limits = torch.tensor(cpu.model.jnt_range[cpu.joint_ids].copy(), device=self.device, dtype=torch.float32)
-        self.ref = Reference(motion, self.device, cpu, body_ids)
+        scales = cfg.action_joint_scales
+        if scales is not None and (len(scales) != 12 or any(not np.isfinite(x) or x <= 0 for x in scales)):
+            raise ValueError('action_joint_scales 必须包含 12 个有限正数')
+        self.action_scales = torch.tensor(scales if scales is not None else [cfg.action_scale] * 12, device=self.device)
+        self.ref = Reference(motion, self.device, cpu, body_ids, loop=cfg.task.reference_loop)
         self.frame = torch.zeros(cfg.num_envs, device=self.device, dtype=torch.long)
         self.steps = torch.zeros_like(self.frame)
         self.start_frame = torch.zeros_like(self.frame)
         self.frame_limit = torch.full_like(self.frame, (len(self.ref.frames)-1)*cfg.task.reference_cycles)
         self.previous_action = torch.zeros((cfg.num_envs, 12), device=self.device)
+        self.previous_joint_vel = torch.zeros((cfg.num_envs, 12), device=self.device)  # 上一控制步末的关节速度，用于加速度惩罚
+        self.torque_squared_sum = torch.zeros((cfg.num_envs, 12), device=self.device)
+        self.torque_squared_sum_wp = wp.from_torch(self.torque_squared_sum, dtype=wp.float32)
         self.history = torch.zeros((cfg.num_envs, cfg.task.history_length, 42), device=self.device)
         self.reset(torch.ones(cfg.num_envs, device=self.device, dtype=torch.bool))
 
     @warp_stream_ordered
-    def reset(self, mask):
+    def reset(self, mask, rsi_probabilities=None, rsi_frames_per_bin=None, start_probability=0.):
         # 参考阶段与回合计时分开；历史以重置后的真实初始观测重复填充。
         ids = mask.nonzero(as_tuple=True)[0]
         if ids.numel() == 0:
@@ -197,17 +259,30 @@ class WarpGo2Env:
         reset_mask = wp.from_torch(mask.contiguous(), dtype=wp.bool)
         mjw.reset_data(self.model, self.data, reset_mask)
         period = len(self.ref.frames)-1
-        phase = (torch.randint(period, (ids.numel(),), device=self.device)
-                 if self.cfg.task.random_reference_start else torch.zeros_like(ids))
+        if rsi_probabilities is not None:
+            if rsi_frames_per_bin is None or rsi_frames_per_bin <= 0:
+                raise ValueError('RSI 分箱帧数必须为正')
+            selected = torch.multinomial(rsi_probabilities, ids.numel(), replacement=True)
+            begin = selected * rsi_frames_per_bin
+            lengths = torch.minimum(torch.full_like(begin, rsi_frames_per_bin), period-begin)
+            phase = begin + torch.floor(torch.rand(ids.numel(), device=self.device)*lengths).long()
+        else:
+            phase = (torch.randint(period, (ids.numel(),), device=self.device)
+                     if self.cfg.task.random_reference_start else torch.zeros_like(ids))
+        if start_probability:
+            phase = torch.where(torch.rand(ids.numel(), device=self.device) < start_probability, 0, phase)
         self.start_frame[ids] = phase
         self.frame[ids] = phase
-        self.frame_limit[ids] = phase + period*self.cfg.task.reference_cycles
+        self.frame_limit[ids] = (phase + period*self.cfg.task.reference_cycles if self.cfg.task.reference_loop
+                                 else torch.full_like(phase, period))
         self.steps[ids] = 0
         self.previous_action[ids] = 0
         self.qpos[ids, :3] = self.ref.position[phase]
         self.qpos[ids, 3:7] = self.ref.quaternion[phase]
         self.qpos[ids[:, None], self.qids] = self.ref.joints[phase]
         self.qvel[ids] = self.ref.velocity[phase]
+        # 重置步没有有意义的上一步速度：取当前速度，使该步加速度为 0。
+        self.previous_joint_vel[ids] = self.qvel[ids][:, self.vids]
         mjw.forward(self.model, self.data)
         initial = self.proprioception()
         self.history[ids] = initial[ids, None, :]
@@ -227,13 +302,29 @@ class WarpGo2Env:
         indices = torch.minimum(self.frame[:, None] + torch.floor(offsets * self.dt * self.ref.fps).long(), self.frame_limit[:, None])
         ref = self.ref.sample(indices)
         goals = torch.cat((ref['joints'], ref['pos'], ref['quat']), dim=-1)
-        return torch.cat((self.history.flatten(1), goals.flatten(1)), dim=-1)
+        parts = [self.history.flatten(1), goals.flatten(1)]
+        if self.cfg.task.heading_observation:
+            current_ref = self.ref.sample(self.frame)
+            parts.append(heading_error_features(self.qpos[:, 3:7], current_ref['quat']))
+        if self.cfg.task.longitudinal_observation:
+            parts.append(longitudinal_features(self.ref, self.frame, self.frame_limit,
+                                               self.qpos[:, :3], self.qvel[:, :3], self.dt))
+        return torch.cat(parts, dim=-1)
+
+    def _flag_nonfoot_contacts(self):
+        # 在每个物理子步后累积：任一非脚掌几何体接触地面则置位，避免只读到控制周期最后一个子步的接触。
+        if self.cfg.task.terminate_on_nonfoot_contact:
+            wp.launch(flag_nonfoot_ground_contact, dim=self.data.naconmax,
+                      inputs=[self.data.nacon, self.data.contact.geom, self.data.contact.worldid,
+                              self.foot_mask_wp, self.ground_geom, self.contact_flag_wp])
 
     def _physics_substeps(self, target):
         for _ in range(self.substeps):
             torque = self.cfg.kp * (target - self.qpos[:, self.qids]) - self.cfg.kd * self.qvel[:, self.vids]
             self.ctrl[:, self.aids] = torque.clamp(-self.cfg.torque_limit, self.cfg.torque_limit)
+            self.torque_squared_sum.add_(self.ctrl[:, self.aids].square())
             mjw.step(self.model, self.data)
+            self._flag_nonfoot_contacts()
 
     def enable_cuda_graph(self):
         """录制固定数量的物理子步；调用后重置所有环境。"""
@@ -246,8 +337,11 @@ class WarpGo2Env:
             for _ in range(self.substeps):
                 wp.launch(pd_control, dim=(self.cfg.num_envs, 12), inputs=[self.data.qpos, self.data.qvel, self.data.ctrl,
                           self.graph_target_wp, wp.from_torch(self.qids), wp.from_torch(self.vids), wp.from_torch(self.aids),
-                          self.cfg.kp, self.cfg.kd, self.cfg.torque_limit])
+                          self.cfg.kp, self.cfg.kd, self.cfg.torque_limit, self.torque_squared_sum_wp])
                 mjw.step(self.model, self.data)
+                self._flag_nonfoot_contacts()
+            # 控制周期末更新运动学，并入 Graph；step 在有 Graph 时不再单独调用。
+            mjw.forward(self.model, self.data)
         torch.cuda.synchronize()
         physics()
         wp.synchronize_device()
@@ -273,10 +367,14 @@ class WarpGo2Env:
             raise ValueError('动作形状应为 (num_envs, 12)')
         action = action.clamp(-1, 1)
         idx = self.frame.clamp(max=len(self.ref.frames)-1)
-        target = self.default_q + cfg.action_scale * action
+        target = self.default_q + self.action_scales * action
+        if cfg.clamp_joint_targets:
+            target = target.clamp(self.joint_limits[:, 0], self.joint_limits[:, 1])
         old_pos = self.xpos[:, self.bids].clone()
         old_quat = self.xquat[:, self.bids].clone()
         self._profile_mark('prepare')
+        self.contact_flag.zero_()
+        self.torque_squared_sum.zero_()
         if self.physics_graph is None:
             self._physics_substeps(target)
         else:
@@ -288,7 +386,9 @@ class WarpGo2Env:
         next_frame = self.start_frame + torch.floor(self.steps.float() * self.dt * self.ref.fps).long()
         ref_idx = torch.minimum(next_frame, self.frame_limit)
         # mj_step 后显式更新运动学，速度由控制周期内的位姿变化估计。
-        mjw.forward(self.model, self.data)
+        # 使用 CUDA Graph 时，forward 已包含在 Graph 末尾。
+        if self.physics_graph is None:
+            mjw.forward(self.model, self.data)
         self._profile_mark('forward')
         pos, quat = self.xpos[:, self.bids], self.xquat[:, self.bids]
         prev_idx = self.frame
@@ -297,15 +397,27 @@ class WarpGo2Env:
         actual = {'pos': pos, 'quat': quat, 'linear_vel': (pos-old_pos)/self.dt,
                   'angular_vel': rotation_vector(quat, old_quat)/self.dt}
         ref = {'pos': target_ref['body_pos'], 'quat': target_ref['body_quat'],
+               'joint_pos': target_ref['joints'],
                'linear_vel': (target_ref['body_pos']-prev_ref['body_pos'])/self.dt,
                'angular_vel': rotation_vector(target_ref['body_quat'], prev_ref['body_quat'])/self.dt}
+        joint_vel = self.qvel[:, self.vids]
         reward, terms = self.task.reward(actual, ref, action, self.previous_action,
-                                         self.qpos[:, self.qids], self.joint_limits, self.dt)
+                                         self.qpos[:, self.qids], self.joint_limits, self.dt,
+                                         joint_vel=joint_vel, prev_joint_vel=self.previous_joint_vel, target=target,
+                                         torque_squared_mean=self.torque_squared_sum/self.substeps,
+                                         kp=cfg.kp, kd=cfg.kd, torque_limit=cfg.torque_limit)
         self.previous_action.copy_(action)
+        self.previous_joint_vel.copy_(joint_vel)
         self.frame.copy_(ref_idx)
         self.history = torch.cat((self.history[:, 1:], self.proprioception()[:, None]), dim=1)
         terminated = self.task.terminated(self.qpos[:, :3], self.qpos[:, 3:7],
                                           target_ref['pos'], target_ref['quat'])
+        # 任一非脚掌几何体接触地面即失败；接触在 Graph 内逐物理子步累积，不会漏掉控制周期中间的触地。
+        self.contact_fall = self.contact_flag > 0
+        if cfg.task.terminate_on_nonfoot_contact:
+            terminated = terminated | self.contact_fall
+        # 失败惩罚是一次性的回报，不属于每秒奖励率，不乘 dt。
+        reward = reward - self.cfg.task.reward.failure_penalty * terminated.float()
         truncated = (next_frame >= self.frame_limit) | (self.steps * self.dt >= cfg.episode_seconds)
         obs = self.observation()
         self._profile_mark('reward_observation')

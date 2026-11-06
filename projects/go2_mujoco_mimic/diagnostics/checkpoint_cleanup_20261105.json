@@ -1,0 +1,178 @@
+{
+  "timestamp": "2026-11-05T17:09:59.875961",
+  "selection": "v12/v18/v19 intermediate; retained first, last, 50-cycle checkpoints, top 3 fixed-eval, referenced and hard-linked checkpoints",
+  "files": [
+    {
+      "path": "projects/go2_mujoco_mimic/logs/backflip_v12_2026-11-04_02-17-28_733699/model_2470.pt",
+      "size_bytes": 186504769
+    },
+    {
+      "path": "projects/go2_mujoco_mimic/logs/backflip_v12_2026-11-04_02-17-28_733699/model_2490.pt",
+      "size_bytes": 186504769
+    },
+    {
+      "path": "projects/go2_mujoco_mimic/logs/backflip_v12_2026-11-04_02-17-28_733699/model_2510.pt",
+      "size_bytes": 186504769
+    },
+    {
+      "path": "projects/go2_mujoco_mimic/logs/backflip_v12_2026-11-04_02-17-28_733699/model_2520.pt",
+      "size_bytes": 186504769
+    },
+    {
+      "path": "projects/go2_mujoco_mimic/logs/backflip_v12_2026-11-04_02-17-28_733699/model_2530.pt",
+      "size_bytes": 186504769
+    },
+    {
+      "path": "projects/go2_mujoco_mimic/logs/backflip_v12_2026-11-04_02-17-28_733699/model_2540.pt",
+      "size_bytes": 186504769
+    },
+    {
+      "path": "projects/go2_mujoco_mimic/logs/backflip_v12_2026-11-04_02-17-28_733699/model_2560.pt",
+      "size_bytes": 186504769
+    },
+    {
+      "path": "projects/go2_mujoco_mimic/logs/backflip_v12_2026-11-04_02-17-28_733699/model_2570.pt",
+      "size_bytes": 186504769
+    },
+    {
+      "path": "projects/go2_mujoco_mimic/logs/backflip_v12_2026-11-04_02-17-28_733699/model_2580.pt",
+      "size_bytes": 186504769
+    },
+    {
+      "path": "projects/go2_mujoco_mimic/logs/backflip_v12_2026-11-04_02-17-28_733699/model_2590.pt",
+      "size_bytes": 186504769
+    },
+    {
+      "path": "projects/go2_mujoco_mimic/logs/backflip_v12_2026-11-04_02-17-28_733699/model_2610.pt",
+      "size_bytes": 186504769
+    },
+    {
+      "path": "projects/go2_mujoco_mimic/logs/backflip_v12_2026-11-04_02-17-28_733699/model_2620.pt",
+      "size_bytes": 186504769
+    },
+    {
+      "path": "projects/go2_mujoco_mimic/logs/backflip_v12_2026-11-04_02-17-28_733699/model_2630.pt",
+      "size_bytes": 186504769
+    },
+    {
+      "path": "projects/go2_mujoco_mimic/logs/backflip_v12_2026-11-04_02-17-28_733699/model_2640.pt",
+      "size_bytes": 186504769
+    },
+    {
+      "path": "projects/go2_mujoco_mimic/logs/backflip_v12_2026-11-04_02-17-28_733699/model_2660.pt",
+      "size_bytes": 186504769
+    },
+    {
+      "path": "projects/go2_mujoco_mimic/logs/backflip_v12_2026-11-04_02-17-28_733699/model_2670.pt",
+      "size_bytes": 186504769
+    },
+    {
+      "path": "projects/go2_mujoco_mimic/logs/backflip_v12_2026-11-04_02-17-28_733699/model_2680.pt",
+      "size_bytes": 186504769
+    },
+    {
+      "path": "projects/go2_mujoco_mimic/logs/backflip_v12_2026-11-04_02-17-28_733699/model_2690.pt",
+      "size_bytes": 186504769
+    },
+    {
+      "path": "projects/go2_mujoco_mimic/logs/backflip_v12_2026-11-04_02-17-28_733699/model_2710.pt",
+      "size_bytes": 186504769
+    },
+    {
+      "path": "projects/go2_mujoco_mimic/logs/backflip_v12_2026-11-04_02-17-28_733699/model_2720.pt",
+      "size_bytes": 186504769
+    },
+    {
+      "path": "projects/go2_mujoco_mimic/logs/backflip_v12_2026-11-04_02-17-28_733699/model_2730.pt",
+      "size_bytes": 186504769
+    },
+    {
+      "path": "projects/go2_mujoco_mimic/logs/backflip_v12_2026-11-04_02-17-28_733699/model_2740.pt",
+      "size_bytes": 186504769
+    },
+    {
+      "path": "projects/go2_mujoco_mimic/logs/backflip_v18_2026-11-05_03-43-23_660064/model_3090.pt",
+      "size_bytes": 186505025
+    },
+    {
+      "path": "projects/go2_mujoco_mimic/logs/backflip_v18_2026-11-05_03-43-23_660064/model_3110.pt",
+      "size_bytes": 186505025
+    },
+    {
+      "path": "projects/go2_mujoco_mimic/logs/backflip_v18_2026-11-05_03-43-23_660064/model_3120.pt",
+      "size_bytes": 186505025
+    },
+    {
+      "path": "projects/go2_mujoco_mimic/logs/backflip_v18_2026-11-05_03-43-23_660064/model_3140.pt",
+      "size_bytes": 186505025
+    },
+    {
+      "path": "projects/go2_mujoco_mimic/logs/backflip_v18_2026-11-05_03-43-23_660064/model_3160.pt",
+      "size_bytes": 186505025
+    },
+    {
+      "path": "projects/go2_mujoco_mimic/logs/backflip_v18_2026-11-05_03-43-23_660064/model_3170.pt",
+      "size_bytes": 186505025
+    },
+    {
+      "path": "projects/go2_mujoco_mimic/logs/backflip_v18_2026-11-05_03-43-23_660064/model_3180.pt",
+      "size_bytes": 186505025
+    },
+    {
+      "path": "projects/go2_mujoco_mimic/logs/backflip_v18_2026-11-05_03-43-23_660064/model_3190.pt",
+      "size_bytes": 186505025
+    },
+    {
+      "path": "projects/go2_mujoco_mimic/logs/backflip_v18_2026-11-05_03-43-23_660064/model_3210.pt",
+      "size_bytes": 186505025
+    },
+    {
+      "path": "projects/go2_mujoco_mimic/logs/backflip_v18_2026-11-05_03-43-23_660064/model_3230.pt",
+      "size_bytes": 186505025
+    },
+    {
+      "path": "projects/go2_mujoco_mimic/logs/backflip_v18_2026-11-05_03-43-23_660064/model_3240.pt",
+      "size_bytes": 186505025
+    },
+    {
+      "path": "projects/go2_mujoco_mimic/logs/backflip_v19_bce_2026-11-05_04-25-36_439009/model_3160.pt",
+      "size_bytes": 187608689
+    },
+    {
+      "path": "projects/go2_mujoco_mimic/logs/backflip_v19_bce_2026-11-05_04-25-36_439009/model_3170.pt",
+      "size_bytes": 187608689
+    },
+    {
+      "path": "projects/go2_mujoco_mimic/logs/backflip_v19_bce_2026-11-05_04-25-36_439009/model_3180.pt",
+      "size_bytes": 187608689
+    },
+    {
+      "path": "projects/go2_mujoco_mimic/logs/backflip_v19_bce_2026-11-05_04-25-36_439009/model_3190.pt",
+      "size_bytes": 187608689
+    },
+    {
+      "path": "projects/go2_mujoco_mimic/logs/backflip_v19_bce_2026-11-05_04-25-36_439009/model_3210.pt",
+      "size_bytes": 187608689
+    },
+    {
+      "path": "projects/go2_mujoco_mimic/logs/backflip_v19_bce_2026-11-05_04-25-36_439009/model_3220.pt",
+      "size_bytes": 187608689
+    },
+    {
+      "path": "projects/go2_mujoco_mimic/logs/backflip_v19_bce_2026-11-05_04-25-36_439009/model_3230.pt",
+      "size_bytes": 187608689
+    },
+    {
+      "path": "projects/go2_mujoco_mimic/logs/backflip_v19_bce_2026-11-05_04-25-36_439009/model_3240.pt",
+      "size_bytes": 187608689
+    },
+    {
+      "path": "projects/go2_mujoco_mimic/logs/backflip_v19_bce_2026-11-05_04-25-36_439009/model_3260.pt",
+      "size_bytes": 187608689
+    },
+    {
+      "path": "projects/go2_mujoco_mimic/logs/backflip_v19_bce_2026-11-05_04-25-36_439009/model_3310.pt",
+      "size_bytes": 187608689
+    }
+  ]
+}

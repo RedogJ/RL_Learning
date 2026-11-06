@@ -1,0 +1,16 @@
+{
+  "frames": 109,
+  "duration_s": 1.3499999999999972,
+  "max_ground_lift_m": 0.052087244416689014,
+  "min_collision_distance_m": 9.99999999999994e-05,
+  "max_frame_root_height_change_m": 0.02645998674554173,
+  "max_frame_joint_change_rad": 0.23950931085732163,
+  "last_feet_clearance_m": [
+    0.0015405808766546063,
+    0.0015405346191417028,
+    0.0021582777860972395,
+    0.0021582586119774476
+  ],
+  "max_deviation_from_raw_rad": 3.1022473080565134,
+  "note": "Kinematic preview only; dynamically feasibility, contact forces and in-between-frame penetration not verified."
+}

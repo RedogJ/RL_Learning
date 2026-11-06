@@ -1,0 +1,186 @@
+{
+  "checkpoint": 3280,
+  "data": "fresh physical trajectories, 64 trials from frame 0, observation noise on, action noise off; same real start windows for all depths; excludes post-terminal transitions; these are held-out trajectories, not replay training samples",
+  "window_count": 2394,
+  "train_formula_8step_mean": 0.029315758496522903,
+  "train_formula_extended16step_mean": 0.07695450633764267,
+  "per_depth": {
+    "1": {
+      "normalized_state_mse": 0.018755828961730003,
+      "root_angle_rms_deg": 2.8760111331939697,
+      "valid_samples": 2394,
+      "teacher_forced_mse": 0.018755828961730003
+    },
+    "2": {
+      "normalized_state_mse": 0.0206276997923851,
+      "root_angle_rms_deg": 4.4151129722595215,
+      "valid_samples": 2377,
+      "teacher_forced_mse": 0.01916927844285965
+    },
+    "3": {
+      "normalized_state_mse": 0.023882782086730003,
+      "root_angle_rms_deg": 5.4496259689331055,
+      "valid_samples": 2360,
+      "teacher_forced_mse": 0.01948411390185356
+    },
+    "4": {
+      "normalized_state_mse": 0.02748304419219494,
+      "root_angle_rms_deg": 6.14701509475708,
+      "valid_samples": 2340,
+      "teacher_forced_mse": 0.019781973212957382
+    },
+    "5": {
+      "normalized_state_mse": 0.0304121021181345,
+      "root_angle_rms_deg": 6.849097728729248,
+      "valid_samples": 2319,
+      "teacher_forced_mse": 0.019967999309301376
+    },
+    "6": {
+      "normalized_state_mse": 0.03379019722342491,
+      "root_angle_rms_deg": 7.675494194030762,
+      "valid_samples": 2298,
+      "teacher_forced_mse": 0.020149441435933113
+    },
+    "7": {
+      "normalized_state_mse": 0.037320349365472794,
+      "root_angle_rms_deg": 8.685504913330078,
+      "valid_samples": 2276,
+      "teacher_forced_mse": 0.020377179607748985
+    },
+    "8": {
+      "normalized_state_mse": 0.04225406050682068,
+      "root_angle_rms_deg": 9.858278274536133,
+      "valid_samples": 2253,
+      "teacher_forced_mse": 0.020608318969607353
+    },
+    "9": {
+      "normalized_state_mse": 0.05024713650345802,
+      "root_angle_rms_deg": 10.959959030151367,
+      "valid_samples": 2230,
+      "teacher_forced_mse": 0.02083560824394226
+    },
+    "10": {
+      "normalized_state_mse": 0.060417719185352325,
+      "root_angle_rms_deg": 12.148618698120117,
+      "valid_samples": 2207,
+      "teacher_forced_mse": 0.021054349839687347
+    },
+    "11": {
+      "normalized_state_mse": 0.07013991475105286,
+      "root_angle_rms_deg": 13.521374702453613,
+      "valid_samples": 2183,
+      "teacher_forced_mse": 0.021175067871809006
+    },
+    "12": {
+      "normalized_state_mse": 0.08890833705663681,
+      "root_angle_rms_deg": 15.22409439086914,
+      "valid_samples": 2159,
+      "teacher_forced_mse": 0.021390998736023903
+    },
+    "13": {
+      "normalized_state_mse": 0.11962777376174927,
+      "root_angle_rms_deg": 17.27542495727539,
+      "valid_samples": 2135,
+      "teacher_forced_mse": 0.021636007353663445
+    },
+    "14": {
+      "normalized_state_mse": 0.15741488337516785,
+      "root_angle_rms_deg": 19.702316284179688,
+      "valid_samples": 2111,
+      "teacher_forced_mse": 0.02186477929353714
+    },
+    "15": {
+      "normalized_state_mse": 0.19904503226280212,
+      "root_angle_rms_deg": 22.340431213378906,
+      "valid_samples": 2087,
+      "teacher_forced_mse": 0.022117627784609795
+    },
+    "16": {
+      "normalized_state_mse": 0.25094524025917053,
+      "root_angle_rms_deg": 25.208524703979492,
+      "valid_samples": 2063,
+      "teacher_forced_mse": 0.022355612367391586
+    }
+  },
+  "by_group": {
+    "root_position": {
+      "scale": [
+        0.22714199125766754,
+        0.10000000149011612,
+        0.15979090332984924
+      ],
+      "normalized_mse_first8_mean": 0.006246703676879406,
+      "normalized_mse_step16": 0.12371846288442612,
+      "contribution_to_total_first8": 0.0005064894794486463
+    },
+    "root_quaternion": {
+      "scale": [
+        0.8383455872535706,
+        0.1342284232378006,
+        0.4315813481807709,
+        0.14328420162200928
+      ],
+      "normalized_mse_first8_mean": 0.02298860251903534,
+      "normalized_mse_step16": 0.32162657380104065,
+      "contribution_to_total_first8": 0.0024852543137967587
+    },
+    "joint_position": {
+      "scale": [
+        0.3458400368690491,
+        0.7180508375167847,
+        0.6534068584442139,
+        0.4364469051361084,
+        0.7687099575996399,
+        0.5211735367774963,
+        0.5015090107917786,
+        0.750411868095398,
+        0.3949199318885803,
+        0.4431225657463074,
+        0.7133863568305969,
+        0.39222660660743713
+      ],
+      "normalized_mse_first8_mean": 0.012505683116614819,
+      "normalized_mse_step16": 0.063362717628479,
+      "contribution_to_total_first8": 0.004055897705256939
+    },
+    "linear_velocity": {
+      "scale": [
+        0.3120753765106201,
+        0.20000000298023224,
+        0.9264142513275146
+      ],
+      "normalized_mse_first8_mean": 0.06492044031620026,
+      "normalized_mse_step16": 0.5981290936470032,
+      "contribution_to_total_first8": 0.005263819359242916
+    },
+    "angular_velocity": {
+      "scale": [
+        2.998014211654663,
+        4.350958824157715,
+        2.1999387741088867
+      ],
+      "normalized_mse_first8_mean": 0.04914409667253494,
+      "normalized_mse_step16": 0.31383103132247925,
+      "contribution_to_total_first8": 0.003984656184911728
+    },
+    "joint_velocity": {
+      "scale": [
+        4.533444404602051,
+        9.863412857055664,
+        7.067859649658203,
+        6.561385154724121,
+        10.300275802612305,
+        7.582371234893799,
+        7.3838372230529785,
+        10.20010757446289,
+        3.1021504402160645,
+        8.130807876586914,
+        7.6937575340271,
+        3.4052746295928955
+      ],
+      "normalized_mse_first8_mean": 0.040143899619579315,
+      "normalized_mse_step16": 0.3442564904689789,
+      "contribution_to_total_first8": 0.013019641861319542
+    }
+  }
+}

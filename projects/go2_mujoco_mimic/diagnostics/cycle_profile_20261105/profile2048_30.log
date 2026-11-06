@@ -1,0 +1,71 @@
+[WM 训练量] 新增=65536 transitions/cycle；更新=30 次（手动）；batch=512，窗口=8；名义训练/新增=1.875。窗口可重复采样，跨终止后的步不计 loss，实际有效比例另行记录。
+[WM 提示] 手动 --wm-updates 覆盖自动计算；当前比例低于目标 3.75。
+[Critic] 每批目标固定，5 epochs × 4 minibatches = 20 次优化器更新/想象批次
+Warp 1.17.0 initialized:
+   CUDA Toolkit 12.9, Driver 13.2
+   Devices:
+     "cpu"      : "x86_64"
+     "cuda:0"   : "NVIDIA GeForce RTX 4060 Laptop GPU" (8 GiB, sm_89, mempool enabled)
+   Kernel cache:
+     /root/.cache/warp/1.17.0
+Module reset_data__locals__reset_xfrc_applied_352ea78a 352ea78 load on device 'cuda:0' took 24.94 ms  (cached)
+Module reset_data__locals__reset_M_eec0f906 eec0f90 load on device 'cuda:0' took 11.56 ms  (cached)
+Module reset_data__locals__reset_mocap_fc232d6e fc232d6 load on device 'cuda:0' took 14.55 ms  (cached)
+Module reset_data__locals__reset_contact_43eedcb5 43eedcb load on device 'cuda:0' took 16.76 ms  (cached)
+Module reset_data__locals__reset_sleep_992f6739 992f673 load on device 'cuda:0' took 13.34 ms  (cached)
+Module reset_data__locals__reset_nworld_235276b7 235276b load on device 'cuda:0' took 36.96 ms  (cached)
+Module mujoco_warp._src.smooth d04e5a7 load on device 'cuda:0' took 1221.70 ms  (cached)
+Module _nxn_broadphase__locals__kernel_04e59282 04e5928 load on device 'cuda:0' took 27.84 ms  (cached)
+Module ccd_kernel_builder__locals__ccd_kernel_32ef18fb 32ef18f load on device 'cuda:0' took 1005.01 ms  (cached)
+Module ccd_kernel_builder__locals__ccd_kernel_32ef18fb 3405702 load on device 'cuda:0' took 998.53 ms  (cached)
+Module ccd_kernel_builder__locals__ccd_kernel_d64d6db3 d64d6db load on device 'cuda:0' took 916.27 ms  (cached)
+Module ccd_kernel_builder__locals__ccd_kernel_d64d6db3 4f2bfae load on device 'cuda:0' took 993.04 ms  (cached)
+Module _primitive_narrowphase__locals__primitive_narrowphase_77b1fe81 77b1fe8 load on device 'cuda:0' took 1100.54 ms  (cached)
+Module mujoco_warp._src.constraint 8d4d513 load on device 'cuda:0' took 17.68 ms  (cached)
+Module _friction_dof__locals__kernel_22ded5f6 22ded5f load on device 'cuda:0' took 40.79 ms  (cached)
+Module _limit_slide_hinge__locals__kernel_24a318de 24a318d load on device 'cuda:0' took 42.09 ms  (cached)
+Module _efc_contact_init__locals__kernel_54f1cc8c 54f1cc8 load on device 'cuda:0' took 23.18 ms  (cached)
+Module _efc_contact_jac_dense__locals__kernel_6b457580 747ee66 load on device 'cuda:0' took 28.86 ms  (cached)
+Module _efc_contact_update__locals__kernel_212e1c0a 212e1c0 load on device 'cuda:0' took 44.60 ms  (cached)
+Module mujoco_warp._src.sensor 830d16a load on device 'cuda:0' took 616.26 ms  (cached)
+Module mujoco_warp._src.forward 4b55789 load on device 'cuda:0' took 375.88 ms  (cached)
+Module mujoco_warp._src.passive 80f3681 load on device 'cuda:0' took 446.39 ms  (cached)
+Module mujoco_warp._src.forward a1745d1 load on device 'cuda:0' took 369.38 ms  (cached)
+Module _qfrc_smooth__locals__kernel_8b823980 8b82398 load on device 'cuda:0' took 23.03 ms  (cached)
+Module mujoco_warp._src.support a59a7bc load on device 'cuda:0' took 32.00 ms  (cached)
+Module _tile_cholesky_factorize_solve_block__locals__kernel_3c544b6e 564f1e2 load on device 'cuda:0' took 331.84 ms  (cached)
+Module _solve_init_dof__locals__kernel_021c7a0e 021c7a0 load on device 'cuda:0' took 18.17 ms  (cached)
+Module mujoco_warp._src.solver 357f443 load on device 'cuda:0' took 232.68 ms  (cached)
+Module _solve_init_jaref_kernel__locals__kernel_f7cae18b f7cae18 load on device 'cuda:0' took 30.19 ms  (cached)
+Module mul_m_kernel__locals___mul_m_f3de1cc7 f3de1cc load on device 'cuda:0' took 28.98 ms  (cached)
+Module _update_constraint_efc__locals__kernel_0539aa50 0539aa5 load on device 'cuda:0' took 24.31 ms  (cached)
+Module _update_constraint_init_qfrc_constraint_dense__locals__kernel_bd7ca2ec bd7ca2e load on device 'cuda:0' took 18.31 ms  (cached)
+Module _update_gradient_zero_grad_dot__locals__kernel_b20934d7 b20934d load on device 'cuda:0' took 10.66 ms  (cached)
+Module _update_gradient_grad__locals__kernel_c876081d c876081 load on device 'cuda:0' took 11.91 ms  (cached)
+Module _update_gradient_JTDAJ_dense_tiled__locals__kernel_fd1fee95 f5f296f load on device 'cuda:0' took 52.42 ms  (cached)
+Module _update_gradient_cholesky__locals__kernel_5d37b712 3092a2d load on device 'cuda:0' took 313.80 ms  (cached)
+Module _linesearch_iterative_kernel__locals__kernel_2d893bc5 60ea4d1 load on device 'cuda:0' took 339.47 ms  (cached)
+Module _solve_done__locals__kernel_0c4a4b4d 0c4a4b4 load on device 'cuda:0' took 27.11 ms  (cached)
+Module go2_mujoco_mimic.warp_env 73f3a65 load on device 'cuda:0' took 56.84 ms  (cached)
+Module mujoco_warp._src.derivative 8222a58 load on device 'cuda:0' took 210.78 ms  (cached)
+Module _next_time_builder__locals___next_time_f604e0b3 f604e0b load on device 'cuda:0' took 27.07 ms  (cached)
+已恢复 RSI 回报与历史分布。
+自适应 RSI：每箱约 0.200s，共 9 箱；分箱按 50%均匀 + 40%近期困难 + 10%历史困难混合。
+单次动作 20% 的重置固定从开头，剩余重置采用上述分箱。
+连续状态=37维；环境=2048；日志=/workspace/go2_mujoco_mimic/logs/profile2048_30_2026-11-05_09-06-51_583389；身体奖励由可微运动学计算；世界模型输入65维、输出37维
+Actor 学习率=2e-06；Actor Critic 尾项系数=0.5
+[Critic] 输入 664 维，含 10 帧策略历史及参考终点倒计时；Actor 从 cycle 3501 起更新。
+缓冲装满后每轮新数据比例=10.0%；Actor想象=512条×16步，每 cycle 滚动更新 1 次
+[终止 BCE 3501] loss=0.00537 正样本=354/119098 召回=49.4% Brier=0.00154
+[profile] collect=4.075s world_model=1.041s imagine_fwd=0.197s actor_update=0.222s critic=0.032s env_prepare=0.006s env_physics=2.012s env_forward=0.008s env_reward_observation=0.160s
+[Critic 3501] 固定目标 MSE：0.69859 → 0.55360；更新=20 次；Actor=更新
+[3501] reward=0.4211 fallen=130 [1m回合收益=7.426[0m 存活=0.54s 回合数=723 state_loss=0.01649 动作更新均值=0.00090 动作更新最大=0.00863 想象累计奖励=5.6212 Critic尾项=5.0914 加权尾项=2.5457 想象总目标=8.1669
+[终止 BCE 3502] loss=0.00592 正样本=298/115780 召回=44.6% Brier=0.00162
+[profile] collect=3.970s world_model=0.729s imagine_fwd=0.168s actor_update=0.238s critic=0.024s env_prepare=0.005s env_physics=2.059s env_forward=0.008s env_reward_observation=0.101s
+[Critic 3502] 固定目标 MSE：0.32719 → 0.23392；更新=20 次；Actor=更新
+[3502] reward=0.4268 fallen=152 [1m回合收益=15.435[0m 存活=1.24s 回合数=2197 state_loss=0.01674 动作更新均值=0.00109 动作更新最大=0.00871 想象累计奖励=5.2492 Critic尾项=3.4938 加权尾项=1.7469 想象总目标=6.9961
+[终止 BCE 3503] loss=0.00558 正样本=351/115531 召回=54.4% Brier=0.00156
+[profile] collect=4.021s world_model=0.761s imagine_fwd=0.159s actor_update=0.233s critic=0.028s env_prepare=0.005s env_physics=2.069s env_forward=0.008s env_reward_observation=0.101s
+[Critic 3503] 固定目标 MSE：0.96691 → 0.68813；更新=20 次；Actor=更新
+[3503] reward=0.4195 fallen=139 [1m回合收益=15.106[0m 存活=1.21s 回合数=1765 state_loss=0.01656 动作更新均值=0.00104 动作更新最大=0.00802 想象累计奖励=5.2132 Critic尾项=3.2818 加权尾项=1.6409 想象总目标=6.8541
+已保存 model_3503.pt 和 latest.pt

@@ -1,0 +1,103 @@
+{
+  "checkpoint": "/workspace/go2_mujoco_mimic/logs/backflip_v19_bce_2026-11-05_04-25-36_439009/model_3330.pt",
+  "cycle": 3330,
+  "env": {
+    "num_envs": 384,
+    "physics_hz": 600,
+    "control_hz": 30,
+    "episode_seconds": 2.0,
+    "action_scale": 1.0,
+    "action_joint_scales": [
+      1.0,
+      1.5,
+      1.15,
+      1.0,
+      1.5,
+      1.15,
+      1.0,
+      1.55,
+      1.0,
+      1.0,
+      1.55,
+      1.0
+    ],
+    "clamp_joint_targets": true,
+    "wm_foot_features": false,
+    "kp": 25.0,
+    "kd": 0.5,
+    "torque_limit": 23.7,
+    "task": {
+      "reward": {
+        "body_position_weight": 1.0,
+        "body_position_sigma": 0.3,
+        "body_orientation_weight": 1.0,
+        "body_orientation_sigma": 0.7,
+        "body_linear_velocity_weight": 1.0,
+        "body_linear_velocity_sigma": 1.0,
+        "body_angular_velocity_weight": 1.0,
+        "body_angular_velocity_sigma": 3.141592653589793,
+        "root_position_weight": 0.5,
+        "root_position_sigma": 0.3,
+        "root_orientation_weight": 0.5,
+        "root_orientation_sigma": 0.7,
+        "joint_position_weight": 12.0,
+        "joint_position_sigma": 1.0,
+        "joint_sigmas": [
+          0.9,
+          1.0,
+          0.85
+        ],
+        "joint_position_mode": "per_joint",
+        "action_rate_weight": 0.1,
+        "torque_l2_weight": 0.0001,
+        "torque_mode": "substep_mean",
+        "joint_acc_l2_weight": 2.5e-07,
+        "joint_limit_weight": 2.0,
+        "failure_penalty": 1.0
+      },
+      "max_height_error": 0.25,
+      "max_tilt_error": 0.8,
+      "reference_loop": false,
+      "reference_cycles": 1,
+      "random_reference_start": true,
+      "heading_observation": false,
+      "longitudinal_observation": false,
+      "history_length": 10,
+      "future_length": 10,
+      "observation_noise": true,
+      "terminate_on_nonfoot_contact": false
+    }
+  },
+  "motion": "/workspace/go2_mujoco_mimic/data/solo12_backflip/reference_30hz/motion.npy",
+  "segment_seconds": [
+    0.6,
+    1.4
+  ],
+  "dataset": "/workspace/go2_mujoco_mimic/diagnostics/wm_fixed_data_20261105/fixed_trajectories.pt",
+  "dataset_sha256": "25cad318b1102731aed69f343dd3c2d0bbeb82837c6406b11158c34bde55cf4e",
+  "seed_collect": 1401,
+  "seed_sample": 7301,
+  "train_envs": 256,
+  "validation_envs": 128,
+  "valid_train_transitions": 6077,
+  "valid_validation_transitions": 3025,
+  "train_windows8": 4352,
+  "validation_windows8": 2176,
+  "batch": 512,
+  "window": 8,
+  "updates": 600,
+  "eval_updates": "20,40,60,90,120,180,240,300,360,420,480,540",
+  "optimizer": "restored Adam states",
+  "wm_learning_rates": [
+    0.0005
+  ],
+  "termination_learning_rates": [
+    0.0002
+  ],
+  "loss": "original normalized 37D recursive 8-step MSE + original BCE weight 1; original quaternion sign alignment; masks include failure step",
+  "sampling": "uniform windows from fixed training trajectories; no phase priority in this diagnostic",
+  "eval": "fixed windows; no weight updates from validation; physical metrics against recorded physics, same actions",
+  "actor_frozen": true,
+  "critic_untouched": true,
+  "normalization_frozen": true
+}

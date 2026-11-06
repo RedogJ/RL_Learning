@@ -1,0 +1,21 @@
+# Actor objective gradient decomposition and finite changes
+
+Frozen actor, dynamics, BCE termination and critic from masked run model_3380. 32 current-actor reference reset starts sampled with saved RSI seed 123; no sensor/action noise; gamma .99, horizon 16. Dynamics/reward implementation follows current training including differentiable kinematics, state normalizer and BF16 dynamics. Fixed 16-step objective was decomposed exactly as: R = sum discounted rewards with only deterministic reference-end mask; T = sum with soft failure survival/penalty minus R; C = soft-survival discounted final critic. Hence J=R+T+C. This explicit decomposition attributes the interaction of survival with rewards to T and survival's effect on the critic to C; it is not the same as simply differentiating the failure penalty.
+
+Raw parameter gradient L2 norms on this one batch: R 5.649, T 0.186, C 19.629, J 17.050. Gradient cosine R/C -0.582, R/T -0.431, T/C +0.474. Parameter gradients are not per-action gradients and optimizer preconditioning / clipping differs; these norms are batch-, parameterization- and checkpoint-dependent.
+
+Each component direction is normalized in parameter space and rescaled such that the mean absolute action change across gradient batch initial observations is 0.002; full J direction also tested. Actor parameter copies vary in both signs; model/head/critic remain frozen. Identical initial reset seeds used for base/perturbations, verified via saved initial_frames. For each parameter change, evaluate both predicted imagined objective and hard-terminated physical discounted return. Gradients were calculated at seed 123; seed 456 RSI and start-only are additional evaluation cases. Observation noise disabled and no optimization state applied; parameter shift is raw-gradient direction, NOT an actual Adam training step. Repeated identical reference frames do not produce independent tasks; especially 32 start-only envs use the same initial state.
+
+| Evaluation starts | Change along J | Imagined mean ΔJ | Real discounted return mean Δ | Base failed | Perturbed failed |
+|---|---|---:|---:|---:|---:|
+| RSI seed123, 32 (9 start at frame0) | +J gradient | +0.03760 | -1.99985 | 0 | 9 |
+| RSI seed456, 32 (7 start at frame0) | +J gradient | +0.03579 | -1.57654 | 0 | 7 |
+| all from reference start, 32 copies | +J gradient | +0.03774 | -7.07265 | 0 | 32 |
+
+The large mean change is dominated by hard early termination and repeated start-zero samples, not 32 independent failure discoveries. On nonzero starts, mean real Δ for +J was -0.016 (23 samples, seed123) and -0.0404 (25 samples, seed456). Model output is a fixed frozen surrogate; no claim that an actual Adam update would reproduce this effect. Sign and magnitude can vary around near-threshold discontinuity.
+
+For seed123 +J, objective contributions: R -0.00532; T +0.00010; C +0.04282; total +0.03760. Seed456 +J: R -0.00657; T +0.00010; C +0.04226; total +0.03579. Since BF16 forward and finite param perturb, finite differences need not equal exact autograd projection. J ascent prioritizes the critic component in this local experiment while first-16-step reward declines.
+
+Individual +gradient outcomes (seed123 RSI): +R gives imagined R +.00905, C -.02189, J -.01301; real Δ -1.9425 (9 failures; nonzero-start mean +.0501). +T gives J +.01409; real Δ -1.1302 (5 failures; nonzero-start mean -.0446). +C gives J +.02969; real Δ -.0313 (0 failures; nonzero-start mean -.0327). This does not establish that C alone caused complete failure: +C preserved all observed seed123 episodes and the total direction is a combination of gradients. It supports a local mismatch and strong critic-vs-reward gradient competition, with a fragile from-start boundary.
+
+One checkpoint, one gradient batch, noise-disabled reset states rather than original mixed replay, one perturbation scale, selected seeds, no policy training. Soft termination T is small in this particular batch, and cannot be generalized to states with higher predicted failures. Critic numerical value inaccuracy, sensitivity, true hard failure, WM Jacobians, and action changes are not causally separated. Fixed seeds and common starting frames do not eliminate nonlinear simulator nondeterminism. Raw data and script accompany this report. No original checkpoints, production logs or training code were modified.

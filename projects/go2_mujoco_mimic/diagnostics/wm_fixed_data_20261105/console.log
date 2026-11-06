@@ -1,0 +1,141 @@
+Warp 1.17.0 initialized:
+   CUDA Toolkit 12.9, Driver 13.2
+   Devices:
+     "cpu"      : "x86_64"
+     "cuda:0"   : "NVIDIA GeForce RTX 4060 Laptop GPU" (8 GiB, sm_89, mempool enabled)
+   Kernel cache:
+     /root/.cache/warp/1.17.0
+Module reset_data__locals__reset_xfrc_applied_352ea78a 352ea78 load on device 'cuda:0' took 17.03 ms  (cached)
+Module reset_data__locals__reset_M_eec0f906 eec0f90 load on device 'cuda:0' took 11.46 ms  (cached)
+Module reset_data__locals__reset_mocap_fc232d6e fc232d6 load on device 'cuda:0' took 12.80 ms  (cached)
+Module reset_data__locals__reset_contact_43eedcb5 43eedcb load on device 'cuda:0' took 15.73 ms  (cached)
+Module reset_data__locals__reset_sleep_992f6739 992f673 load on device 'cuda:0' took 12.23 ms  (cached)
+Module reset_data__locals__reset_nworld_235276b7 235276b load on device 'cuda:0' took 34.30 ms  (cached)
+Module mujoco_warp._src.smooth d04e5a7 load on device 'cuda:0' took 1090.23 ms  (cached)
+Module _nxn_broadphase__locals__kernel_04e59282 04e5928 load on device 'cuda:0' took 19.05 ms  (cached)
+Module ccd_kernel_builder__locals__ccd_kernel_32ef18fb 32ef18f load on device 'cuda:0' took 876.10 ms  (cached)
+Module ccd_kernel_builder__locals__ccd_kernel_32ef18fb 3405702 load on device 'cuda:0' took 887.44 ms  (cached)
+Module ccd_kernel_builder__locals__ccd_kernel_d64d6db3 d64d6db load on device 'cuda:0' took 825.79 ms  (cached)
+Module ccd_kernel_builder__locals__ccd_kernel_d64d6db3 4f2bfae load on device 'cuda:0' took 850.74 ms  (cached)
+Module _primitive_narrowphase__locals__primitive_narrowphase_77b1fe81 77b1fe8 load on device 'cuda:0' took 916.19 ms  (cached)
+Module mujoco_warp._src.constraint 8d4d513 load on device 'cuda:0' took 9.28 ms  (cached)
+Module _friction_dof__locals__kernel_22ded5f6 22ded5f load on device 'cuda:0' took 38.07 ms  (cached)
+Module _limit_slide_hinge__locals__kernel_24a318de 24a318d load on device 'cuda:0' took 40.22 ms  (cached)
+Module _efc_contact_init__locals__kernel_54f1cc8c 54f1cc8 load on device 'cuda:0' took 22.11 ms  (cached)
+Module _efc_contact_jac_dense__locals__kernel_6b457580 747ee66 load on device 'cuda:0' took 27.58 ms  (cached)
+Module _efc_contact_update__locals__kernel_212e1c0a 212e1c0 load on device 'cuda:0' took 42.96 ms  (cached)
+Module mujoco_warp._src.sensor 830d16a load on device 'cuda:0' took 575.20 ms  (cached)
+Module mujoco_warp._src.forward 4b55789 load on device 'cuda:0' took 347.85 ms  (cached)
+Module mujoco_warp._src.passive 80f3681 load on device 'cuda:0' took 411.99 ms  (cached)
+Module mujoco_warp._src.forward a1745d1 load on device 'cuda:0' took 347.71 ms  (cached)
+Module _qfrc_smooth__locals__kernel_8b823980 8b82398 load on device 'cuda:0' took 15.17 ms  (cached)
+Module mujoco_warp._src.support a59a7bc load on device 'cuda:0' took 30.82 ms  (cached)
+Module _tile_cholesky_factorize_solve_block__locals__kernel_3c544b6e 564f1e2 load on device 'cuda:0' took 319.70 ms  (cached)
+Module _solve_init_dof__locals__kernel_021c7a0e 021c7a0 load on device 'cuda:0' took 10.36 ms  (cached)
+Module mujoco_warp._src.solver 357f443 load on device 'cuda:0' took 225.33 ms  (cached)
+Module _solve_init_jaref_kernel__locals__kernel_f7cae18b f7cae18 load on device 'cuda:0' took 21.39 ms  (cached)
+Module mul_m_kernel__locals___mul_m_f3de1cc7 f3de1cc load on device 'cuda:0' took 27.39 ms  (cached)
+Module _update_constraint_efc__locals__kernel_0539aa50 0539aa5 load on device 'cuda:0' took 23.38 ms  (cached)
+Module _update_constraint_init_qfrc_constraint_dense__locals__kernel_bd7ca2ec bd7ca2e load on device 'cuda:0' took 17.15 ms  (cached)
+Module _update_gradient_zero_grad_dot__locals__kernel_b20934d7 b20934d load on device 'cuda:0' took 9.37 ms  (cached)
+Module _update_gradient_grad__locals__kernel_c876081d c876081 load on device 'cuda:0' took 10.84 ms  (cached)
+Module _update_gradient_JTDAJ_dense_tiled__locals__kernel_fd1fee95 f5f296f load on device 'cuda:0' took 49.13 ms  (cached)
+Module _update_gradient_cholesky__locals__kernel_5d37b712 3092a2d load on device 'cuda:0' took 283.44 ms  (cached)
+Module _linesearch_iterative_kernel__locals__kernel_2d893bc5 60ea4d1 load on device 'cuda:0' took 290.15 ms  (cached)
+Module _solve_done__locals__kernel_0c4a4b4d 0c4a4b4 load on device 'cuda:0' took 25.86 ms  (cached)
+Module go2_mujoco_mimic.warp_env 73f3a65 load on device 'cuda:0' took 54.50 ms  (cached)
+Module mujoco_warp._src.derivative 8222a58 load on device 'cuda:0' took 194.05 ms  (cached)
+Module _next_time_builder__locals___next_time_f604e0b3 f604e0b load on device 'cuda:0' took 19.09 ms  (cached)
+采集固定数据：checkpoint=3330；384条独立噪声轨迹；参考0.60–1.40s
+Traceback (most recent call last):
+  File "/workspace/go2_mujoco_mimic/diagnostics/wm_fixed_data_20261105/experiment.py", line 201, in <module>
+    if __name__=='__main__':main()
+                            ^^^^^^
+  File "/workspace/go2_mujoco_mimic/diagnostics/wm_fixed_data_20261105/experiment.py", line 77, in main
+    reset_segment()
+TypeError: main.<locals>.reset_segment() missing 1 required positional argument: 'self'
+Warp 1.17.0 initialized:
+   CUDA Toolkit 12.9, Driver 13.2
+   Devices:
+     "cpu"      : "x86_64"
+     "cuda:0"   : "NVIDIA GeForce RTX 4060 Laptop GPU" (8 GiB, sm_89, mempool enabled)
+   Kernel cache:
+     /root/.cache/warp/1.17.0
+Module reset_data__locals__reset_xfrc_applied_352ea78a 352ea78 load on device 'cuda:0' took 16.19 ms  (cached)
+Module reset_data__locals__reset_M_eec0f906 eec0f90 load on device 'cuda:0' took 10.94 ms  (cached)
+Module reset_data__locals__reset_mocap_fc232d6e fc232d6 load on device 'cuda:0' took 13.26 ms  (cached)
+Module reset_data__locals__reset_contact_43eedcb5 43eedcb load on device 'cuda:0' took 15.79 ms  (cached)
+Module reset_data__locals__reset_sleep_992f6739 992f673 load on device 'cuda:0' took 12.15 ms  (cached)
+Module reset_data__locals__reset_nworld_235276b7 235276b load on device 'cuda:0' took 33.91 ms  (cached)
+Module mujoco_warp._src.smooth d04e5a7 load on device 'cuda:0' took 1098.81 ms  (cached)
+Module _nxn_broadphase__locals__kernel_04e59282 04e5928 load on device 'cuda:0' took 20.23 ms  (cached)
+Module ccd_kernel_builder__locals__ccd_kernel_32ef18fb 32ef18f load on device 'cuda:0' took 900.29 ms  (cached)
+Module ccd_kernel_builder__locals__ccd_kernel_32ef18fb 3405702 load on device 'cuda:0' took 872.84 ms  (cached)
+Module ccd_kernel_builder__locals__ccd_kernel_d64d6db3 d64d6db load on device 'cuda:0' took 840.66 ms  (cached)
+Module ccd_kernel_builder__locals__ccd_kernel_d64d6db3 4f2bfae load on device 'cuda:0' took 853.40 ms  (cached)
+Module _primitive_narrowphase__locals__primitive_narrowphase_77b1fe81 77b1fe8 load on device 'cuda:0' took 963.71 ms  (cached)
+Module mujoco_warp._src.constraint 8d4d513 load on device 'cuda:0' took 9.56 ms  (cached)
+Module _friction_dof__locals__kernel_22ded5f6 22ded5f load on device 'cuda:0' took 38.95 ms  (cached)
+Module _limit_slide_hinge__locals__kernel_24a318de 24a318d load on device 'cuda:0' took 41.59 ms  (cached)
+Module _efc_contact_init__locals__kernel_54f1cc8c 54f1cc8 load on device 'cuda:0' took 22.40 ms  (cached)
+Module _efc_contact_jac_dense__locals__kernel_6b457580 747ee66 load on device 'cuda:0' took 27.67 ms  (cached)
+Module _efc_contact_update__locals__kernel_212e1c0a 212e1c0 load on device 'cuda:0' took 43.02 ms  (cached)
+Module mujoco_warp._src.sensor 830d16a load on device 'cuda:0' took 580.28 ms  (cached)
+Module mujoco_warp._src.forward 4b55789 load on device 'cuda:0' took 346.19 ms  (cached)
+Module mujoco_warp._src.passive 80f3681 load on device 'cuda:0' took 422.60 ms  (cached)
+Module mujoco_warp._src.forward a1745d1 load on device 'cuda:0' took 348.80 ms  (cached)
+Module _qfrc_smooth__locals__kernel_8b823980 8b82398 load on device 'cuda:0' took 14.92 ms  (cached)
+Module mujoco_warp._src.support a59a7bc load on device 'cuda:0' took 31.29 ms  (cached)
+Module _tile_cholesky_factorize_solve_block__locals__kernel_3c544b6e 564f1e2 load on device 'cuda:0' took 318.94 ms  (cached)
+Module _solve_init_dof__locals__kernel_021c7a0e 021c7a0 load on device 'cuda:0' took 10.60 ms  (cached)
+Module mujoco_warp._src.solver 357f443 load on device 'cuda:0' took 233.32 ms  (cached)
+Module _solve_init_jaref_kernel__locals__kernel_f7cae18b f7cae18 load on device 'cuda:0' took 21.29 ms  (cached)
+Module mul_m_kernel__locals___mul_m_f3de1cc7 f3de1cc load on device 'cuda:0' took 28.95 ms  (cached)
+Module _update_constraint_efc__locals__kernel_0539aa50 0539aa5 load on device 'cuda:0' took 23.88 ms  (cached)
+Module _update_constraint_init_qfrc_constraint_dense__locals__kernel_bd7ca2ec bd7ca2e load on device 'cuda:0' took 17.47 ms  (cached)
+Module _update_gradient_zero_grad_dot__locals__kernel_b20934d7 b20934d load on device 'cuda:0' took 9.61 ms  (cached)
+Module _update_gradient_grad__locals__kernel_c876081d c876081 load on device 'cuda:0' took 11.01 ms  (cached)
+Module _update_gradient_JTDAJ_dense_tiled__locals__kernel_fd1fee95 f5f296f load on device 'cuda:0' took 49.49 ms  (cached)
+Module _update_gradient_cholesky__locals__kernel_5d37b712 3092a2d load on device 'cuda:0' took 287.08 ms  (cached)
+Module _linesearch_iterative_kernel__locals__kernel_2d893bc5 60ea4d1 load on device 'cuda:0' took 297.38 ms  (cached)
+Module _solve_done__locals__kernel_0c4a4b4d 0c4a4b4 load on device 'cuda:0' took 25.59 ms  (cached)
+Module go2_mujoco_mimic.warp_env 73f3a65 load on device 'cuda:0' took 55.74 ms  (cached)
+Module mujoco_warp._src.derivative 8222a58 load on device 'cuda:0' took 193.60 ms  (cached)
+Module _next_time_builder__locals___next_time_f604e0b3 f604e0b load on device 'cuda:0' took 19.54 ms  (cached)
+采集固定数据：checkpoint=3330；384条独立噪声轨迹；参考0.60–1.40s
+数据固定：{"valid_train_transitions": 6077, "valid_validation_transitions": 3025, "train_windows8": 4352, "validation_windows8": 2176}
+EVAL {"update": 0, "elapsed_seconds": 15.018832233000012, "train": {"loss8": 0.03398925065994263, "bce8": 0.009867377579212189, "physical": {"1": {"samples": 512, "root_position_rms_cm": 0.8477588184177876, "root_rotation_rms_deg": 2.317284107208252, "root_rotation_p90_deg": 3.8126072883605957, "joint_position_rmse_deg": 1.4674171579142858, "linear_velocity_rmse_m_s": 0.0343010313808918, "angular_velocity_rmse_rad_s": 0.2732137143611908, "joint_velocity_rmse_rad_s": 0.658760130405426}, "8": {"samples": 512, "root_position_rms_cm": 5.268428474664688, "root_rotation_rms_deg": 16.508085250854492, "root_rotation_p90_deg": 21.481082916259766, "joint_position_rmse_deg": 3.5035523649472107, "linear_velocity_rmse_m_s": 0.17720934748649597, "angular_velocity_rmse_rad_s": 1.0615179538726807, "joint_velocity_rmse_rad_s": 1.6614866256713867}, "16": {"samples": 495, "root_position_rms_cm": 8.958159387111664, "root_rotation_rms_deg": 34.19926452636719, "root_rotation_p90_deg": 51.10395812988281, "joint_position_rmse_deg": 15.833693307504785, "linear_velocity_rmse_m_s": 0.32589372992515564, "angular_velocity_rmse_rad_s": 2.1919000148773193, "joint_velocity_rmse_rad_s": 3.2606523036956787}}}, "validation": {"loss8": 0.03452011197805405, "bce8": 0.007601927034556866, "physical": {"1": {"samples": 512, "root_position_rms_cm": 0.8443454280495644, "root_rotation_rms_deg": 2.336918354034424, "root_rotation_p90_deg": 3.678389072418213, "joint_position_rmse_deg": 1.469732698764626, "linear_velocity_rmse_m_s": 0.03403870016336441, "angular_velocity_rmse_rad_s": 0.27384817600250244, "joint_velocity_rmse_rad_s": 0.6625705361366272}, "8": {"samples": 512, "root_position_rms_cm": 5.184223502874374, "root_rotation_rms_deg": 16.989221572875977, "root_rotation_p90_deg": 22.188148498535156, "joint_position_rmse_deg": 3.469800344833358, "linear_velocity_rmse_m_s": 0.18541279435157776, "angular_velocity_rmse_rad_s": 1.0866355895996094, "joint_velocity_rmse_rad_s": 1.522890567779541}, "16": {"samples": 483, "root_position_rms_cm": 8.871804922819138, "root_rotation_rms_deg": 34.634971618652344, "root_rotation_p90_deg": 51.064292907714844, "joint_position_rmse_deg": 15.911297916854469, "linear_velocity_rmse_m_s": 0.32964977622032166, "angular_velocity_rmse_rad_s": 2.2098114490509033, "joint_velocity_rmse_rad_s": 3.3053483963012695}}}}
+WM固定数据 [20/600] state=0.026706 BCE=0.004335 训练用时=0.5s
+WM固定数据 [40/600] state=0.024346 BCE=0.001409 训练用时=0.9s
+WM固定数据 [60/600] state=0.022543 BCE=0.001054 训练用时=1.4s
+EVAL {"update": 60, "elapsed_seconds": 16.61387399299997, "train": {"loss8": 0.019686056300997734, "bce8": 0.0007265083258971572, "physical": {"1": {"samples": 512, "root_position_rms_cm": 0.5694149527698755, "root_rotation_rms_deg": 1.9450485706329346, "root_rotation_p90_deg": 3.2124667167663574, "joint_position_rmse_deg": 1.1460448046341385, "linear_velocity_rmse_m_s": 0.0271303653717041, "angular_velocity_rmse_rad_s": 0.19069595634937286, "joint_velocity_rmse_rad_s": 0.4758710265159607}, "8": {"samples": 512, "root_position_rms_cm": 3.108946420252323, "root_rotation_rms_deg": 5.070679664611816, "root_rotation_p90_deg": 7.574041366577148, "joint_position_rmse_deg": 2.519372051306679, "linear_velocity_rmse_m_s": 0.1537843942642212, "angular_velocity_rmse_rad_s": 0.5070976614952087, "joint_velocity_rmse_rad_s": 1.1915582418441772}, "16": {"samples": 495, "root_position_rms_cm": 6.3832685351371765, "root_rotation_rms_deg": 9.697410583496094, "root_rotation_p90_deg": 12.49173355102539, "joint_position_rmse_deg": 5.3336298360658425, "linear_velocity_rmse_m_s": 0.15794852375984192, "angular_velocity_rmse_rad_s": 0.9083197116851807, "joint_velocity_rmse_rad_s": 1.5763373374938965}}}, "validation": {"loss8": 0.02093619853258133, "bce8": 0.003581393975764513, "physical": {"1": {"samples": 512, "root_position_rms_cm": 0.5572873633354902, "root_rotation_rms_deg": 1.9779218435287476, "root_rotation_p90_deg": 3.1834871768951416, "joint_position_rmse_deg": 1.1660449859061108, "linear_velocity_rmse_m_s": 0.028582369908690453, "angular_velocity_rmse_rad_s": 0.19702234864234924, "joint_velocity_rmse_rad_s": 0.49435630440711975}, "8": {"samples": 512, "root_position_rms_cm": 3.248538449406624, "root_rotation_rms_deg": 5.6747355461120605, "root_rotation_p90_deg": 7.954558849334717, "joint_position_rmse_deg": 2.625893760611494, "linear_velocity_rmse_m_s": 0.15010125935077667, "angular_velocity_rmse_rad_s": 0.5534191131591797, "joint_velocity_rmse_rad_s": 1.2475106716156006}, "16": {"samples": 483, "root_position_rms_cm": 6.669630855321884, "root_rotation_rms_deg": 10.518329620361328, "root_rotation_p90_deg": 12.94918441772461, "joint_position_rmse_deg": 5.91933008333866, "linear_velocity_rmse_m_s": 0.1695583164691925, "angular_velocity_rmse_rad_s": 0.9432114362716675, "joint_velocity_rmse_rad_s": 1.6904752254486084}}}}
+WM固定数据 [80/600] state=0.019258 BCE=0.000521 训练用时=1.8s
+WM固定数据 [100/600] state=0.019199 BCE=0.000973 训练用时=2.2s
+WM固定数据 [120/600] state=0.015653 BCE=0.000170 训练用时=2.7s
+WM固定数据 [140/600] state=0.014314 BCE=0.000152 训练用时=3.1s
+WM固定数据 [160/600] state=0.010886 BCE=0.000095 训练用时=3.5s
+WM固定数据 [180/600] state=0.011859 BCE=0.000089 训练用时=3.9s
+EVAL {"update": 180, "elapsed_seconds": 19.15875560799998, "train": {"loss8": 0.012057364918291569, "bce8": 0.00012579822214320302, "physical": {"1": {"samples": 512, "root_position_rms_cm": 0.3807378001511097, "root_rotation_rms_deg": 1.4457528591156006, "root_rotation_p90_deg": 2.148345470428467, "joint_position_rmse_deg": 0.8041926627362366, "linear_velocity_rmse_m_s": 0.02103765681385994, "angular_velocity_rmse_rad_s": 0.13813292980194092, "joint_velocity_rmse_rad_s": 0.40826332569122314}, "8": {"samples": 512, "root_position_rms_cm": 1.9168050959706306, "root_rotation_rms_deg": 4.818439960479736, "root_rotation_p90_deg": 7.492133617401123, "joint_position_rmse_deg": 2.333573830409407, "linear_velocity_rmse_m_s": 0.12538348138332367, "angular_velocity_rmse_rad_s": 0.5181004405021667, "joint_velocity_rmse_rad_s": 1.0573461055755615}, "16": {"samples": 495, "root_position_rms_cm": 4.7068096697330475, "root_rotation_rms_deg": 8.74120044708252, "root_rotation_p90_deg": 12.348349571228027, "joint_position_rmse_deg": 5.50655315037764, "linear_velocity_rmse_m_s": 0.1404649019241333, "angular_velocity_rmse_rad_s": 0.9167424440383911, "joint_velocity_rmse_rad_s": 1.6939541101455688}}}, "validation": {"loss8": 0.014504966326057911, "bce8": 0.006365768611431122, "physical": {"1": {"samples": 512, "root_position_rms_cm": 0.404020631685853, "root_rotation_rms_deg": 1.512933373451233, "root_rotation_p90_deg": 2.175295114517212, "joint_position_rmse_deg": 0.8457935840626389, "linear_velocity_rmse_m_s": 0.022098030894994736, "angular_velocity_rmse_rad_s": 0.14606337249279022, "joint_velocity_rmse_rad_s": 0.42956221103668213}, "8": {"samples": 512, "root_position_rms_cm": 2.087538130581379, "root_rotation_rms_deg": 5.595520496368408, "root_rotation_p90_deg": 8.55394172668457, "joint_position_rmse_deg": 2.51147443163544, "linear_velocity_rmse_m_s": 0.1287042796611786, "angular_velocity_rmse_rad_s": 0.6095585227012634, "joint_velocity_rmse_rad_s": 1.2146055698394775}, "16": {"samples": 483, "root_position_rms_cm": 5.490584671497345, "root_rotation_rms_deg": 9.116008758544922, "root_rotation_p90_deg": 12.166232109069824, "joint_position_rmse_deg": 6.2124489322302265, "linear_velocity_rmse_m_s": 0.14805005490779877, "angular_velocity_rmse_rad_s": 0.9097007513046265, "joint_velocity_rmse_rad_s": 1.7661144733428955}}}}
+WM固定数据 [200/600] state=0.013531 BCE=0.000149 训练用时=4.4s
+WM固定数据 [220/600] state=0.010983 BCE=0.000066 训练用时=4.8s
+WM固定数据 [240/600] state=0.010262 BCE=0.000069 训练用时=5.2s
+WM固定数据 [260/600] state=0.009345 BCE=0.000060 训练用时=5.6s
+WM固定数据 [280/600] state=0.008681 BCE=0.000054 训练用时=6.0s
+WM固定数据 [300/600] state=0.008503 BCE=0.000054 训练用时=6.5s
+WM固定数据 [320/600] state=0.008374 BCE=0.000046 训练用时=6.9s
+WM固定数据 [340/600] state=0.009168 BCE=0.000074 训练用时=7.3s
+WM固定数据 [360/600] state=0.013771 BCE=0.000271 训练用时=7.7s
+WM固定数据 [380/600] state=0.007768 BCE=0.000035 训练用时=8.1s
+WM固定数据 [400/600] state=0.007063 BCE=0.000037 训练用时=8.5s
+WM固定数据 [420/600] state=0.007906 BCE=0.000037 训练用时=9.0s
+WM固定数据 [440/600] state=0.008091 BCE=0.000063 训练用时=9.4s
+WM固定数据 [460/600] state=0.008165 BCE=0.000029 训练用时=9.8s
+WM固定数据 [480/600] state=0.007059 BCE=0.000027 训练用时=10.2s
+WM固定数据 [500/600] state=0.006530 BCE=0.000029 训练用时=10.6s
+WM固定数据 [520/600] state=0.006616 BCE=0.000027 训练用时=11.0s
+WM固定数据 [540/600] state=0.005326 BCE=0.000027 训练用时=11.5s
+WM固定数据 [560/600] state=0.004819 BCE=0.000026 训练用时=11.9s
+WM固定数据 [580/600] state=0.004840 BCE=0.000023 训练用时=12.3s
+WM固定数据 [600/600] state=0.007248 BCE=0.000125 训练用时=12.7s
+EVAL {"update": 600, "elapsed_seconds": 27.97362435499997, "train": {"loss8": 0.007191457785665989, "bce8": 0.00028940572519786656, "physical": {"1": {"samples": 512, "root_position_rms_cm": 0.3296386916190386, "root_rotation_rms_deg": 1.0963634252548218, "root_rotation_p90_deg": 1.5788732767105103, "joint_position_rmse_deg": 0.7965153166657307, "linear_velocity_rmse_m_s": 0.016919322311878204, "angular_velocity_rmse_rad_s": 0.1174873635172844, "joint_velocity_rmse_rad_s": 0.33416926860809326}, "8": {"samples": 512, "root_position_rms_cm": 1.5003412030637264, "root_rotation_rms_deg": 3.940652847290039, "root_rotation_p90_deg": 5.990929126739502, "joint_position_rmse_deg": 1.742303030259915, "linear_velocity_rmse_m_s": 0.09029687941074371, "angular_velocity_rmse_rad_s": 0.37996554374694824, "joint_velocity_rmse_rad_s": 0.8593125343322754}, "16": {"samples": 495, "root_position_rms_cm": 2.9680388048291206, "root_rotation_rms_deg": 7.274293422698975, "root_rotation_p90_deg": 9.369791030883789, "joint_position_rmse_deg": 3.796696827048165, "linear_velocity_rmse_m_s": 0.09120544046163559, "angular_velocity_rmse_rad_s": 0.677996039390564, "joint_velocity_rmse_rad_s": 1.1557849645614624}}}, "validation": {"loss8": 0.012073714286088943, "bce8": 0.01119717676192522, "physical": {"1": {"samples": 512, "root_position_rms_cm": 0.34897951409220695, "root_rotation_rms_deg": 1.1877281665802002, "root_rotation_p90_deg": 1.7883491516113281, "joint_position_rmse_deg": 0.8240364433483864, "linear_velocity_rmse_m_s": 0.017886312678456306, "angular_velocity_rmse_rad_s": 0.12200646102428436, "joint_velocity_rmse_rad_s": 0.36104872822761536}, "8": {"samples": 512, "root_position_rms_cm": 1.5687379986047745, "root_rotation_rms_deg": 4.558233737945557, "root_rotation_p90_deg": 6.770712852478027, "joint_position_rmse_deg": 1.9186287392737311, "linear_velocity_rmse_m_s": 0.10981221497058868, "angular_velocity_rmse_rad_s": 0.44863271713256836, "joint_velocity_rmse_rad_s": 1.0155868530273438}, "16": {"samples": 483, "root_position_rms_cm": 3.5359423607587814, "root_rotation_rms_deg": 8.499765396118164, "root_rotation_p90_deg": 10.49153995513916, "joint_position_rmse_deg": 5.022491240596489, "linear_velocity_rmse_m_s": 0.11294513195753098, "angular_velocity_rmse_rad_s": 0.8022388219833374, "joint_velocity_rmse_rad_s": 1.4991955757141113}}}}
+DONE /workspace/go2_mujoco_mimic/diagnostics/wm_fixed_data_20261105/summary.json

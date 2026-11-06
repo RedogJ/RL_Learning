@@ -1,0 +1,26 @@
+{
+  "3300": {
+    "n": 64,
+    "position_cm": 5.419,
+    "rotation_deg": 11.515,
+    "joint_deg": 6.571
+  },
+  "3310": {
+    "n": 64,
+    "position_cm": 6.056,
+    "rotation_deg": 7.028,
+    "joint_deg": 6.491
+  },
+  "3340": {
+    "n": 64,
+    "position_cm": 8.494,
+    "rotation_deg": 14.16,
+    "joint_deg": 10.826
+  },
+  "3350": {
+    "n": 64,
+    "position_cm": 8.25,
+    "rotation_deg": 9.74,
+    "joint_deg": 8.18
+  }
+}

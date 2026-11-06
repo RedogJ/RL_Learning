@@ -1,0 +1,146 @@
+{
+  "diagnostic_update": "first cycle, update 20",
+  "expected_original": {
+    "cycle": 0,
+    "update": 20,
+    "state_gradient_norm": 1.5984504222869873,
+    "bce_gradient_norm": 1.0222995281219482,
+    "cosine": 0.37910956144332886,
+    "bce_to_state_norm_ratio": 0.6395565867424011,
+    "state_loss_before": 0.0202645156532526,
+    "bce_before": 0.007421388756483793,
+    "valid_steps": 3780.0,
+    "positive_steps": 12.0,
+    "preclip_joint_gradient_norm": 2.19954776763916,
+    "adam_step_dot_state_gradient": -0.0029194210655987263,
+    "adam_step_dot_bce_gradient": -0.0031280505936592817,
+    "state_loss_after": 0.021581506356596947,
+    "bce_after": 0.005305672064423561
+  },
+  "replayed_before": [
+    0.0202645156532526,
+    0.007421388756483793
+  ],
+  "replayed_after": [
+    0.021581506356596947,
+    0.005305672064423561
+  ],
+  "exact_loss_match": true,
+  "description": "interpolate both WM and head actual Adam parameter changes. Same-batch MSE/BCE measured with BF16 and with float32 matmul (TF32 allowed). Probes use BF16 as original.",
+  "fractions": [
+    {
+      "fraction": 0.0,
+      "bf16_state_loss": 0.0202645156532526,
+      "bf16_bce": 0.007421388756483793,
+      "float32_state_loss": 0.020320437848567963,
+      "float32_bce": 0.007443863898515701,
+      "physical16": {
+        "old_policy_3270": {
+          "root_position_rms_cm": 6.457994133234024,
+          "root_rotation_rms_deg": 15.832231521606445,
+          "joint_position_rmse_deg": 8.53620564636821
+        },
+        "recent_policy_3330": {
+          "root_position_rms_cm": 9.303127229213715,
+          "root_rotation_rms_deg": 20.16730308532715,
+          "joint_position_rmse_deg": 8.723642258892639
+        }
+      }
+    },
+    {
+      "fraction": 0.1,
+      "bf16_state_loss": 0.02003992535173893,
+      "bf16_bce": 0.007039414718747139,
+      "float32_state_loss": 0.02007238008081913,
+      "float32_bce": 0.0071234749630093575,
+      "physical16": {
+        "old_policy_3270": {
+          "root_position_rms_cm": 6.145346909761429,
+          "root_rotation_rms_deg": 15.047050476074219,
+          "joint_position_rmse_deg": 8.27298552368155
+        },
+        "recent_policy_3330": {
+          "root_position_rms_cm": 9.133719652891159,
+          "root_rotation_rms_deg": 19.509239196777344,
+          "joint_position_rmse_deg": 8.601015603855169
+        }
+      }
+    },
+    {
+      "fraction": 0.25,
+      "bf16_state_loss": 0.019861608743667603,
+      "bf16_bce": 0.006743319798260927,
+      "float32_state_loss": 0.019871745258569717,
+      "float32_bce": 0.006727342959493399,
+      "physical16": {
+        "old_policy_3270": {
+          "root_position_rms_cm": 5.736751481890678,
+          "root_rotation_rms_deg": 14.078165054321289,
+          "joint_position_rmse_deg": 7.967413959272582
+        },
+        "recent_policy_3330": {
+          "root_position_rms_cm": 8.892811834812164,
+          "root_rotation_rms_deg": 18.63011360168457,
+          "joint_position_rmse_deg": 8.43922805921143
+        }
+      }
+    },
+    {
+      "fraction": 0.5,
+      "bf16_state_loss": 0.019924676045775414,
+      "bf16_bce": 0.006237098481506109,
+      "float32_state_loss": 0.01994774118065834,
+      "float32_bce": 0.00616889912635088,
+      "physical16": {
+        "old_policy_3270": {
+          "root_position_rms_cm": 5.215126276016235,
+          "root_rotation_rms_deg": 12.820378303527832,
+          "joint_position_rmse_deg": 7.612967268710293
+        },
+        "recent_policy_3330": {
+          "root_position_rms_cm": 8.500267565250397,
+          "root_rotation_rms_deg": 17.416017532348633,
+          "joint_position_rmse_deg": 8.160446204274542
+        }
+      }
+    },
+    {
+      "fraction": 0.75,
+      "bf16_state_loss": 0.020442591980099678,
+      "bf16_bce": 0.005651579704135656,
+      "float32_state_loss": 0.020504429936408997,
+      "float32_bce": 0.005703460890799761,
+      "physical16": {
+        "old_policy_3270": {
+          "root_position_rms_cm": 5.011609196662903,
+          "root_rotation_rms_deg": 12.11392593383789,
+          "joint_position_rmse_deg": 7.644048044528437
+        },
+        "recent_policy_3330": {
+          "root_position_rms_cm": 8.063703030347824,
+          "root_rotation_rms_deg": 16.516462326049805,
+          "joint_position_rmse_deg": 7.941817825357958
+        }
+      }
+    },
+    {
+      "fraction": 1.0,
+      "bf16_state_loss": 0.021581506356596947,
+      "bf16_bce": 0.005305672064423561,
+      "float32_state_loss": 0.02155519463121891,
+      "float32_bce": 0.005294907372444868,
+      "physical16": {
+        "old_policy_3270": {
+          "root_position_rms_cm": 5.23170568048954,
+          "root_rotation_rms_deg": 11.97439193725586,
+          "joint_position_rmse_deg": 8.12411984317383
+        },
+        "recent_policy_3330": {
+          "root_position_rms_cm": 7.504113018512726,
+          "root_rotation_rms_deg": 15.698728561401367,
+          "joint_position_rmse_deg": 7.7648612843412685
+        }
+      }
+    }
+  ]
+}

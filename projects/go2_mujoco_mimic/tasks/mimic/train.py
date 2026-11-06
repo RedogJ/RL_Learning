@@ -89,6 +89,7 @@ def main():
             raise ValueError('续训的动作路径与检查点不一致')
         from copy import deepcopy
         saved_env = deepcopy(saved['env_cfg'])
+        saved_env['task'].setdefault('terminate_on_tracking_error', True)
         saved_num_envs = saved_env['num_envs']
         saved_env['num_envs'] = cfg.num_envs
         if saved_num_envs != cfg.num_envs:

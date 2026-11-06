@@ -1,0 +1,28 @@
+{
+  "learning_rates": [
+    0.0002,
+    0.0005,
+    0.001,
+    0.002
+  ],
+  "termination_lr": 0.0002,
+  "updates_checked": [
+    0,
+    20,
+    40,
+    60,
+    90,
+    120,
+    180,
+    300,
+    600
+  ],
+  "primary_target": "simultaneously match the baseline 600-update validation 16-step RMS position, rotation, joint-angle errors",
+  "baseline_reference": {
+    "root_position_rms_cm": 3.5359423607587814,
+    "root_rotation_rms_deg": 8.499765396118164,
+    "joint_position_rmse_deg": 5.022491240596489
+  },
+  "secondary": "also report termination BCE; repeated validation used for tuning, no claim of unseen-motion generalization",
+  "dataset": "same saved tensors and whole-trajectory split; sampling seeds and optimizer states matched"
+}

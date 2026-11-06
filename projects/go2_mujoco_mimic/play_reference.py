@@ -56,6 +56,7 @@ def main():
     p.add_argument('--start', type=int, default=None, help='起始帧（包含）；默认使用作者配置')
     p.add_argument('--end', type=int, default=None, help='结束帧（不包含）；默认使用作者配置')
     p.add_argument('--check', action='store_true', help='无窗口检查参考足部正运动学误差')
+    p.add_argument('--checkerboard', action='store_true', help='显示格子地面')
     args = p.parse_args()
     frames = np.load(args.motion, allow_pickle=False)
     if frames.ndim != 2 or frames.shape[1] != 61 or len(frames) == 0 or not np.isfinite(frames).all():
@@ -75,7 +76,7 @@ def main():
     fps = args.fps if args.fps is not None else info.get('fps', 60)
     if not np.isfinite([fps, args.speed]).all() or fps <= 0 or args.speed <= 0:
         raise ValueError('fps 和 speed 必须为正有限值')
-    env = Go2Environment()
+    env = Go2Environment(checkerboard=args.checkerboard)
     print(f"动作：{args.motion}；帧 [{start}, {end})，{len(frames)} 帧，{fps:g} Hz，{len(frames)/fps:.2f} 秒；运动学回放（不施力、不运行策略）", flush=True)
     if args.check:
         ids = [mujoco.mj_name2id(env.model, mujoco.mjtObj.mjOBJ_BODY, f'{leg}_foot') for leg in ('FL','RL','FR','RR')]

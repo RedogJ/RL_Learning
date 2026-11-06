@@ -1,0 +1,38 @@
+{
+  "checkpoint": "/workspace/go2_mujoco_mimic/logs/backflip_v23_landing_refine_2026-11-05_12-26-04_609466/model_5250.pt",
+  "cycle": 5250,
+  "seed": 123,
+  "num_envs": 64,
+  "observation_noise": true,
+  "original_end_s": 1.7666666666666666,
+  "extended_end_s": 3.3666666666666667,
+  "hold_seconds": 2.0166666666666693,
+  "reached_original_end": 64,
+  "completed": 64,
+  "failed_before_original_end": 0,
+  "failed_during_extension": 0,
+  "original_hold": {
+    "samples": 832,
+    "joint_rms_deg": 2.739426612854004,
+    "root_rotation_rms_deg": 5.478687286376953,
+    "root_position_mean_m": 0.06657277047634125,
+    "height_abs_mean_m": 0.012895227409899235,
+    "root_speed_mean_m_s": 0.05044342949986458
+  },
+  "extended_hold": {
+    "samples": 3072,
+    "joint_rms_deg": 3.081047534942627,
+    "root_rotation_rms_deg": 6.288936138153076,
+    "root_position_mean_m": 0.06266925483942032,
+    "height_abs_mean_m": 0.009362155571579933,
+    "root_speed_mean_m_s": 0.008279945701360703
+  },
+  "final_half_second": {
+    "samples": 1024,
+    "joint_rms_deg": 3.140533447265625,
+    "root_rotation_rms_deg": 6.361660480499268,
+    "root_position_mean_m": 0.06230509653687477,
+    "height_abs_mean_m": 0.009524138644337654,
+    "root_speed_mean_m_s": 0.007006936706602573
+  }
+}

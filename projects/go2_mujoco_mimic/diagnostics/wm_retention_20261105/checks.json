@@ -1,0 +1,18 @@
+{
+  "recent_probe_reproduces_previous_baseline_exactly": true,
+  "identical_real_action_sequences_and_sample_masks_across_wms": true,
+  "regression_ratio_3330_over_3320": {
+    "old_policy_3270": {
+      "root_position_rms_cm": 1.810232131436482,
+      "root_rotation_rms_deg": 2.4030877359407303,
+      "joint_position_rmse_deg": 1.7823185948367994
+    },
+    "recent_policy_3330": {
+      "root_position_rms_cm": 1.6802771182630099,
+      "root_rotation_rms_deg": 3.093290069598047,
+      "joint_position_rmse_deg": 2.420641421198639
+    }
+  },
+  "original_training_replay_not_saved": true,
+  "production_training_code_and_checkpoints_unchanged": true
+}

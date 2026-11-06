@@ -8,8 +8,17 @@ if [[ "${1:-}" == train-state ]]; then
 elif [[ "${1:-}" == evaluate-state ]]; then
   module=go2_mujoco_mimic.tasks.mimic.evaluate_state
   shift
+elif [[ "${1:-}" == evaluate-hold ]]; then
+  module=go2_mujoco_mimic.tasks.mimic.evaluate_hold
+  shift
+elif [[ "${1:-}" == play-solo-flip ]]; then
+  module=go2_mujoco_mimic.play_solo_backflip
+  shift
 elif [[ "${1:-}" == play ]]; then
   module=go2_mujoco_mimic.play_policy
+  shift
+elif [[ "${1:-}" == reference ]]; then
+  module=go2_mujoco_mimic.play_reference
   shift
 elif [[ "${1:-}" == check-graph ]]; then
   module=go2_mujoco_mimic.check_graph
@@ -23,7 +32,7 @@ elif [[ "${1:-}" == train ]]; then
 fi
 mkdir -p "$root/projects/go2_mujoco_mimic/.cache/warp" "$root/projects/go2_mujoco_mimic/logs"
 extra=()
-if [[ "$module" == go2_mujoco_mimic.play_policy && -n "${DISPLAY:-}" ]]; then
+if [[ ( "$module" == go2_mujoco_mimic.play_policy || "$module" == go2_mujoco_mimic.play_solo_backflip || "$module" == go2_mujoco_mimic.play_reference ) && -n "${DISPLAY:-}" ]]; then
   extra+=( -e "DISPLAY=$DISPLAY" -e XAUTHORITY=/tmp/xauthority -e NVIDIA_DRIVER_CAPABILITIES=all -v /tmp/.X11-unix:/tmp/.X11-unix:ro )
   if [[ -n "${XAUTHORITY:-}" && -f "$XAUTHORITY" ]]; then
     extra+=( -v "$XAUTHORITY:/tmp/xauthority:ro" )

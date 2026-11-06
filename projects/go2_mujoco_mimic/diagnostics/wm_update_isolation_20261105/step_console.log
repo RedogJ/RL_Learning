@@ -1,0 +1,160 @@
+Traceback (most recent call last):
+  File "/workspace/go2_mujoco_mimic/diagnostics/wm_update_isolation_20261105/step_size_check.py", line 73, in <module>
+    om.zero_grad(set_to_none=True);od.zero_grad(set_to_none=True);(lm+ld).backward()
+Warp 1.17.0 initialized:
+   CUDA Toolkit 12.9, Driver 13.2
+   Devices:
+     "cpu"      : "x86_64"
+     "cuda:0"   : "NVIDIA GeForce RTX 4060 Laptop GPU" (8 GiB, sm_89, mempool enabled)
+   Kernel cache:
+     /root/.cache/warp/1.17.0
+Module reset_data__locals__reset_xfrc_applied_352ea78a 352ea78 load on device 'cuda:0' took 19.98 ms  (cached)
+Module reset_data__locals__reset_M_eec0f906 eec0f90 load on device 'cuda:0' took 11.34 ms  (cached)
+Module reset_data__locals__reset_mocap_fc232d6e fc232d6 load on device 'cuda:0' took 13.58 ms  (cached)
+Module reset_data__locals__reset_contact_43eedcb5 43eedcb load on device 'cuda:0' took 16.68 ms  (cached)
+Module reset_data__locals__reset_sleep_992f6739 992f673 load on device 'cuda:0' took 12.65 ms  (cached)
+Module reset_data__locals__reset_nworld_235276b7 235276b load on device 'cuda:0' took 35.28 ms  (cached)
+Module mujoco_warp._src.smooth d04e5a7 load on device 'cuda:0' took 1123.52 ms  (cached)
+Module _nxn_broadphase__locals__kernel_04e59282 04e5928 load on device 'cuda:0' took 27.22 ms  (cached)
+Module ccd_kernel_builder__locals__ccd_kernel_32ef18fb 32ef18f load on device 'cuda:0' took 1003.38 ms  (cached)
+Module ccd_kernel_builder__locals__ccd_kernel_32ef18fb 3405702 load on device 'cuda:0' took 910.12 ms  (cached)
+Module ccd_kernel_builder__locals__ccd_kernel_d64d6db3 d64d6db load on device 'cuda:0' took 909.23 ms  (cached)
+Module ccd_kernel_builder__locals__ccd_kernel_d64d6db3 4f2bfae load on device 'cuda:0' took 882.72 ms  (cached)
+Module _primitive_narrowphase__locals__primitive_narrowphase_77b1fe81 77b1fe8 load on device 'cuda:0' took 1054.00 ms  (cached)
+Module mujoco_warp._src.constraint 8d4d513 load on device 'cuda:0' took 18.02 ms  (cached)
+Module _friction_dof__locals__kernel_22ded5f6 22ded5f load on device 'cuda:0' took 41.47 ms  (cached)
+Module _limit_slide_hinge__locals__kernel_24a318de 24a318d load on device 'cuda:0' took 42.45 ms  (cached)
+Module _efc_contact_init__locals__kernel_54f1cc8c 54f1cc8 load on device 'cuda:0' took 23.48 ms  (cached)
+Module _efc_contact_jac_dense__locals__kernel_6b457580 747ee66 load on device 'cuda:0' took 28.76 ms  (cached)
+Module _efc_contact_update__locals__kernel_212e1c0a 212e1c0 load on device 'cuda:0' took 45.22 ms  (cached)
+Module mujoco_warp._src.sensor 830d16a load on device 'cuda:0' took 603.92 ms  (cached)
+Module mujoco_warp._src.forward 4b55789 load on device 'cuda:0' took 386.56 ms  (cached)
+Module mujoco_warp._src.passive 80f3681 load on device 'cuda:0' took 439.67 ms  (cached)
+Module mujoco_warp._src.forward a1745d1 load on device 'cuda:0' took 376.68 ms  (cached)
+Module _qfrc_smooth__locals__kernel_8b823980 8b82398 load on device 'cuda:0' took 23.13 ms  (cached)
+Module mujoco_warp._src.support a59a7bc load on device 'cuda:0' took 32.33 ms  (cached)
+Module _tile_cholesky_factorize_solve_block__locals__kernel_3c544b6e 564f1e2 load on device 'cuda:0' took 341.69 ms  (cached)
+Module _solve_init_dof__locals__kernel_021c7a0e 021c7a0 load on device 'cuda:0' took 18.36 ms  (cached)
+Module mujoco_warp._src.solver 357f443 load on device 'cuda:0' took 237.56 ms  (cached)
+Module _solve_init_jaref_kernel__locals__kernel_f7cae18b f7cae18 load on device 'cuda:0' took 30.27 ms  (cached)
+Module mul_m_kernel__locals___mul_m_f3de1cc7 f3de1cc load on device 'cuda:0' took 30.37 ms  (cached)
+Module _update_constraint_efc__locals__kernel_0539aa50 0539aa5 load on device 'cuda:0' took 24.93 ms  (cached)
+Module _update_constraint_init_qfrc_constraint_dense__locals__kernel_bd7ca2ec bd7ca2e load on device 'cuda:0' took 18.44 ms  (cached)
+Module _update_gradient_zero_grad_dot__locals__kernel_b20934d7 b20934d load on device 'cuda:0' took 10.34 ms  (cached)
+Module _update_gradient_grad__locals__kernel_c876081d c876081 load on device 'cuda:0' took 11.92 ms  (cached)
+Module _update_gradient_JTDAJ_dense_tiled__locals__kernel_fd1fee95 f5f296f load on device 'cuda:0' took 52.05 ms  (cached)
+Module _update_gradient_cholesky__locals__kernel_5d37b712 3092a2d load on device 'cuda:0' took 303.44 ms  (cached)
+Module _linesearch_iterative_kernel__locals__kernel_2d893bc5 60ea4d1 load on device 'cuda:0' took 319.85 ms  (cached)
+Module _solve_done__locals__kernel_0c4a4b4d 0c4a4b4 load on device 'cuda:0' took 34.48 ms  (cached)
+                                                                  ^^^^^^^^^^^^^^^^^^
+  File "/opt/isaaclab-venv/lib/python3.12/site-packages/torch/_tensor.py", line 631, in backward
+    torch.autograd.backward(
+  File "/opt/isaaclab-venv/lib/python3.12/site-packages/torch/autograd/__init__.py", line 379, in backward
+    _engine_run_backward(
+  File "/opt/isaaclab-venv/lib/python3.12/site-packages/torch/autograd/graph.py", line 882, in _engine_run_backward
+    return Variable._execution_engine.run_backward(  # Calls into the C++ engine to run the backward pass
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+RuntimeError: one of the variables needed for gradient computation has been modified by an inplace operation: [torch.cuda.FloatTensor [512]] is at version 8; expected version 7 instead. Hint: enable anomaly detection to find the operation that failed to compute its gradient, with torch.autograd.set_detect_anomaly(True, check_nan=False).
+Warp 1.17.0 initialized:
+   CUDA Toolkit 12.9, Driver 13.2
+   Devices:
+     "cpu"      : "x86_64"
+     "cuda:0"   : "NVIDIA GeForce RTX 4060 Laptop GPU" (8 GiB, sm_89, mempool enabled)
+   Kernel cache:
+     /root/.cache/warp/1.17.0
+Module reset_data__locals__reset_xfrc_applied_352ea78a 352ea78 load on device 'cuda:0' took 17.47 ms  (cached)
+Module reset_data__locals__reset_M_eec0f906 eec0f90 load on device 'cuda:0' took 10.98 ms  (cached)
+Module reset_data__locals__reset_mocap_fc232d6e fc232d6 load on device 'cuda:0' took 13.78 ms  (cached)
+Module reset_data__locals__reset_contact_43eedcb5 43eedcb load on device 'cuda:0' took 16.03 ms  (cached)
+Module reset_data__locals__reset_sleep_992f6739 992f673 load on device 'cuda:0' took 12.40 ms  (cached)
+Module reset_data__locals__reset_nworld_235276b7 235276b load on device 'cuda:0' took 35.01 ms  (cached)
+Module mujoco_warp._src.smooth d04e5a7 load on device 'cuda:0' took 1116.89 ms  (cached)
+Module _nxn_broadphase__locals__kernel_04e59282 04e5928 load on device 'cuda:0' took 20.26 ms  (cached)
+Module ccd_kernel_builder__locals__ccd_kernel_32ef18fb 32ef18f load on device 'cuda:0' took 945.90 ms  (cached)
+Module ccd_kernel_builder__locals__ccd_kernel_32ef18fb 3405702 load on device 'cuda:0' took 865.83 ms  (cached)
+Module ccd_kernel_builder__locals__ccd_kernel_d64d6db3 d64d6db load on device 'cuda:0' took 845.01 ms  (cached)
+Module ccd_kernel_builder__locals__ccd_kernel_d64d6db3 4f2bfae load on device 'cuda:0' took 859.83 ms  (cached)
+Module _primitive_narrowphase__locals__primitive_narrowphase_77b1fe81 77b1fe8 load on device 'cuda:0' took 929.37 ms  (cached)
+Module mujoco_warp._src.constraint 8d4d513 load on device 'cuda:0' took 9.53 ms  (cached)
+Module _friction_dof__locals__kernel_22ded5f6 22ded5f load on device 'cuda:0' took 39.46 ms  (cached)
+Module _limit_slide_hinge__locals__kernel_24a318de 24a318d load on device 'cuda:0' took 41.58 ms  (cached)
+Module _efc_contact_init__locals__kernel_54f1cc8c 54f1cc8 load on device 'cuda:0' took 22.68 ms  (cached)
+Module _efc_contact_jac_dense__locals__kernel_6b457580 747ee66 load on device 'cuda:0' took 28.68 ms  (cached)
+Module _efc_contact_update__locals__kernel_212e1c0a 212e1c0 load on device 'cuda:0' took 44.02 ms  (cached)
+Module mujoco_warp._src.sensor 830d16a load on device 'cuda:0' took 589.37 ms  (cached)
+Module mujoco_warp._src.forward 4b55789 load on device 'cuda:0' took 358.79 ms  (cached)
+Module mujoco_warp._src.passive 80f3681 load on device 'cuda:0' took 421.27 ms  (cached)
+Module mujoco_warp._src.forward a1745d1 load on device 'cuda:0' took 356.85 ms  (cached)
+Module _qfrc_smooth__locals__kernel_8b823980 8b82398 load on device 'cuda:0' took 15.40 ms  (cached)
+Module mujoco_warp._src.support a59a7bc load on device 'cuda:0' took 31.95 ms  (cached)
+Module _tile_cholesky_factorize_solve_block__locals__kernel_3c544b6e 564f1e2 load on device 'cuda:0' took 330.01 ms  (cached)
+Module _solve_init_dof__locals__kernel_021c7a0e 021c7a0 load on device 'cuda:0' took 10.54 ms  (cached)
+Module mujoco_warp._src.solver 357f443 load on device 'cuda:0' took 228.55 ms  (cached)
+Module _solve_init_jaref_kernel__locals__kernel_f7cae18b f7cae18 load on device 'cuda:0' took 22.04 ms  (cached)
+Module mul_m_kernel__locals___mul_m_f3de1cc7 f3de1cc load on device 'cuda:0' took 28.69 ms  (cached)
+Module _update_constraint_efc__locals__kernel_0539aa50 0539aa5 load on device 'cuda:0' took 23.84 ms  (cached)
+Module _update_constraint_init_qfrc_constraint_dense__locals__kernel_bd7ca2ec bd7ca2e load on device 'cuda:0' took 17.86 ms  (cached)
+Module _update_gradient_zero_grad_dot__locals__kernel_b20934d7 b20934d load on device 'cuda:0' took 9.73 ms  (cached)
+Module _update_gradient_grad__locals__kernel_c876081d c876081 load on device 'cuda:0' took 11.07 ms  (cached)
+Module _update_gradient_JTDAJ_dense_tiled__locals__kernel_fd1fee95 f5f296f load on device 'cuda:0' took 52.19 ms  (cached)
+Module _update_gradient_cholesky__locals__kernel_5d37b712 3092a2d load on device 'cuda:0' took 308.19 ms  (cached)
+Module _linesearch_iterative_kernel__locals__kernel_2d893bc5 60ea4d1 load on device 'cuda:0' took 292.79 ms  (cached)
+Module _solve_done__locals__kernel_0c4a4b4d 0c4a4b4 load on device 'cuda:0' took 26.32 ms  (cached)
+Traceback (most recent call last):
+  File "/workspace/go2_mujoco_mimic/diagnostics/wm_update_isolation_20261105/step_size_check.py", line 79, in <module>
+    assert abs(measured_before[0]-expected['state_loss_before'])<1e-5
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError
+Warp 1.17.0 initialized:
+   CUDA Toolkit 12.9, Driver 13.2
+   Devices:
+     "cpu"      : "x86_64"
+     "cuda:0"   : "NVIDIA GeForce RTX 4060 Laptop GPU" (8 GiB, sm_89, mempool enabled)
+   Kernel cache:
+     /root/.cache/warp/1.17.0
+Module reset_data__locals__reset_xfrc_applied_352ea78a 352ea78 load on device 'cuda:0' took 16.74 ms  (cached)
+Module reset_data__locals__reset_M_eec0f906 eec0f90 load on device 'cuda:0' took 10.82 ms  (cached)
+Module reset_data__locals__reset_mocap_fc232d6e fc232d6 load on device 'cuda:0' took 13.55 ms  (cached)
+Module reset_data__locals__reset_contact_43eedcb5 43eedcb load on device 'cuda:0' took 15.77 ms  (cached)
+Module reset_data__locals__reset_sleep_992f6739 992f673 load on device 'cuda:0' took 11.99 ms  (cached)
+Module reset_data__locals__reset_nworld_235276b7 235276b load on device 'cuda:0' took 34.48 ms  (cached)
+Module mujoco_warp._src.smooth d04e5a7 load on device 'cuda:0' took 1142.07 ms  (cached)
+Module _nxn_broadphase__locals__kernel_04e59282 04e5928 load on device 'cuda:0' took 20.03 ms  (cached)
+Module ccd_kernel_builder__locals__ccd_kernel_32ef18fb 32ef18f load on device 'cuda:0' took 876.77 ms  (cached)
+Module ccd_kernel_builder__locals__ccd_kernel_32ef18fb 3405702 load on device 'cuda:0' took 882.87 ms  (cached)
+Module ccd_kernel_builder__locals__ccd_kernel_d64d6db3 d64d6db load on device 'cuda:0' took 850.99 ms  (cached)
+Module ccd_kernel_builder__locals__ccd_kernel_d64d6db3 4f2bfae load on device 'cuda:0' took 869.53 ms  (cached)
+Module _primitive_narrowphase__locals__primitive_narrowphase_77b1fe81 77b1fe8 load on device 'cuda:0' took 908.08 ms  (cached)
+Module mujoco_warp._src.constraint 8d4d513 load on device 'cuda:0' took 9.45 ms  (cached)
+Module _friction_dof__locals__kernel_22ded5f6 22ded5f load on device 'cuda:0' took 38.99 ms  (cached)
+Module _limit_slide_hinge__locals__kernel_24a318de 24a318d load on device 'cuda:0' took 43.43 ms  (cached)
+Module _efc_contact_init__locals__kernel_54f1cc8c 54f1cc8 load on device 'cuda:0' took 22.31 ms  (cached)
+Module _efc_contact_jac_dense__locals__kernel_6b457580 747ee66 load on device 'cuda:0' took 28.06 ms  (cached)
+Module _efc_contact_update__locals__kernel_212e1c0a 212e1c0 load on device 'cuda:0' took 43.89 ms  (cached)
+Module mujoco_warp._src.sensor 830d16a load on device 'cuda:0' took 581.43 ms  (cached)
+Module mujoco_warp._src.forward 4b55789 load on device 'cuda:0' took 354.65 ms  (cached)
+Module mujoco_warp._src.passive 80f3681 load on device 'cuda:0' took 432.93 ms  (cached)
+Module mujoco_warp._src.forward a1745d1 load on device 'cuda:0' took 355.40 ms  (cached)
+Module _qfrc_smooth__locals__kernel_8b823980 8b82398 load on device 'cuda:0' took 15.51 ms  (cached)
+Module mujoco_warp._src.support a59a7bc load on device 'cuda:0' took 30.96 ms  (cached)
+Module _tile_cholesky_factorize_solve_block__locals__kernel_3c544b6e 564f1e2 load on device 'cuda:0' took 346.25 ms  (cached)
+Module _solve_init_dof__locals__kernel_021c7a0e 021c7a0 load on device 'cuda:0' took 10.44 ms  (cached)
+Module mujoco_warp._src.solver 357f443 load on device 'cuda:0' took 227.87 ms  (cached)
+Module _solve_init_jaref_kernel__locals__kernel_f7cae18b f7cae18 load on device 'cuda:0' took 22.46 ms  (cached)
+Module mul_m_kernel__locals___mul_m_f3de1cc7 f3de1cc load on device 'cuda:0' took 28.37 ms  (cached)
+Module _update_constraint_efc__locals__kernel_0539aa50 0539aa5 load on device 'cuda:0' took 23.91 ms  (cached)
+Module _update_constraint_init_qfrc_constraint_dense__locals__kernel_bd7ca2ec bd7ca2e load on device 'cuda:0' took 17.59 ms  (cached)
+Module _update_gradient_zero_grad_dot__locals__kernel_b20934d7 b20934d load on device 'cuda:0' took 9.92 ms  (cached)
+Module _update_gradient_grad__locals__kernel_c876081d c876081 load on device 'cuda:0' took 11.27 ms  (cached)
+Module _update_gradient_JTDAJ_dense_tiled__locals__kernel_fd1fee95 f5f296f load on device 'cuda:0' took 50.23 ms  (cached)
+Module _update_gradient_cholesky__locals__kernel_5d37b712 3092a2d load on device 'cuda:0' took 298.15 ms  (cached)
+Module _linesearch_iterative_kernel__locals__kernel_2d893bc5 60ea4d1 load on device 'cuda:0' took 301.15 ms  (cached)
+Module _solve_done__locals__kernel_0c4a4b4d 0c4a4b4 load on device 'cuda:0' took 26.54 ms  (cached)
+REPLAY CHECK [0.020777380093932152, 0.008287958800792694] [0.021749218925833702, 0.0055446014739573] original 0.020750494673848152 0.021761251613497734
+STEP FRACTION {"fraction": 0.0, "bf16_state_loss": 0.020777380093932152, "bf16_bce": 0.008287958800792694, "float32_state_loss": 0.02083728089928627, "float32_bce": 0.008284194394946098, "physical16": {"old_policy_3270": {"root_position_rms_cm": 6.051287800073624, "root_rotation_rms_deg": 15.37734317779541, "joint_position_rmse_deg": 8.193876565167171}, "recent_policy_3330": {"root_position_rms_cm": 8.798401802778244, "root_rotation_rms_deg": 20.04756736755371, "joint_position_rmse_deg": 8.643261177645343}}}
+STEP FRACTION {"fraction": 0.1, "bf16_state_loss": 0.020489078015089035, "bf16_bce": 0.007851332426071167, "float32_state_loss": 0.020557951182127, "float32_bce": 0.00785207748413086, "physical16": {"old_policy_3270": {"root_position_rms_cm": 5.816485732793808, "root_rotation_rms_deg": 14.752510070800781, "joint_position_rmse_deg": 8.018643793142262}, "recent_policy_3330": {"root_position_rms_cm": 8.646056056022644, "root_rotation_rms_deg": 19.58562660217285, "joint_position_rmse_deg": 8.616741260645476}}}
+STEP FRACTION {"fraction": 0.25, "bf16_state_loss": 0.02033095248043537, "bf16_bce": 0.007300033234059811, "float32_state_loss": 0.020304517820477486, "float32_bce": 0.007279217708855867, "physical16": {"old_policy_3270": {"root_position_rms_cm": 5.45356310904026, "root_rotation_rms_deg": 13.892393112182617, "joint_position_rmse_deg": 7.841212553978256}, "recent_policy_3330": {"root_position_rms_cm": 8.321809023618698, "root_rotation_rms_deg": 18.883525848388672, "joint_position_rmse_deg": 8.531852254545973}}}
+STEP FRACTION {"fraction": 0.5, "bf16_state_loss": 0.02026250772178173, "bf16_bce": 0.0064971852116286755, "float32_state_loss": 0.020304003730416298, "float32_bce": 0.006541707552969456, "physical16": {"old_policy_3270": {"root_position_rms_cm": 5.031528323888779, "root_rotation_rms_deg": 12.843666076660156, "joint_position_rmse_deg": 7.7577595951517475}, "recent_policy_3330": {"root_position_rms_cm": 7.848167419433594, "root_rotation_rms_deg": 18.169700622558594, "joint_position_rmse_deg": 8.49373553010907}}}
+STEP FRACTION {"fraction": 0.75, "bf16_state_loss": 0.02077069878578186, "bf16_bce": 0.005957252811640501, "float32_state_loss": 0.020789779722690582, "float32_bce": 0.005972615908831358, "physical16": {"old_policy_3270": {"root_position_rms_cm": 4.974802955985069, "root_rotation_rms_deg": 12.395920753479004, "joint_position_rmse_deg": 8.09082693983825}, "recent_policy_3330": {"root_position_rms_cm": 7.438679784536362, "root_rotation_rms_deg": 17.784273147583008, "joint_position_rmse_deg": 8.52489656064996}}}
+STEP FRACTION {"fraction": 1.0, "bf16_state_loss": 0.021749218925833702, "bf16_bce": 0.0055446014739573, "float32_state_loss": 0.02179879881441593, "float32_bce": 0.00551124382764101, "physical16": {"old_policy_3270": {"root_position_rms_cm": 5.283718928694725, "root_rotation_rms_deg": 12.526385307312012, "joint_position_rmse_deg": 8.701539766738478}, "recent_policy_3330": {"root_position_rms_cm": 6.928247958421707, "root_rotation_rms_deg": 17.554874420166016, "joint_position_rmse_deg": 8.526026103183952}}}
+DONE /workspace/go2_mujoco_mimic/diagnostics/wm_update_isolation_20261105/step_size_check.json

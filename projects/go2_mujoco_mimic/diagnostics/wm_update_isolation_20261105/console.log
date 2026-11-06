@@ -1,0 +1,132 @@
+Warp 1.17.0 initialized:
+   CUDA Toolkit 12.9, Driver 13.2
+   Devices:
+     "cpu"      : "x86_64"
+     "cuda:0"   : "NVIDIA GeForce RTX 4060 Laptop GPU" (8 GiB, sm_89, mempool enabled)
+   Kernel cache:
+     /root/.cache/warp/1.17.0
+Module reset_data__locals__reset_xfrc_applied_352ea78a 352ea78 load on device 'cuda:0' took 24.81 ms  (cached)
+Module reset_data__locals__reset_M_eec0f906 eec0f90 load on device 'cuda:0' took 10.87 ms  (cached)
+Module reset_data__locals__reset_mocap_fc232d6e fc232d6 load on device 'cuda:0' took 13.78 ms  (cached)
+Module reset_data__locals__reset_contact_43eedcb5 43eedcb load on device 'cuda:0' took 16.42 ms  (cached)
+Module reset_data__locals__reset_sleep_992f6739 992f673 load on device 'cuda:0' took 12.50 ms  (cached)
+Module reset_data__locals__reset_nworld_235276b7 235276b load on device 'cuda:0' took 35.40 ms  (cached)
+Module mujoco_warp._src.smooth d04e5a7 load on device 'cuda:0' took 1125.54 ms  (cached)
+Module _nxn_broadphase__locals__kernel_04e59282 04e5928 load on device 'cuda:0' took 27.83 ms  (cached)
+Module ccd_kernel_builder__locals__ccd_kernel_32ef18fb 32ef18f load on device 'cuda:0' took 916.71 ms  (cached)
+Module ccd_kernel_builder__locals__ccd_kernel_32ef18fb 3405702 load on device 'cuda:0' took 937.63 ms  (cached)
+Module ccd_kernel_builder__locals__ccd_kernel_d64d6db3 d64d6db load on device 'cuda:0' took 976.90 ms  (cached)
+Module ccd_kernel_builder__locals__ccd_kernel_d64d6db3 4f2bfae load on device 'cuda:0' took 930.71 ms  (cached)
+Module _primitive_narrowphase__locals__primitive_narrowphase_77b1fe81 77b1fe8 load on device 'cuda:0' took 956.57 ms  (cached)
+Module mujoco_warp._src.constraint 8d4d513 load on device 'cuda:0' took 17.38 ms  (cached)
+Module _friction_dof__locals__kernel_22ded5f6 22ded5f load on device 'cuda:0' took 39.90 ms  (cached)
+Module _limit_slide_hinge__locals__kernel_24a318de 24a318d load on device 'cuda:0' took 41.82 ms  (cached)
+Module _efc_contact_init__locals__kernel_54f1cc8c 54f1cc8 load on device 'cuda:0' took 23.16 ms  (cached)
+Module _efc_contact_jac_dense__locals__kernel_6b457580 747ee66 load on device 'cuda:0' took 28.81 ms  (cached)
+Module _efc_contact_update__locals__kernel_212e1c0a 212e1c0 load on device 'cuda:0' took 44.11 ms  (cached)
+Module mujoco_warp._src.sensor 830d16a load on device 'cuda:0' took 613.07 ms  (cached)
+Module mujoco_warp._src.forward 4b55789 load on device 'cuda:0' took 361.89 ms  (cached)
+Module mujoco_warp._src.passive 80f3681 load on device 'cuda:0' took 426.23 ms  (cached)
+Module mujoco_warp._src.forward a1745d1 load on device 'cuda:0' took 366.95 ms  (cached)
+Module _qfrc_smooth__locals__kernel_8b823980 8b82398 load on device 'cuda:0' took 22.88 ms  (cached)
+Module mujoco_warp._src.support a59a7bc load on device 'cuda:0' took 32.10 ms  (cached)
+Module _tile_cholesky_factorize_solve_block__locals__kernel_3c544b6e 564f1e2 load on device 'cuda:0' took 332.95 ms  (cached)
+Module _solve_init_dof__locals__kernel_021c7a0e 021c7a0 load on device 'cuda:0' took 18.39 ms  (cached)
+Module mujoco_warp._src.solver 357f443 load on device 'cuda:0' took 235.83 ms  (cached)
+Module _solve_init_jaref_kernel__locals__kernel_f7cae18b f7cae18 load on device 'cuda:0' took 23.03 ms  (cached)
+Module mul_m_kernel__locals___mul_m_f3de1cc7 f3de1cc load on device 'cuda:0' took 29.21 ms  (cached)
+Module _update_constraint_efc__locals__kernel_0539aa50 0539aa5 load on device 'cuda:0' took 25.28 ms  (cached)
+Module _update_constraint_init_qfrc_constraint_dense__locals__kernel_bd7ca2ec bd7ca2e load on device 'cuda:0' took 18.10 ms  (cached)
+Module _update_gradient_zero_grad_dot__locals__kernel_b20934d7 b20934d load on device 'cuda:0' took 9.89 ms  (cached)
+Module _update_gradient_grad__locals__kernel_c876081d c876081 load on device 'cuda:0' took 11.76 ms  (cached)
+Module _update_gradient_JTDAJ_dense_tiled__locals__kernel_fd1fee95 f5f296f load on device 'cuda:0' took 51.29 ms  (cached)
+Module _update_gradient_cholesky__locals__kernel_5d37b712 3092a2d load on device 'cuda:0' took 292.69 ms  (cached)
+Module _linesearch_iterative_kernel__locals__kernel_2d893bc5 60ea4d1 load on device 'cuda:0' took 305.68 ms  (cached)
+Module _solve_done__locals__kernel_0c4a4b4d 0c4a4b4 load on device 'cuda:0' took 34.01 ms  (cached)
+Module go2_mujoco_mimic.warp_env 73f3a65 load on device 'cuda:0' took 55.89 ms  (cached)
+Module mujoco_warp._src.derivative 8222a58 load on device 'cuda:0' took 214.84 ms  (cached)
+Module _next_time_builder__locals___next_time_f604e0b3 f604e0b load on device 'cuda:0' took 26.94 ms  (cached)
+固定Actor=3320；先采集640步×2048环境，前320步填满缓冲，之后每32步做一轮对照。
+采集 [32/640] 用时=16.8s
+采集 [64/640] 用时=20.9s
+采集 [96/640] 用时=24.8s
+采集 [128/640] 用时=28.7s
+采集 [160/640] 用时=32.6s
+采集 [192/640] 用时=36.6s
+采集 [224/640] 用时=40.6s
+采集 [256/640] 用时=44.5s
+采集 [288/640] 用时=48.4s
+采集 [320/640] 用时=52.3s
+采集 [352/640] 用时=56.3s
+采集 [384/640] 用时=60.3s
+采集 [416/640] 用时=64.2s
+采集 [448/640] 用时=68.2s
+采集 [480/640] 用时=72.2s
+采集 [512/640] 用时=76.1s
+采集 [544/640] 用时=80.0s
+采集 [576/640] 用时=83.9s
+采集 [608/640] 用时=87.9s
+采集 [640/640] 用时=91.8s
+固定数据流已保存；所有对照组只读取同一份数据。
+PROBE 0 0 initial {"joint_lr2e-4": {"old_policy_3270": 8.33, "recent_policy_3330": 11.2}, "detached_bce_lr2e-4": {"old_policy_3270": 8.33, "recent_policy_3330": 11.2}, "joint_lr1e-4": {"old_policy_3270": 8.33, "recent_policy_3330": 11.2}}
+PROBE 0 0 before_wm {"joint_lr2e-4": {"old_policy_3270": 8.33, "recent_policy_3330": 11.2}}
+PROBE 0 1 within_wm {"joint_lr2e-4": {"old_policy_3270": 8.57, "recent_policy_3330": 9.74}}
+PROBE 0 10 within_wm {"joint_lr2e-4": {"old_policy_3270": 7.62, "recent_policy_3330": 10.58}}
+PROBE 0 20 within_wm {"joint_lr2e-4": {"old_policy_3270": 12.63, "recent_policy_3330": 18.03}}
+PROBE 0 40 within_wm {"joint_lr2e-4": {"old_policy_3270": 14.05, "recent_policy_3330": 15.71}}
+PROBE 0 60 after_wm {"joint_lr2e-4": {"old_policy_3270": 19.04, "recent_policy_3330": 18.98}, "detached_bce_lr2e-4": {"old_policy_3270": 13.46, "recent_policy_3330": 20.79}, "joint_lr1e-4": {"old_policy_3270": 8.28, "recent_policy_3330": 9.49}}
+PROBE 1 0 before_wm {"joint_lr2e-4": {"old_policy_3270": 19.04, "recent_policy_3330": 18.98}}
+PROBE 1 1 within_wm {"joint_lr2e-4": {"old_policy_3270": 9.73, "recent_policy_3330": 9.71}}
+PROBE 1 10 within_wm {"joint_lr2e-4": {"old_policy_3270": 8.47, "recent_policy_3330": 10.56}}
+PROBE 1 20 within_wm {"joint_lr2e-4": {"old_policy_3270": 10.06, "recent_policy_3330": 13.75}}
+PROBE 1 40 within_wm {"joint_lr2e-4": {"old_policy_3270": 8.99, "recent_policy_3330": 12.86}}
+PROBE 1 60 after_wm {"joint_lr2e-4": {"old_policy_3270": 10.31, "recent_policy_3330": 18.94}, "detached_bce_lr2e-4": {"old_policy_3270": 9.15, "recent_policy_3330": 14.57}, "joint_lr1e-4": {"old_policy_3270": 9.11, "recent_policy_3330": 18.67}}
+PROBE 2 0 before_wm {"joint_lr2e-4": {"old_policy_3270": 10.31, "recent_policy_3330": 18.94}}
+PROBE 2 1 within_wm {"joint_lr2e-4": {"old_policy_3270": 10.65, "recent_policy_3330": 15.3}}
+PROBE 2 10 within_wm {"joint_lr2e-4": {"old_policy_3270": 8.78, "recent_policy_3330": 13.65}}
+PROBE 2 20 within_wm {"joint_lr2e-4": {"old_policy_3270": 9.21, "recent_policy_3330": 11.37}}
+PROBE 2 40 within_wm {"joint_lr2e-4": {"old_policy_3270": 10.66, "recent_policy_3330": 13.46}}
+PROBE 2 60 after_wm {"joint_lr2e-4": {"old_policy_3270": 9.26, "recent_policy_3330": 12.19}, "detached_bce_lr2e-4": {"old_policy_3270": 9.17, "recent_policy_3330": 11.88}, "joint_lr1e-4": {"old_policy_3270": 8.87, "recent_policy_3330": 10.47}}
+PROBE 3 0 before_wm {"joint_lr2e-4": {"old_policy_3270": 9.26, "recent_policy_3330": 12.19}}
+PROBE 3 1 within_wm {"joint_lr2e-4": {"old_policy_3270": 13.09, "recent_policy_3330": 14.18}}
+PROBE 3 10 within_wm {"joint_lr2e-4": {"old_policy_3270": 12.17, "recent_policy_3330": 18.29}}
+PROBE 3 20 within_wm {"joint_lr2e-4": {"old_policy_3270": 15.54, "recent_policy_3330": 12.55}}
+PROBE 3 40 within_wm {"joint_lr2e-4": {"old_policy_3270": 10.01, "recent_policy_3330": 13.3}}
+PROBE 3 60 after_wm {"joint_lr2e-4": {"old_policy_3270": 10.44, "recent_policy_3330": 17.99}, "detached_bce_lr2e-4": {"old_policy_3270": 9.16, "recent_policy_3330": 13.66}, "joint_lr1e-4": {"old_policy_3270": 10.54, "recent_policy_3330": 13.49}}
+PROBE 4 0 before_wm {"joint_lr2e-4": {"old_policy_3270": 10.44, "recent_policy_3330": 17.99}}
+PROBE 4 1 within_wm {"joint_lr2e-4": {"old_policy_3270": 9.31, "recent_policy_3330": 9.8}}
+PROBE 4 10 within_wm {"joint_lr2e-4": {"old_policy_3270": 8.86, "recent_policy_3330": 10.42}}
+PROBE 4 20 within_wm {"joint_lr2e-4": {"old_policy_3270": 11.26, "recent_policy_3330": 12.04}}
+PROBE 4 40 within_wm {"joint_lr2e-4": {"old_policy_3270": 8.68, "recent_policy_3330": 10.13}}
+PROBE 4 60 after_wm {"joint_lr2e-4": {"old_policy_3270": 14.7, "recent_policy_3330": 16.53}, "detached_bce_lr2e-4": {"old_policy_3270": 8.34, "recent_policy_3330": 10.51}, "joint_lr1e-4": {"old_policy_3270": 7.56, "recent_policy_3330": 9.24}}
+PROBE 5 0 before_wm {"joint_lr2e-4": {"old_policy_3270": 14.7, "recent_policy_3330": 16.53}}
+PROBE 5 1 within_wm {"joint_lr2e-4": {"old_policy_3270": 12.35, "recent_policy_3330": 14.4}}
+PROBE 5 10 within_wm {"joint_lr2e-4": {"old_policy_3270": 7.8, "recent_policy_3330": 8.97}}
+PROBE 5 20 within_wm {"joint_lr2e-4": {"old_policy_3270": 12.07, "recent_policy_3330": 14.27}}
+PROBE 5 40 within_wm {"joint_lr2e-4": {"old_policy_3270": 12.22, "recent_policy_3330": 13.15}}
+PROBE 5 60 after_wm {"joint_lr2e-4": {"old_policy_3270": 11.38, "recent_policy_3330": 11.95}, "detached_bce_lr2e-4": {"old_policy_3270": 11.6, "recent_policy_3330": 10.75}, "joint_lr1e-4": {"old_policy_3270": 10.67, "recent_policy_3330": 10.58}}
+PROBE 6 0 before_wm {"joint_lr2e-4": {"old_policy_3270": 11.38, "recent_policy_3330": 11.95}}
+PROBE 6 1 within_wm {"joint_lr2e-4": {"old_policy_3270": 9.56, "recent_policy_3330": 10.0}}
+PROBE 6 10 within_wm {"joint_lr2e-4": {"old_policy_3270": 9.76, "recent_policy_3330": 10.57}}
+PROBE 6 20 within_wm {"joint_lr2e-4": {"old_policy_3270": 11.37, "recent_policy_3330": 12.27}}
+PROBE 6 40 within_wm {"joint_lr2e-4": {"old_policy_3270": 8.49, "recent_policy_3330": 10.43}}
+PROBE 6 60 after_wm {"joint_lr2e-4": {"old_policy_3270": 9.19, "recent_policy_3330": 11.47}, "detached_bce_lr2e-4": {"old_policy_3270": 8.13, "recent_policy_3330": 9.23}, "joint_lr1e-4": {"old_policy_3270": 7.76, "recent_policy_3330": 8.85}}
+PROBE 7 0 before_wm {"joint_lr2e-4": {"old_policy_3270": 9.19, "recent_policy_3330": 11.47}}
+PROBE 7 1 within_wm {"joint_lr2e-4": {"old_policy_3270": 8.22, "recent_policy_3330": 10.25}}
+PROBE 7 10 within_wm {"joint_lr2e-4": {"old_policy_3270": 7.97, "recent_policy_3330": 12.2}}
+PROBE 7 20 within_wm {"joint_lr2e-4": {"old_policy_3270": 10.09, "recent_policy_3330": 15.55}}
+PROBE 7 40 within_wm {"joint_lr2e-4": {"old_policy_3270": 15.27, "recent_policy_3330": 13.04}}
+PROBE 7 60 after_wm {"joint_lr2e-4": {"old_policy_3270": 13.29, "recent_policy_3330": 13.72}, "detached_bce_lr2e-4": {"old_policy_3270": 11.46, "recent_policy_3330": 10.97}, "joint_lr1e-4": {"old_policy_3270": 7.83, "recent_policy_3330": 9.05}}
+PROBE 8 0 before_wm {"joint_lr2e-4": {"old_policy_3270": 13.29, "recent_policy_3330": 13.72}}
+PROBE 8 1 within_wm {"joint_lr2e-4": {"old_policy_3270": 15.21, "recent_policy_3330": 13.45}}
+PROBE 8 10 within_wm {"joint_lr2e-4": {"old_policy_3270": 13.79, "recent_policy_3330": 12.81}}
+PROBE 8 20 within_wm {"joint_lr2e-4": {"old_policy_3270": 10.08, "recent_policy_3330": 14.27}}
+PROBE 8 40 within_wm {"joint_lr2e-4": {"old_policy_3270": 16.85, "recent_policy_3330": 20.11}}
+PROBE 8 60 after_wm {"joint_lr2e-4": {"old_policy_3270": 10.13, "recent_policy_3330": 11.88}, "detached_bce_lr2e-4": {"old_policy_3270": 8.37, "recent_policy_3330": 10.37}, "joint_lr1e-4": {"old_policy_3270": 9.45, "recent_policy_3330": 10.42}}
+PROBE 9 0 before_wm {"joint_lr2e-4": {"old_policy_3270": 10.13, "recent_policy_3330": 11.88}}
+PROBE 9 1 within_wm {"joint_lr2e-4": {"old_policy_3270": 11.58, "recent_policy_3330": 14.29}}
+PROBE 9 10 within_wm {"joint_lr2e-4": {"old_policy_3270": 11.36, "recent_policy_3330": 12.52}}
+PROBE 9 20 within_wm {"joint_lr2e-4": {"old_policy_3270": 11.14, "recent_policy_3330": 11.29}}
+PROBE 9 40 within_wm {"joint_lr2e-4": {"old_policy_3270": 10.04, "recent_policy_3330": 10.26}}
+PROBE 9 60 after_wm {"joint_lr2e-4": {"old_policy_3270": 9.96, "recent_policy_3330": 10.8}, "detached_bce_lr2e-4": {"old_policy_3270": 8.8, "recent_policy_3330": 8.85}, "joint_lr1e-4": {"old_policy_3270": 7.68, "recent_policy_3330": 9.85}}
+DONE /workspace/go2_mujoco_mimic/diagnostics/wm_update_isolation_20261105/summary.json

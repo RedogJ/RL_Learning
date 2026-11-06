@@ -1,0 +1,262 @@
+{
+  "conditions": "64 physical trajectories from reference frame 0; observation noise ON, action noise OFF; same recorded real actions, each window starts from exact real state; exclude transitions after first termination/truncation. These are prediction errors against physics, not tracking errors against reference.",
+  "metrics": "Position is RMS 3D distance. Rotation is RMS quaternion geodesic angle. Joint errors and velocity errors are RMS per scalar component. p90 is 90th percentile.",
+  "checkpoints": {
+    "3280": {
+      "1": {
+        "samples": 2393,
+        "seconds": 0.03333333333333333,
+        "root_position_distance_rms_cm": 0.9604234248399734,
+        "root_position_distance_p90_cm": 1.5854813158512115,
+        "root_position_xyz_rmse_cm": [
+          0.6707059741020203,
+          0.17247910797595978,
+          0.6654455065727234
+        ],
+        "root_rotation_rms_deg": 2.850222110748291,
+        "root_rotation_p90_deg": 4.603002548217773,
+        "joint_angle_rmse_deg": 2.4468873090701533,
+        "joint_angle_absolute_p90_deg": 3.3348044306524063,
+        "linear_velocity_rmse_m_s": 0.07861211895942688,
+        "body_angular_velocity_rmse_rad_s": 0.5425260663032532,
+        "joint_velocity_rmse_rad_s": 1.11557936668396
+      },
+      "8": {
+        "samples": 2256,
+        "seconds": 0.26666666666666666,
+        "root_position_distance_rms_cm": 3.112226538360119,
+        "root_position_distance_p90_cm": 4.5647479593753815,
+        "root_position_xyz_rmse_cm": [
+          2.0008654594421387,
+          1.443326473236084,
+          1.8971819877624512
+        ],
+        "root_rotation_rms_deg": 9.290247917175293,
+        "root_rotation_p90_deg": 13.992474555969238,
+        "joint_angle_rmse_deg": 3.787736045743931,
+        "joint_angle_absolute_p90_deg": 5.860191317296928,
+        "linear_velocity_rmse_m_s": 0.12924478948116302,
+        "body_angular_velocity_rmse_rad_s": 0.802916944026947,
+        "joint_velocity_rmse_rad_s": 1.2648382186889648
+      },
+      "16": {
+        "samples": 2080,
+        "seconds": 0.5333333333333333,
+        "root_position_distance_rms_cm": 8.212452381849289,
+        "root_position_distance_p90_cm": 12.0868019759655,
+        "root_position_xyz_rmse_cm": [
+          4.968427658081055,
+          4.476835250854492,
+          4.766241073608398
+        ],
+        "root_rotation_rms_deg": 24.343090057373047,
+        "root_rotation_p90_deg": 33.16328048706055,
+        "joint_angle_rmse_deg": 7.434861548365749,
+        "joint_angle_absolute_p90_deg": 11.300066453449611,
+        "linear_velocity_rmse_m_s": 0.23690558969974518,
+        "body_angular_velocity_rmse_rad_s": 1.6395457983016968,
+        "joint_velocity_rmse_rad_s": 2.9987740516662598,
+        "by_endpoint_reference_phase": [
+          {
+            "reference_seconds": [
+              0.4,
+              0.6
+            ],
+            "samples": 128,
+            "root_rotation_rms_deg": 10.091445922851562,
+            "root_position_rms_cm": 2.238824777305126,
+            "joint_angle_rmse_deg": 2.5186858307385043
+          },
+          {
+            "reference_seconds": [
+              0.6,
+              0.8
+            ],
+            "samples": 384,
+            "root_rotation_rms_deg": 14.693757057189941,
+            "root_position_rms_cm": 4.762452840805054,
+            "joint_angle_rmse_deg": 1.6901871927888368
+          },
+          {
+            "reference_seconds": [
+              0.8,
+              1.0
+            ],
+            "samples": 384,
+            "root_rotation_rms_deg": 22.272916793823242,
+            "root_position_rms_cm": 7.1746885776519775,
+            "joint_angle_rmse_deg": 4.5857087540238135
+          },
+          {
+            "reference_seconds": [
+              1.0,
+              1.2
+            ],
+            "samples": 382,
+            "root_rotation_rms_deg": 21.202735900878906,
+            "root_position_rms_cm": 9.614080935716629,
+            "joint_angle_rmse_deg": 12.610316156085142
+          },
+          {
+            "reference_seconds": [
+              1.2,
+              1.4
+            ],
+            "samples": 292,
+            "root_rotation_rms_deg": 46.19014358520508,
+            "root_position_rms_cm": 12.6263827085495,
+            "joint_angle_rmse_deg": 9.564947394814373
+          },
+          {
+            "reference_seconds": [
+              1.4,
+              1.6
+            ],
+            "samples": 258,
+            "root_rotation_rms_deg": 18.750511169433594,
+            "root_position_rms_cm": 7.416728138923645,
+            "joint_angle_rmse_deg": 5.975500278412375
+          },
+          {
+            "reference_seconds": [
+              1.6,
+              1.7666666666666666
+            ],
+            "samples": 252,
+            "root_rotation_rms_deg": 15.521482467651367,
+            "root_position_rms_cm": 7.744337618350983,
+            "joint_angle_rmse_deg": 5.745930790219076
+          }
+        ]
+      }
+    },
+    "3330": {
+      "1": {
+        "samples": 2272,
+        "seconds": 0.03333333333333333,
+        "root_position_distance_rms_cm": 1.1503777466714382,
+        "root_position_distance_p90_cm": 1.8570704385638237,
+        "root_position_xyz_rmse_cm": [
+          0.7528849840164185,
+          0.22738684713840485,
+          0.8395406603813171
+        ],
+        "root_rotation_rms_deg": 3.043990135192871,
+        "root_rotation_p90_deg": 5.389651298522949,
+        "joint_angle_rmse_deg": 2.951409263953489,
+        "joint_angle_absolute_p90_deg": 2.7876772498304123,
+        "linear_velocity_rmse_m_s": 0.09137453883886337,
+        "body_angular_velocity_rmse_rad_s": 0.5747894644737244,
+        "joint_velocity_rmse_rad_s": 1.2530832290649414
+      },
+      "8": {
+        "samples": 2110,
+        "seconds": 0.26666666666666666,
+        "root_position_distance_rms_cm": 4.995359107851982,
+        "root_position_distance_p90_cm": 7.008138298988342,
+        "root_position_xyz_rmse_cm": [
+          3.898721218109131,
+          1.57514488697052,
+          2.6967580318450928
+        ],
+        "root_rotation_rms_deg": 11.562053680419922,
+        "root_rotation_p90_deg": 19.904727935791016,
+        "joint_angle_rmse_deg": 5.35406576206252,
+        "joint_angle_absolute_p90_deg": 6.806033779126178,
+        "linear_velocity_rmse_m_s": 0.2287285029888153,
+        "body_angular_velocity_rmse_rad_s": 0.9259150624275208,
+        "joint_velocity_rmse_rad_s": 2.0591466426849365
+      },
+      "16": {
+        "samples": 1913,
+        "seconds": 0.5333333333333333,
+        "root_position_distance_rms_cm": 13.320916891098022,
+        "root_position_distance_p90_cm": 21.380998194217682,
+        "root_position_xyz_rmse_cm": [
+          9.402128219604492,
+          3.3636982440948486,
+          8.816594123840332
+        ],
+        "root_rotation_rms_deg": 26.75592041015625,
+        "root_rotation_p90_deg": 41.372901916503906,
+        "joint_angle_rmse_deg": 11.067349955596228,
+        "joint_angle_absolute_p90_deg": 15.138540559442982,
+        "linear_velocity_rmse_m_s": 0.4284399747848511,
+        "body_angular_velocity_rmse_rad_s": 1.9355649948120117,
+        "joint_velocity_rmse_rad_s": 3.8687584400177,
+        "by_endpoint_reference_phase": [
+          {
+            "reference_seconds": [
+              0.4,
+              0.6
+            ],
+            "samples": 128,
+            "root_rotation_rms_deg": 8.313703536987305,
+            "root_position_rms_cm": 6.73864558339119,
+            "joint_angle_rmse_deg": 3.6405651059240203
+          },
+          {
+            "reference_seconds": [
+              0.6,
+              0.8
+            ],
+            "samples": 384,
+            "root_rotation_rms_deg": 15.19350528717041,
+            "root_position_rms_cm": 11.369482427835464,
+            "joint_angle_rmse_deg": 1.9266493023500302
+          },
+          {
+            "reference_seconds": [
+              0.8,
+              1.0
+            ],
+            "samples": 382,
+            "root_rotation_rms_deg": 34.35137939453125,
+            "root_position_rms_cm": 14.563028514385223,
+            "joint_angle_rmse_deg": 8.204828773501285
+          },
+          {
+            "reference_seconds": [
+              1.0,
+              1.2
+            ],
+            "samples": 287,
+            "root_rotation_rms_deg": 36.74830627441406,
+            "root_position_rms_cm": 21.813824772834778,
+            "joint_angle_rmse_deg": 23.63720321726457
+          },
+          {
+            "reference_seconds": [
+              1.2,
+              1.4
+            ],
+            "samples": 257,
+            "root_rotation_rms_deg": 35.677059173583984,
+            "root_position_rms_cm": 13.52497935295105,
+            "joint_angle_rmse_deg": 11.019335433278332
+          },
+          {
+            "reference_seconds": [
+              1.4,
+              1.6
+            ],
+            "samples": 240,
+            "root_rotation_rms_deg": 14.166055679321289,
+            "root_position_rms_cm": 6.115009635686874,
+            "joint_angle_rmse_deg": 5.807087023386901
+          },
+          {
+            "reference_seconds": [
+              1.6,
+              1.7666666666666666
+            ],
+            "samples": 235,
+            "root_rotation_rms_deg": 15.75860595703125,
+            "root_position_rms_cm": 6.664373725652695,
+            "joint_angle_rmse_deg": 4.979397869575586
+          }
+        ]
+      }
+    }
+  }
+}

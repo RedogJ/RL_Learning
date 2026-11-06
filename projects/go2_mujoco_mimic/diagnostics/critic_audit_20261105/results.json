@@ -1,0 +1,198 @@
+{
+  "config": {
+    "cycle": 3280,
+    "seed": 9132,
+    "sample_seed": 9876,
+    "envs": 256,
+    "states": 768,
+    "observ_noise": true,
+    "action_noise": false,
+    "horizon": 16,
+    "rsi": "checkpoint probabilities; first reset only",
+    "valid_real_transitions": 9310,
+    "fails": 17,
+    "dt": 0.03333333333333333,
+    "ref_fps": 30.0,
+    "reference_frames": 54
+  },
+  "means": {
+    "critic": 6.90635,
+    "imag_lambda": 6.99466,
+    "real_lambda": 7.0354,
+    "real_mc": 6.98967
+  },
+  "all": {
+    "critic_vs_imag_lambda": {
+      "bias": -0.0883,
+      "mae": 0.91119,
+      "rmse": 1.30957
+    },
+    "critic_vs_real_lambda": {
+      "bias": -0.12905,
+      "mae": 0.90264,
+      "rmse": 1.277
+    },
+    "imag_vs_real_lambda": {
+      "bias": -0.04074,
+      "mae": 0.1991,
+      "rmse": 0.46835
+    },
+    "critic_vs_real_mc": {
+      "bias": -0.08332,
+      "mae": 1.32095,
+      "rmse": 1.89019
+    },
+    "imag_lambda_vs_real_mc": {
+      "bias": 0.00499,
+      "mae": 0.81672,
+      "rmse": 1.38603
+    },
+    "real_lambda_vs_real_mc": {
+      "bias": 0.04573,
+      "mae": 0.74194,
+      "rmse": 1.22817
+    }
+  },
+  "bins": {
+    "0": {
+      "n": 68,
+      "critic_vs_mc": {
+        "bias": 0.28717,
+        "mae": 1.60654,
+        "rmse": 2.19463
+      },
+      "critic_vs_imag_lambda": {
+        "bias": -0.08248,
+        "mae": 0.31577,
+        "rmse": 0.45961
+      },
+      "imag_vs_real_lambda": {
+        "bias": -0.17821,
+        "mae": 0.19133,
+        "rmse": 0.27938
+      },
+      "real_lambda_vs_mc": {
+        "bias": 0.54786,
+        "mae": 1.51994,
+        "rmse": 2.30624
+      }
+    },
+    "1": {
+      "n": 137,
+      "critic_vs_mc": {
+        "bias": 0.03959,
+        "mae": 1.28107,
+        "rmse": 2.02917
+      },
+      "critic_vs_imag_lambda": {
+        "bias": -0.24059,
+        "mae": 0.64461,
+        "rmse": 0.91027
+      },
+      "imag_vs_real_lambda": {
+        "bias": 0.04613,
+        "mae": 0.35715,
+        "rmse": 0.56504
+      },
+      "real_lambda_vs_mc": {
+        "bias": 0.23405,
+        "mae": 1.15435,
+        "rmse": 1.80148
+      }
+    },
+    "2": {
+      "n": 169,
+      "critic_vs_mc": {
+        "bias": 0.20514,
+        "mae": 1.31575,
+        "rmse": 2.14496
+      },
+      "critic_vs_imag_lambda": {
+        "bias": 0.50723,
+        "mae": 1.17665,
+        "rmse": 1.74186
+      },
+      "imag_vs_real_lambda": {
+        "bias": -0.11143,
+        "mae": 0.33222,
+        "rmse": 0.6271
+      },
+      "real_lambda_vs_mc": {
+        "bias": -0.19066,
+        "mae": 1.08268,
+        "rmse": 1.26365
+      }
+    },
+    "3": {
+      "n": 208,
+      "critic_vs_mc": {
+        "bias": -0.56029,
+        "mae": 1.59334,
+        "rmse": 1.98808
+      },
+      "critic_vs_imag_lambda": {
+        "bias": -0.47428,
+        "mae": 1.09979,
+        "rmse": 1.48611
+      },
+      "imag_vs_real_lambda": {
+        "bias": -0.01969,
+        "mae": 0.14957,
+        "rmse": 0.50392
+      },
+      "real_lambda_vs_mc": {
+        "bias": -0.06632,
+        "mae": 0.50395,
+        "rmse": 0.61459
+      }
+    },
+    "4": {
+      "n": 186,
+      "critic_vs_mc": {
+        "bias": -0.038,
+        "mae": 0.94602,
+        "rmse": 1.16546
+      },
+      "critic_vs_imag_lambda": {
+        "bias": -0.08775,
+        "mae": 0.87312,
+        "rmse": 1.08033
+      },
+      "imag_vs_real_lambda": {
+        "bias": -0.01378,
+        "mae": 0.01996,
+        "rmse": 0.02751
+      },
+      "real_lambda_vs_mc": {
+        "bias": 0.06353,
+        "mae": 0.1103,
+        "rmse": 0.14167
+      }
+    }
+  },
+  "past_reference_end": {
+    "fraction_all_critic_training_states": 0.18262,
+    "windows_containing_invalid": 0.36458,
+    "mean_invalid_target": 0.44236,
+    "mean_invalid_critic": 1.20687,
+    "invalid_target_abs_mean": 0.44558,
+    "invalid_fraction_by_step": [
+      0.0,
+      0.0221,
+      0.0508,
+      0.0742,
+      0.0977,
+      0.1198,
+      0.1432,
+      0.168,
+      0.194,
+      0.2174,
+      0.2422,
+      0.2734,
+      0.2956,
+      0.3177,
+      0.3411,
+      0.3646
+    ]
+  }
+}

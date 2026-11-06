@@ -3,6 +3,7 @@ import argparse
 from dataclasses import fields
 from pathlib import Path
 import time
+from threading import Event
 
 import mujoco
 import numpy as np
@@ -10,21 +11,23 @@ import torch
 
 from .environment import Go2Environment
 from .tasks.mimic.networks import MotionPolicy
+from .tasks.mimic.rewards import heading_error_features
+from .tasks.mimic.reward_cfg import saved_reward_config
 from .warp_env import EnvCfg, WarpGo2Env
 
 
-DEFAULT = Path('/workspace/go2_mujoco_mimic/logs/mimic_optimized_2026-10-29_07-31-02_685069/latest.pt')
+DEFAULT = Path('/workspace/go2_mujoco_mimic/logs/backflip_v21_2026-11-05_09-22-06_245558/model_4050.pt')
 
 
 def load_config(saved):
     cfg = EnvCfg()
     raw = saved['env_cfg'] if 'env_cfg' in saved else saved['env']
     for f in fields(cfg):
-        if f.name not in ('num_envs', 'task'):
+        if f.name not in ('num_envs', 'task') and f.name in raw:
             setattr(cfg, f.name, raw[f.name])
     for key, value in raw['task'].items():
         if key == 'reward':
-            for name, val in value.items():
+            for name, val in saved_reward_config(value).items():
                 setattr(cfg.task.reward, name, val)
         else:
             setattr(cfg.task, key, value)
@@ -58,40 +61,63 @@ def main():
     p.add_argument('--checkpoint', type=Path, default=DEFAULT)
     p.add_argument('--ghost-offset-y', type=float, default=0.0, help='参考模型横向偏移（米）；默认原位叠加')
     p.add_argument('--no-noise', action='store_true', help='关闭观测噪声以便观察')
+    p.add_argument('--no-failure-reset', action='store_true', help='播放时关闭跟踪误差及非脚掌接触导致的提前失败')
     p.add_argument('--headless', action='store_true', help='无窗口短测')
     p.add_argument('--steps', type=int, default=0, help='控制步数；0 表示持续播放')
+    p.add_argument('--speed', type=float, default=1.0, help='播放倍速，例如 0.25 表示四分之一速度')
     args = p.parse_args()
+    if not np.isfinite(args.speed) or args.speed <= 0:
+        p.error('--speed 必须是有限正数')
     if args.steps < 0 or (args.headless and args.steps == 0):
         p.error('headless 模式需要正数 --steps')
     checkpoint = torch.load(args.checkpoint, map_location='cpu', weights_only=False)
     cfg = load_config(checkpoint)
+    if args.no_failure_reset:
+        cfg.task.terminate_on_tracking_error = False
+        cfg.task.terminate_on_nonfoot_contact = False
+    if not cfg.task.reference_loop:
+        cfg.task.random_reference_start = False
     if args.no_noise:
         cfg.task.observation_noise = False
     env = WarpGo2Env(cfg, Path(checkpoint['motion']))
     env.enable_cuda_graph()
-    policy = MotionPolicy(history_length=cfg.task.history_length, future_length=cfg.task.future_length).to(env.device)
+    policy = MotionPolicy(history_length=cfg.task.history_length, future_length=cfg.task.future_length, heading_dim=2*int(cfg.task.heading_observation)+2*int(cfg.task.longitudinal_observation)).to(env.device)
     policy.load_state_dict(checkpoint['policy'] if 'policy' in checkpoint else checkpoint['actor'])
     policy.eval()
-    cpu = Go2Environment(cfg.physics_hz, cfg.control_hz)
+    cpu = Go2Environment(cfg.physics_hz, cfg.control_hz, checkerboard=True)
     ghost = mujoco.MjData(cpu.model)
     visual_opt = mujoco.MjvOption()
     visual_opt.geomgroup[:] = 0
     visual_opt.geomgroup[2] = 1
     offset = np.array([0., args.ghost_offset_y, 0.])
     viewer = None
+    paused = Event()
+    def on_key(keycode):
+        if keycode == 32:  # GLFW 空格键
+            if paused.is_set():
+                paused.clear()
+                print('[播放] 继续', flush=True)
+            else:
+                paused.set()
+                print('[播放] 暂停；再次按空格继续', flush=True)
     if not args.headless:
         from mujoco import viewer as mj_viewer
-        viewer = mj_viewer.launch_passive(cpu.model, cpu.data)
+        viewer = mj_viewer.launch_passive(cpu.model, cpu.data, key_callback=on_key)
         viewer.cam.type = mujoco.mjtCamera.mjCAMERA_TRACKING
         viewer.cam.trackbodyid = mujoco.mj_name2id(cpu.model, mujoco.mjtObj.mjOBJ_BODY, 'base_link')
         viewer.cam.distance, viewer.cam.azimuth, viewer.cam.elevation = 2.5, 135, -20
     print(f"模型 cycle={checkpoint['cycle']} | 参考={checkpoint['motion']} | 蓝色=参考，实体=策略 | 偏移={args.ghost_offset_y:g}m", flush=True)
-    print(f'参考连续播放 {cfg.task.reference_cycles} 次；失败、最终片段结束或超时后一起重置。Ctrl+C 退出。', flush=True)
+    print(f'参考连续播放 {cfg.task.reference_cycles} 次；失败、最终片段结束或超时后一起重置。窗口空格暂停/继续，Ctrl+C 退出。', flush=True)
     steps = 0
     try:
         while (viewer is None or viewer.is_running()) and (args.steps == 0 or steps < args.steps):
+            if viewer is not None and paused.is_set():
+                viewer.sync()
+                time.sleep(0.02)
+                continue
             start = time.monotonic()
             with torch.no_grad():
+                old_ref = env.ref.sample(env.frame)['quat'].clone() if steps % 30 == 0 else None
                 action = policy(env.observation())
                 _, reward, terminated, truncated, _ = env.step(action)
                 # 先展示终止前的实际状态和同一帧参考，再进行重置。
@@ -104,13 +130,27 @@ def main():
                     update_ghost(viewer, cpu, ghost, visual_opt, offset)
                     viewer.sync()
                 if steps % 30 == 0:
-                    print(f'step={steps} 参考帧={index} reward={reward.item():.4f} failed={bool(terminated.item())}', flush=True)
+                    ref = env.ref.sample(env.frame)
+                    actual_q = env.qpos[:, 3:7]
+                    err = heading_error_features(actual_q, ref['quat'])[0]
+                    yaw_error = torch.rad2deg(torch.atan2(err[0], err[1])).item()
+                    def yaw(q):
+                        w,x,y,z=q.unbind(-1)
+                        return torch.atan2(2*(w*z+x*y),1-2*(y*y+z*z))
+                    ref_yaw=yaw(ref['quat'])
+                    delta=ref_yaw-yaw(old_ref)
+                    ref_rate=(torch.atan2(delta.sin(),delta.cos())/env.dt).item()
+                    w,x,y,z=actual_q[0]; wx,wy,wz=env.qvel[0,3:6]
+                    actual_rate=(2*(x*z-w*y)*wx+2*(y*z+w*x)*wy+(1-2*(x*x+y*y))*wz).item()
+                    diff=env.qpos[0,:2]-ref['pos'][0,:2]
+                    lateral=(-ref_yaw.sin()[0]*diff[0]+ref_yaw.cos()[0]*diff[1]).item()
+                    print(f'step={steps} 参考帧={index} reward={reward.item():.4f} failed={bool(terminated.item())} | 航向误差(参考-机身)={yaw_error:.1f}° 角速度(机身/参考)={actual_rate:.2f}/{ref_rate:.2f}rad/s 横向偏差={lateral:.2f}m', flush=True)
                 if (terminated | truncated).item():
                     print(f'重置: failed={bool(terminated.item())} truncated={bool(truncated.item())} 控制步={int(env.steps.item())}', flush=True)
                 env.reset(terminated | truncated)
             steps += 1
             if viewer is not None:
-                time.sleep(max(0, env.dt-(time.monotonic()-start)))
+                time.sleep(max(0, env.dt / args.speed-(time.monotonic()-start)))
     finally:
         if viewer is not None:
             viewer.close()

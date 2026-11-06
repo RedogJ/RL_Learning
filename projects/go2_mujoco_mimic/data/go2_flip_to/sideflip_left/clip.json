@@ -1,0 +1,8 @@
+{
+  "fps": 50.0,
+  "source": "projects/go2_mujoco_mimic/data/go2_flip_to/quad_sideflip_50hz.txt",
+  "mode": "kinematic_preview",
+  "frames": 127,
+  "duration_s": 2.52,
+  "notes": "For visualization only. Unfilled fields do not form a complete training reference."
+}

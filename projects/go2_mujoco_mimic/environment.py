@@ -12,7 +12,7 @@ JOINT_NAMES = tuple(f'{leg}_{part}_joint' for leg in ('FL', 'FR', 'RL', 'RR')
 
 
 class Go2Environment:
-    def __init__(self, physics_hz=600, control_hz=30):
+    def __init__(self, physics_hz=600, control_hz=30, checkerboard=False):
         if physics_hz <= 0 or control_hz <= 0 or physics_hz % control_hz:
             raise ValueError('physics_hz 必须是 control_hz 的正整数倍')
         root = ET.parse(MODEL_DIR / 'go2.xml').getroot()
@@ -21,8 +21,18 @@ class Go2Environment:
         opt.set('timestep', str(1 / physics_hz))
         opt.set('integrator', 'implicitfast')
         world = root.find('worldbody')
-        ET.SubElement(world, 'geom', name='ground', type='plane', size='0 0 .1',
-                      rgba='.38 .42 .47 1', friction='.5 .005 .0001')
+        ground_args = dict(name='ground', type='plane', size='0 0 .1',
+                           rgba='.38 .42 .47 1', friction='.5 .005 .0001')
+        if checkerboard:
+            asset = root.find('asset')
+            ET.SubElement(asset, 'texture', name='play_ground_checker', type='2d',
+                          builtin='checker', width='512', height='512',
+                          rgb1='.22 .25 .29', rgb2='.75 .78 .81')
+            ET.SubElement(asset, 'material', name='play_ground_material',
+                          texture='play_ground_checker', texuniform='true', texrepeat='2 2',
+                          reflectance='0')
+            ground_args.update(material='play_ground_material', rgba='1 1 1 1')
+        ET.SubElement(world, 'geom', **ground_args)
         ET.SubElement(world, 'light', pos='0 0 3', dir='0 0 -1', directional='true')
         self.model = mujoco.MjModel.from_xml_string(ET.tostring(root, encoding='unicode'))
         self.data = mujoco.MjData(self.model)

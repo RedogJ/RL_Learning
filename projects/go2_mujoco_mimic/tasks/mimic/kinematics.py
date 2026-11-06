@@ -71,3 +71,11 @@ class BodyKinematics(nn.Module):
         pos, quat = self(current)
         return {'pos': pos, 'quat': quat, 'linear_vel': (pos-old_pos)/dt,
                 'angular_vel': rotation_vector(quat, old_quat)/dt}
+
+    def transition_with_pose(self, old_pose, previous, current, dt):
+        """数值与 transition 一致；连续想象时复用上一步已算出的位姿，避免重复正向运动学。"""
+        old_pos, old_quat = old_pose if old_pose is not None else self(previous)
+        pose = self(current)
+        pos, quat = pose
+        return {'pos': pos, 'quat': quat, 'linear_vel': (pos-old_pos)/dt,
+                'angular_vel': rotation_vector(quat, old_quat)/dt}, pose

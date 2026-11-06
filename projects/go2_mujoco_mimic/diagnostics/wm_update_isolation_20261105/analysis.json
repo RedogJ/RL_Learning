@@ -1,0 +1,266 @@
+{
+  "authoritative_experiment": "independent_adam",
+  "aggregation": "Arithmetic mean of fixed-probe RMS at 10 cycle ends, not pooled individual-sample RMS and not final checkpoint only.",
+  "aggregate": {
+    "joint_lr2e-4": {
+      "old_policy_3270": {
+        "root_position_rms_cm": {
+          "mean": 7.198404408991337,
+          "std": 1.8423475877700148,
+          "max": 11.957037448883057,
+          "min": 4.934832453727722
+        },
+        "root_rotation_rms_deg": {
+          "mean": 11.25539665222168,
+          "std": 4.991416431608587,
+          "max": 25.61927032470703,
+          "min": 7.950366973876953
+        },
+        "joint_position_rmse_deg": {
+          "mean": 7.595154049977536,
+          "std": 1.125275703281677,
+          "max": 10.342650662958597,
+          "min": 6.257213565163667
+        },
+        "linear_velocity_rmse_m_s": {
+          "mean": 0.22064520567655563,
+          "std": 0.04430654598728708,
+          "max": 0.3337884247303009,
+          "min": 0.17689651250839233
+        },
+        "angular_velocity_rmse_rad_s": {
+          "mean": 1.2567104816436767,
+          "std": 0.3905471132558472,
+          "max": 2.305030107498169,
+          "min": 0.8976414799690247
+        },
+        "joint_velocity_rmse_rad_s": {
+          "mean": 2.360973763465881,
+          "std": 0.3677039093246524,
+          "max": 3.2262332439422607,
+          "min": 1.965194821357727
+        },
+        "bce8_mean": 0.001123715628637001
+      },
+      "recent_policy_3330": {
+        "root_position_rms_cm": {
+          "mean": 7.159238122403622,
+          "std": 2.136618811212891,
+          "max": 11.756040155887604,
+          "min": 4.362190887331963
+        },
+        "root_rotation_rms_deg": {
+          "mean": 13.40677900314331,
+          "std": 4.7413649586397115,
+          "max": 25.206130981445312,
+          "min": 8.734111785888672
+        },
+        "joint_position_rmse_deg": {
+          "mean": 7.537917705063063,
+          "std": 1.105313280544186,
+          "max": 9.732959803112932,
+          "min": 5.86980608921419
+        },
+        "linear_velocity_rmse_m_s": {
+          "mean": 0.2376529321074486,
+          "std": 0.05156775030807148,
+          "max": 0.3208414614200592,
+          "min": 0.16879752278327942
+        },
+        "angular_velocity_rmse_rad_s": {
+          "mean": 1.3089000463485718,
+          "std": 0.26786881912759464,
+          "max": 1.9000563621520996,
+          "min": 1.005221962928772
+        },
+        "joint_velocity_rmse_rad_s": {
+          "mean": 2.212420570850372,
+          "std": 0.3135186536210313,
+          "max": 2.79807186126709,
+          "min": 1.7646856307983398
+        },
+        "bce8_mean": 0.009010015474632382
+      }
+    },
+    "detached_bce_lr2e-4": {
+      "old_policy_3270": {
+        "root_position_rms_cm": {
+          "mean": 5.449817553162575,
+          "std": 0.3869230793830336,
+          "max": 6.127239018678665,
+          "min": 4.819204285740852
+        },
+        "root_rotation_rms_deg": {
+          "mean": 8.572097015380859,
+          "std": 0.7490573591377683,
+          "max": 9.865596771240234,
+          "min": 7.689173698425293
+        },
+        "joint_position_rmse_deg": {
+          "mean": 6.636403768588749,
+          "std": 0.6587885926426917,
+          "max": 7.823809231973064,
+          "min": 5.533161006063071
+        },
+        "linear_velocity_rmse_m_s": {
+          "mean": 0.1805000349879265,
+          "std": 0.01407713198182211,
+          "max": 0.20326411724090576,
+          "min": 0.15186913311481476
+        },
+        "angular_velocity_rmse_rad_s": {
+          "mean": 0.953602921962738,
+          "std": 0.09253662299304358,
+          "max": 1.0879993438720703,
+          "min": 0.8037082552909851
+        },
+        "joint_velocity_rmse_rad_s": {
+          "mean": 1.986806058883667,
+          "std": 0.13785259512467307,
+          "max": 2.168153762817383,
+          "min": 1.727291464805603
+        },
+        "bce8_mean": 0.0012910246499814094
+      },
+      "recent_policy_3330": {
+        "root_position_rms_cm": {
+          "mean": 5.343956798315048,
+          "std": 1.15132117856518,
+          "max": 8.083752542734146,
+          "min": 4.143158718943596
+        },
+        "root_rotation_rms_deg": {
+          "mean": 12.015555572509765,
+          "std": 3.0298080553186177,
+          "max": 19.55304527282715,
+          "min": 8.956440925598145
+        },
+        "joint_position_rmse_deg": {
+          "mean": 7.008890952428427,
+          "std": 1.3302933081425692,
+          "max": 10.586950307870675,
+          "min": 5.675566608276428
+        },
+        "linear_velocity_rmse_m_s": {
+          "mean": 0.1774400845170021,
+          "std": 0.030750982218660777,
+          "max": 0.24197155237197876,
+          "min": 0.1363237053155899
+        },
+        "angular_velocity_rmse_rad_s": {
+          "mean": 1.1365145146846771,
+          "std": 0.1952155071662883,
+          "max": 1.606117606163025,
+          "min": 0.9501217007637024
+        },
+        "joint_velocity_rmse_rad_s": {
+          "mean": 1.9978001236915588,
+          "std": 0.3081988794492473,
+          "max": 2.68969464302063,
+          "min": 1.6885673999786377
+        },
+        "bce8_mean": 0.01096249562688172
+      }
+    },
+    "joint_lr1e-4": {
+      "old_policy_3270": {
+        "root_position_rms_cm": {
+          "mean": 5.9024447947740555,
+          "std": 1.0214564928820526,
+          "max": 7.841117680072784,
+          "min": 4.5993562787771225
+        },
+        "root_rotation_rms_deg": {
+          "mean": 9.350482416152953,
+          "std": 1.5492443470580877,
+          "max": 11.715806007385254,
+          "min": 7.240087509155273
+        },
+        "joint_position_rmse_deg": {
+          "mean": 7.468111122688782,
+          "std": 1.267984703789014,
+          "max": 10.666124153182169,
+          "min": 5.874232905570005
+        },
+        "linear_velocity_rmse_m_s": {
+          "mean": 0.20832792967557906,
+          "std": 0.039176552851395076,
+          "max": 0.28988534212112427,
+          "min": 0.157578244805336
+        },
+        "angular_velocity_rmse_rad_s": {
+          "mean": 1.127681404352188,
+          "std": 0.23280830526773416,
+          "max": 1.5875678062438965,
+          "min": 0.8263841867446899
+        },
+        "joint_velocity_rmse_rad_s": {
+          "mean": 2.2366079688072205,
+          "std": 0.33654537149000313,
+          "max": 2.940288543701172,
+          "min": 1.7918825149536133
+        },
+        "bce8_mean": 0.00028685444267466663
+      },
+      "recent_policy_3330": {
+        "root_position_rms_cm": {
+          "mean": 5.946689397096634,
+          "std": 0.9692780969493702,
+          "max": 7.535760849714279,
+          "min": 4.642357677221298
+        },
+        "root_rotation_rms_deg": {
+          "mean": 12.509834671020508,
+          "std": 2.439160789013787,
+          "max": 16.977020263671875,
+          "min": 9.673746109008789
+        },
+        "joint_position_rmse_deg": {
+          "mean": 7.772805093166769,
+          "std": 0.7770009415376826,
+          "max": 9.206986571924114,
+          "min": 7.00204612104038
+        },
+        "linear_velocity_rmse_m_s": {
+          "mean": 0.21456249952316284,
+          "std": 0.04953464686237582,
+          "max": 0.30055415630340576,
+          "min": 0.15389996767044067
+        },
+        "angular_velocity_rmse_rad_s": {
+          "mean": 1.2293541431427002,
+          "std": 0.20182899362518292,
+          "max": 1.655296802520752,
+          "min": 0.9564920663833618
+        },
+        "joint_velocity_rmse_rad_s": {
+          "mean": 2.136956751346588,
+          "std": 0.2553223104848825,
+          "max": 2.700282335281372,
+          "min": 1.8267285823822021
+        },
+        "bce8_mean": 0.007433154387399554
+      }
+    }
+  },
+  "gradient_summary": {
+    "sampled_steps": 30,
+    "negative_cosines": 6,
+    "state_loss_increased_on_same_batch": 11,
+    "actual_adam_step_dot_state_gradient_positive": 0,
+    "bce_to_state_gradient_norm_ratio_median": 0.38460780680179596,
+    "bce_to_state_gradient_norm_ratio_max": 0.7956883907318115
+  },
+  "checks": {
+    "initial_predictions_identical": true,
+    "fixed_probe_sample_counts_identical": true,
+    "probe_before_next_cycle_identical_to_previous_end": true,
+    "bad_step_replayed_exactly": true,
+    "actor_unchanged": true,
+    "normalizers_unchanged": true,
+    "all_branches_same_data_and_minibatches": true,
+    "only_current_320_steps_sampled": true,
+    "production_untouched": true
+  },
+  "scope": "Actor/Critic frozen, fresh replay prefill, single collected stream, not exact historical RL continuation; no buffer-capacity A/B or policy-performance evaluation."
+}
