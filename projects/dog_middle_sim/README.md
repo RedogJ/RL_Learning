@@ -12,7 +12,9 @@ Go2 canter → middle 的独立映射参考已准备，使用 `bash run.sh middl
 
 ## 启动
 
-所有命令从 RL_Learning 根目录执行。GPU 训练复用 `isaaclab-base:local`，无需重建镜像。
+所有命令从 RL_Learning 根目录执行，全部通过 Docker 使用 `isaaclab-base:local`。
+宿主机只需 Docker、NVIDIA 驱动及 Container Toolkit；打开窗口还需要 X11 显示授权。
+不再调用宿主机 Python，训练、播放、模型生成与参考映射使用同一套依赖。
 
 ```bash
 # 正式训练由用户启动；每轮打印真实奖励率、回合统计、WM误差和想象目标
@@ -23,7 +25,7 @@ bash run.sh middle train \
   --resume projects/dog_middle_sim/logs/standing/<运行目录>/model_500.pt \
   --cycles 500 --run-name standing_v2
 
-# 播放策略：原生 MuJoCo 窗口，使用当前 Python 的 torch/mujoco/numpy/scipy
+# 播放策略：Docker 内 MuJoCo 窗口，通过 X11 显示到桌面
 bash run.sh middle play --checkpoint projects/dog_middle_sim/logs/standing/<运行目录>/model_500.pt
 
 # 在已有 Docker 环境评估 10 秒；真实物理，不通过 WM 生成运动
@@ -40,8 +42,10 @@ bash run.sh middle check
 
 `--resume latest` / `play --checkpoint latest` 选择 `logs/standing/*/latest.pt` 中最后修改的一份；
 不是最好模型，短测运行也可能被选中，建议使用明确路径。
-可通过 `MIDDLE_IMAGE`、`MIDDLE_DOCKER_PYTHON` 替换训练镜像/解释器；原生回放用 `MIDDLE_PYTHON`。
-`run_gpu.sh play` 也支持 Docker 回放，需要本机 X11 与有效 DISPLAY/XAUTHORITY。
+可通过 `MIDDLE_IMAGE`、`MIDDLE_DOCKER_PYTHON` 替换 Docker 镜像/容器解释器。
+所有窗口模式自动传递 DISPLAY/XAUTHORITY；`MIDDLE_PYTHON` 不再使用。
+`bash run.sh middle build` 和 `bash run.sh middle check-model` 也在容器中运行。
+生成模型只开放 `assets/dog_middle/simulation/` 写入；重新映射开放项目 `data/` 写入。
 
 ## 配置与文件
 
@@ -64,12 +68,12 @@ dog_middle_sim/
 ├── main.py                     # 旧PD演示入口
 ├── check_model.py              # URDF/MJCF运动学一致性
 ├── check_training.py           # 训练关键边界检查
-├── run.sh / run_gpu.sh         # 原生 / Docker入口
+├── run.sh / run_gpu.sh         # 模式分发 / 统一Docker入口
 └── logs/standing/              # 独立日志，不进入Git
 ```
 
-训练依赖见 `requirements-training.txt`，基础 PD 演示依赖见 `requirements.txt`。
-原生播放还需要 PyTorch；直接 Docker 播放/评估可复用训练镜像全部依赖。
+统一运行环境的依赖见 `requirements-training.txt`，由镜像提供。
+`requirements.txt` 是历史本机查看器依赖，不用于当前 Docker 启动流程。
 
 ## 网络与训练过程
 
@@ -142,7 +146,8 @@ RNG、参考状态、模型哈希、配置和历史区间；不把Replay和物�
 4. 外观和碰撞复用原始 STL。MuJoCo 网格碰撞采用凸包，不是逐三角形凹面碰撞。
    初期只允许机器人与地面接触，关闭机器人自碰撞；碰撞几何为 group 3，默认隐藏。
 5. 保留原四个 foot 节点为 site；额外从小腿网格底部选取 `*_sole` site 用于
-   站姿初始化/诊断。没有凭空添加球形脚掌，site 不参与碰撞。
+   站姿初始化/诊断。试验脚掌采用半径2 cm的球形碰撞体，小腿网格仍保留碰撞；
+   site 本身不参与碰撞。球体位置与半径需要结合实物校准。
 6. 用逆运动学求机身水平的四足站姿，再按全部碰撞网格的最低点放置根高度，避免
    初始穿地。不是从实机导出的站姿。BODY 原点高度不等于机身质心高度。
 7. 当前仿真假设：地面摩擦 0.8，关节 damping=0.3、frictionloss=0.02、armature=0.002；
