@@ -1,0 +1,29 @@
+Decomposing and motor optimization process: 1
+Decomposing the mesh...
+Optimizing the actuators...
+Auto design best fitness: 7.711232410130644
+Average motor cost: 0.6426027008442203
+Refining the mesh to connect the actuators...
+Removing the interference between the links...
+Saving the results... URDF file is saved at: /home/cc/git/anything2robot/result/n02087046_4058_neutral_res_e300_smoothed_scaled_20241031-023114/result_round1/urdf/n02087046_4058_neutral_res_e300_smoothed_scaled20241031-023418.urdf
+Checking the mesh destruction...
+Do FEA analysis...
+*******Do FEA analysis for: /home/cc/git/anything2robot/result/n02087046_4058_neutral_res_e300_smoothed_scaled_20241031-023114/result_round1/urdf/FR_LOW.stl
+best_relative_density: 1.0
+*******Do FEA analysis for: /home/cc/git/anything2robot/result/n02087046_4058_neutral_res_e300_smoothed_scaled_20241031-023114/result_round1/urdf/FL_UP.stl
+best_relative_density: 1.0
+*******Do FEA analysis for: /home/cc/git/anything2robot/result/n02087046_4058_neutral_res_e300_smoothed_scaled_20241031-023114/result_round1/urdf/FL_LOW.stl
+best_relative_density: 1.0
+*******Do FEA analysis for: /home/cc/git/anything2robot/result/n02087046_4058_neutral_res_e300_smoothed_scaled_20241031-023114/result_round1/urdf/RR_UP.stl
+best_relative_density: 1.0
+*******Do FEA analysis for: /home/cc/git/anything2robot/result/n02087046_4058_neutral_res_e300_smoothed_scaled_20241031-023114/result_round1/urdf/RL_UP.stl
+best_relative_density: 1.0
+*******Do FEA analysis for: /home/cc/git/anything2robot/result/n02087046_4058_neutral_res_e300_smoothed_scaled_20241031-023114/result_round1/urdf/FR_UP.stl
+best_relative_density: 1.0
+*******Do FEA analysis for: /home/cc/git/anything2robot/result/n02087046_4058_neutral_res_e300_smoothed_scaled_20241031-023114/result_round1/urdf/RR_LOW.stl
+best_relative_density: 1.0
+*******Do FEA analysis for: /home/cc/git/anything2robot/result/n02087046_4058_neutral_res_e300_smoothed_scaled_20241031-023114/result_round1/urdf/RL_LOW.stl
+best_relative_density: 1.0
+Success!!!!!!!!!!! The model is feasible in FEA.
+Round 1 is done. Time: 627.038825750351 seconds.
+Exit code: 0

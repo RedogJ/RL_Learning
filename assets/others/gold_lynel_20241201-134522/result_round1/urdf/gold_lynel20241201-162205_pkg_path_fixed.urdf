@@ -1,0 +1,531 @@
+<?xml version="1.0"?>
+<robot name="robot">
+  <material name="red">
+    <color rgba="1 0 0 1"/>
+  </material>
+  <material name="magenta">
+    <color rgba="0.2 0 0.2 1"/>
+  </material>
+  <material name="green">
+    <color rgba="0 1 0 1"/>
+  </material>
+  <material name="cyan">
+    <color rgba="0 1 1 1"/>
+  </material>
+  <material name="blue">
+    <color rgba="0 0 1 1"/>
+  </material>
+  <material name="orange">
+    <color rgba="1 0.5 0 1"/>
+  </material>
+  <material name="yellow">
+    <color rgba="1 1 0 1"/>
+  </material>
+  <material name="pink">
+    <color rgba="1 0 1 1"/>
+  </material>
+  <material name="grey">
+    <color rgba="0.8 0.8 0.8 1"/>
+  </material>
+  <material name="motor">
+    <color rgba="0.2 0.2 0.2 1"/>
+  </material>
+  <link name="BODY">
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <mesh filename="package://simple_robot_controller/urdf/gold_lynel_20241201-134522/result_round1/urdf/BODY.stl"/>
+      </geometry>
+      <material name="grey"/>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <mesh filename="package://simple_robot_controller/urdf/gold_lynel_20241201-134522/result_round1/urdf/BODY.stl"/>
+      </geometry>
+    </collision>
+    <inertial>
+      <origin xyz="0.00020714503272176908 -0.10163659462351003 0.29244324708880065" rpy="0 0 0"/>
+      <mass value="6.30072"/>
+      <inertia ixx="0.010076917545109147" ixy="0.00025614682671981794" ixz="1.5149812235761963e-05" iyy="0.004561531618129131" iyz="-0.00046651908546166345" izz="0.009055591666037721"/>
+    </inertial>
+  </link>
+  <link name="FL_UP">
+    <visual>
+      <origin xyz="-0.10182323878668224 0.19525317440899254 -0.285" rpy="0 0 0"/>
+      <geometry>
+        <mesh filename="package://simple_robot_controller/urdf/gold_lynel_20241201-134522/result_round1/urdf/FL_UP.stl"/>
+      </geometry>
+      <material name="grey"/>
+    </visual>
+    <collision>
+      <origin xyz="-0.10182323878668224 0.19525317440899254 -0.285" rpy="0 0 0"/>
+      <geometry>
+        <mesh filename="package://simple_robot_controller/urdf/gold_lynel_20241201-134522/result_round1/urdf/FL_UP.stl"/>
+      </geometry>
+    </collision>
+    <inertial>
+      <origin xyz="0.06588296991224066 -0.0701378381335418 -0.06618806117786727" rpy="0 0 0"/>
+      <mass value="0.65136"/>
+      <inertia ixx="0.00030177878272383973" ixy="-1.1236847780029584e-05" ixz="-6.081295191599154e-05" iyy="0.00026396652081798127" iyz="-1.6765552920044097e-05" izz="0.00011558044779384718"/>
+    </inertial>
+  </link>
+  <link name="FL_UP_virtual">
+  </link>
+  <joint name="FL_UP_joint1" type="revolute">
+    <parent link="BODY"/>
+    <child link="FL_UP_virtual"/>
+    <origin xyz="0.040573238786682245 -0.13400317440899254 0.285" rpy="0 0 0"/>
+    <axis xyz="0.0 1.0 0.0"/>
+    <limit lower="-1.57" upper="1.57" effort="20" velocity="1.5"/>
+  </joint>
+  <joint name="FL_UP_joint2" type="revolute">
+    <parent link="FL_UP_virtual"/>
+    <child link="FL_UP"/>
+    <origin xyz="0.06125 -0.06125 0.0" rpy="0 0 0"/>
+    <axis xyz="1.0 0.0 0.0"/>
+    <limit lower="-1.57" upper="1.57" effort="20" velocity="1.5"/>
+  </joint>
+  <link name="FR_UP">
+    <visual>
+      <origin xyz="0.10809893522773613 0.21807600194961782 -0.2742696466533988" rpy="0 0 0"/>
+      <geometry>
+        <mesh filename="package://simple_robot_controller/urdf/gold_lynel_20241201-134522/result_round1/urdf/FR_UP.stl"/>
+      </geometry>
+      <material name="grey"/>
+    </visual>
+    <collision>
+      <origin xyz="0.10809893522773613 0.21807600194961782 -0.2742696466533988" rpy="0 0 0"/>
+      <geometry>
+        <mesh filename="package://simple_robot_controller/urdf/gold_lynel_20241201-134522/result_round1/urdf/FR_UP.stl"/>
+      </geometry>
+    </collision>
+    <inertial>
+      <origin xyz="-0.05697399779513169 -0.05447782681899088 -0.06198730109930198" rpy="0 0 0"/>
+      <mass value="0.58512"/>
+      <inertia ixx="0.0002661228589263746" ixy="-2.623973979696535e-06" ixz="8.27546859105822e-05" iyy="0.00024991402320036866" iyz="1.933776589417545e-05" izz="0.00012790224718006602"/>
+    </inertial>
+  </link>
+  <link name="FR_UP_virtual">
+  </link>
+  <joint name="FR_UP_joint1" type="revolute">
+    <parent link="BODY"/>
+    <child link="FR_UP_virtual"/>
+    <origin xyz="-0.04684893522773614 -0.15682600194961782 0.2742696466533988" rpy="0 0 0"/>
+    <axis xyz="0.0 1.0 0.0"/>
+    <limit lower="-1.57" upper="1.57" effort="20" velocity="1.5"/>
+  </joint>
+  <joint name="FR_UP_joint2" type="revolute">
+    <parent link="FR_UP_virtual"/>
+    <child link="FR_UP"/>
+    <origin xyz="-0.06125 -0.06125 0.0" rpy="0 0 0"/>
+    <axis xyz="-1.0 0.0 0.0"/>
+    <limit lower="-1.57" upper="1.57" effort="20" velocity="1.5"/>
+  </joint>
+  <link name="RR_UP">
+    <visual>
+      <origin xyz="0.11034780240081679 -0.05595832499917077 -0.26547432708207624" rpy="0 0 0"/>
+      <geometry>
+        <mesh filename="package://simple_robot_controller/urdf/gold_lynel_20241201-134522/result_round1/urdf/RR_UP.stl"/>
+      </geometry>
+      <material name="grey"/>
+    </visual>
+    <collision>
+      <origin xyz="0.11034780240081679 -0.05595832499917077 -0.26547432708207624" rpy="0 0 0"/>
+      <geometry>
+        <mesh filename="package://simple_robot_controller/urdf/gold_lynel_20241201-134522/result_round1/urdf/RR_UP.stl"/>
+      </geometry>
+    </collision>
+    <inertial>
+      <origin xyz="-0.052900654377226075 0.0677333848151553 -0.05254333341879619" rpy="0 0 0"/>
+      <mass value="0.61728"/>
+      <inertia ixx="0.00022989511083301034" ixy="-1.0599957912130562e-05" ixz="6.295575218701312e-05" iyy="0.00022745623913783208" iyz="2.1598482066485277e-05" izz="0.00014333791854587936"/>
+    </inertial>
+  </link>
+  <link name="RR_UP_virtual">
+  </link>
+  <joint name="RR_UP_joint1" type="revolute">
+    <parent link="BODY"/>
+    <child link="RR_UP_virtual"/>
+    <origin xyz="-0.049097802400816785 -0.005291675000829228 0.26547432708207624" rpy="0 0 0"/>
+    <axis xyz="0.0 -1.0 0.0"/>
+    <limit lower="-1.57" upper="1.57" effort="20" velocity="1.5"/>
+  </joint>
+  <joint name="RR_UP_joint2" type="revolute">
+    <parent link="RR_UP_virtual"/>
+    <child link="RR_UP"/>
+    <origin xyz="-0.06125 0.06125 0.0" rpy="0 0 0"/>
+    <axis xyz="-1.0 0.0 0.0"/>
+    <limit lower="-1.57" upper="1.57" effort="20" velocity="1.5"/>
+  </joint>
+  <link name="RL_UP">
+    <visual>
+      <origin xyz="-0.09857675434667097 -0.04497701926904893 -0.2764671387930631" rpy="0 0 0"/>
+      <geometry>
+        <mesh filename="package://simple_robot_controller/urdf/gold_lynel_20241201-134522/result_round1/urdf/RL_UP.stl"/>
+      </geometry>
+      <material name="grey"/>
+    </visual>
+    <collision>
+      <origin xyz="-0.09857675434667097 -0.04497701926904893 -0.2764671387930631" rpy="0 0 0"/>
+      <geometry>
+        <mesh filename="package://simple_robot_controller/urdf/gold_lynel_20241201-134522/result_round1/urdf/RL_UP.stl"/>
+      </geometry>
+    </collision>
+    <inertial>
+      <origin xyz="0.06534919836269387 0.07650155272437187 -0.06900255767799768" rpy="0 0 0"/>
+      <mass value="0.74304"/>
+      <inertia ixx="0.00038309031819282955" ixy="6.528031734496112e-06" ixz="-3.980543192829452e-05" iyy="0.0003206883012960294" iyz="7.618719737160839e-05" izz="0.0001620275730983519"/>
+    </inertial>
+  </link>
+  <link name="RL_UP_virtual">
+  </link>
+  <joint name="RL_UP_joint1" type="revolute">
+    <parent link="BODY"/>
+    <child link="RL_UP_virtual"/>
+    <origin xyz="0.03732675434667097 -0.016272980730951073 0.2764671387930631" rpy="0 0 0"/>
+    <axis xyz="0.0 -1.0 0.0"/>
+    <limit lower="-1.57" upper="1.57" effort="20" velocity="1.5"/>
+  </joint>
+  <joint name="RL_UP_joint2" type="revolute">
+    <parent link="RL_UP_virtual"/>
+    <child link="RL_UP"/>
+    <origin xyz="0.06125 0.06125 0.0" rpy="0 0 0"/>
+    <axis xyz="1.0 0.0 0.0"/>
+    <limit lower="-1.57" upper="1.57" effort="20" velocity="1.5"/>
+  </joint>
+  <link name="BODY_UP">
+    <visual>
+      <origin xyz="0.001541974336453183 0.18755432367137426 -0.3800852320320633" rpy="0 0 0"/>
+      <geometry>
+        <mesh filename="package://simple_robot_controller/urdf/gold_lynel_20241201-134522/result_round1/urdf/BODY_UP.stl"/>
+      </geometry>
+      <material name="grey"/>
+    </visual>
+    <collision>
+      <origin xyz="0.001541974336453183 0.18755432367137426 -0.3800852320320633" rpy="0 0 0"/>
+      <geometry>
+        <mesh filename="package://simple_robot_controller/urdf/gold_lynel_20241201-134522/result_round1/urdf/BODY_UP.stl"/>
+      </geometry>
+    </collision>
+    <inertial>
+      <origin xyz="0.003752574726540549 -0.004922876134635185 0.17459469642210113" rpy="0 0 0"/>
+      <mass value="8.82672"/>
+      <inertia ixx="0.01057753483791401" ixy="4.686815574018177e-05" ixz="-0.00010211102829476711" iyy="0.009361976716292329" iyz="0.0006951596532947577" izz="0.007886509007426244"/>
+    </inertial>
+  </link>
+  <joint name="BODY_UP_joint" type="revolute">
+    <parent link="BODY"/>
+    <child link="BODY_UP"/>
+    <origin xyz="-0.001541974336453183 -0.18755432367137426 0.3800852320320633" rpy="0 0 0"/>
+    <axis xyz="0.0 0.0 1.0"/>
+    <limit lower="-1.57" upper="1.57" effort="20" velocity="1.5"/>
+  </joint>
+  <link name="TAIL">
+    <visual>
+      <origin xyz="0.005094771424286484 -0.07984154659118432 -0.3431488663945204" rpy="0 0 0"/>
+      <geometry>
+        <mesh filename="package://simple_robot_controller/urdf/gold_lynel_20241201-134522/result_round1/urdf/TAIL.stl"/>
+      </geometry>
+      <material name="grey"/>
+    </visual>
+    <collision>
+      <origin xyz="0.005094771424286484 -0.07984154659118432 -0.3431488663945204" rpy="0 0 0"/>
+      <geometry>
+        <mesh filename="package://simple_robot_controller/urdf/gold_lynel_20241201-134522/result_round1/urdf/TAIL.stl"/>
+      </geometry>
+    </collision>
+    <inertial>
+      <origin xyz="0.010892101113380386 0.10483949446494006 -0.048204142348618806" rpy="0 0 0"/>
+      <mass value="0.49620000000000003"/>
+      <inertia ixx="0.0006383505123337329" ixy="1.839524818621524e-05" ixz="-9.107085671100388e-06" iyy="0.000176096116686818" iyz="0.00023597549047763103" izz="0.0004939018044739972"/>
+    </inertial>
+  </link>
+  <joint name="TAIL_joint" type="revolute">
+    <parent link="BODY"/>
+    <child link="TAIL"/>
+    <origin xyz="-0.005094771424286484 0.07984154659118432 0.3431488663945204" rpy="0 0 0"/>
+    <axis xyz="1.0 0.0 0.0"/>
+    <limit lower="-1.57" upper="1.57" effort="20" velocity="1.5"/>
+  </joint>
+  <link name="FL_LOW">
+    <visual>
+      <origin xyz="-0.11012424251114462 0.216626256622421 -0.13832110735958122" rpy="0 0 0"/>
+      <geometry>
+        <mesh filename="package://simple_robot_controller/urdf/gold_lynel_20241201-134522/result_round1/urdf/FL_LOW.stl"/>
+      </geometry>
+      <material name="grey"/>
+    </visual>
+    <collision>
+      <origin xyz="-0.11012424251114462 0.216626256622421 -0.13832110735958122" rpy="0 0 0"/>
+      <geometry>
+        <mesh filename="package://simple_robot_controller/urdf/gold_lynel_20241201-134522/result_round1/urdf/FL_LOW.stl"/>
+      </geometry>
+    </collision>
+    <inertial>
+      <origin xyz="0.011835177153991017 -0.010672286024403954 -0.05508772486713741" rpy="0 0 0"/>
+      <mass value="0.44952000000000003"/>
+      <inertia ixx="0.00016967952249065691" ixy="-4.663747463961575e-06" ixz="-2.509214495461839e-05" iyy="0.00014047172100240215" iyz="-2.9601970535237548e-05" izz="6.713411862653488e-05"/>
+    </inertial>
+  </link>
+  <joint name="FL_LOW_joint" type="revolute">
+    <parent link="FL_UP"/>
+    <child link="FL_LOW"/>
+    <origin xyz="0.008301003724462373 -0.021373082213428454 -0.14667889264041878" rpy="0 0 0"/>
+    <axis xyz="1.0 0.0 0.0"/>
+    <limit lower="-1.57" upper="1.57" effort="20" velocity="1.5"/>
+  </joint>
+  <link name="FR_LOW">
+    <visual>
+      <origin xyz="0.09976979681622795 0.2138625952749878 -0.14119172718493855" rpy="0 0 0"/>
+      <geometry>
+        <mesh filename="package://simple_robot_controller/urdf/gold_lynel_20241201-134522/result_round1/urdf/FR_LOW.stl"/>
+      </geometry>
+      <material name="grey"/>
+    </visual>
+    <collision>
+      <origin xyz="0.09976979681622795 0.2138625952749878 -0.14119172718493855" rpy="0 0 0"/>
+      <geometry>
+        <mesh filename="package://simple_robot_controller/urdf/gold_lynel_20241201-134522/result_round1/urdf/FR_LOW.stl"/>
+      </geometry>
+    </collision>
+    <inertial>
+      <origin xyz="-0.01082802168510362 -0.011537080574503089 -0.05616024554268756" rpy="0 0 0"/>
+      <mass value="0.43068"/>
+      <inertia ixx="0.00016887752570353954" ixy="3.577639906659221e-06" ixz="2.0340196015603253e-05" iyy="0.00013962718173585976" iyz="-3.1094055656172004e-05" izz="6.224196336026765e-05"/>
+    </inertial>
+  </link>
+  <joint name="FR_LOW_joint" type="revolute">
+    <parent link="FR_UP"/>
+    <child link="FR_LOW"/>
+    <origin xyz="0.00832913841150818 0.004213406674630029 -0.13307791946846026" rpy="0 0 0"/>
+    <axis xyz="-1.0 0.0 0.0"/>
+    <limit lower="-1.57" upper="1.57" effort="20" velocity="1.5"/>
+  </joint>
+  <link name="RR_LOW">
+    <visual>
+      <origin xyz="0.10793190426768176 -0.07671926460324081 -0.1426454431221096" rpy="0 0 0"/>
+      <geometry>
+        <mesh filename="package://simple_robot_controller/urdf/gold_lynel_20241201-134522/result_round1/urdf/RR_LOW.stl"/>
+      </geometry>
+      <material name="grey"/>
+    </visual>
+    <collision>
+      <origin xyz="0.10793190426768176 -0.07671926460324081 -0.1426454431221096" rpy="0 0 0"/>
+      <geometry>
+        <mesh filename="package://simple_robot_controller/urdf/gold_lynel_20241201-134522/result_round1/urdf/RR_LOW.stl"/>
+      </geometry>
+    </collision>
+    <inertial>
+      <origin xyz="-0.013967267673333103 -0.001696342904771428 -0.050505314108546195" rpy="0 0 0"/>
+      <mass value="0.39372"/>
+      <inertia ixx="0.00013793570755867238" ixy="-1.8079046022554967e-07" ixz="1.720072847455054e-05" iyy="0.00012137277064919293" iyz="-1.2276067090825956e-05" izz="4.781091176470589e-05"/>
+    </inertial>
+  </link>
+  <joint name="RR_LOW_joint" type="revolute">
+    <parent link="RR_UP"/>
+    <child link="RR_LOW"/>
+    <origin xyz="0.0024158981331350304 0.020760939604070047 -0.1228288839599666" rpy="0 0 0"/>
+    <axis xyz="-1.0 0.0 0.0"/>
+    <limit lower="-1.57" upper="1.57" effort="20" velocity="1.5"/>
+  </joint>
+  <link name="RL_LOW">
+    <visual>
+      <origin xyz="-0.11911485690527275 -0.07613978704263874 -0.12590171191944177" rpy="0 0 0"/>
+      <geometry>
+        <mesh filename="package://simple_robot_controller/urdf/gold_lynel_20241201-134522/result_round1/urdf/RL_LOW.stl"/>
+      </geometry>
+      <material name="grey"/>
+    </visual>
+    <collision>
+      <origin xyz="-0.11911485690527275 -0.07613978704263874 -0.12590171191944177" rpy="0 0 0"/>
+      <geometry>
+        <mesh filename="package://simple_robot_controller/urdf/gold_lynel_20241201-134522/result_round1/urdf/RL_LOW.stl"/>
+      </geometry>
+    </collision>
+    <inertial>
+      <origin xyz="0.01447005339100528 -0.004539828316893771 -0.04409089419665743" rpy="0 0 0"/>
+      <mass value="0.38124"/>
+      <inertia ixx="0.00011381240651558087" ixy="-2.7212677053824398e-06" ixz="-2.0269060906515544e-05" iyy="9.851875448536301e-05" iyz="-8.054027974504267e-06" izz="5.1010448536355404e-05"/>
+    </inertial>
+  </link>
+  <joint name="RL_LOW_joint" type="revolute">
+    <parent link="RL_UP"/>
+    <child link="RL_LOW"/>
+    <origin xyz="0.02053810255860178 0.031162767773589818 -0.15056542687362134" rpy="0 0 0"/>
+    <axis xyz="1.0 0.0 0.0"/>
+    <limit lower="-1.57" upper="1.57" effort="20" velocity="1.5"/>
+  </joint>
+  <link name="L_ARM">
+    <visual>
+      <origin xyz="-0.15273593171671013 0.1997709833692708 -0.5289105673345125" rpy="0 0 0"/>
+      <geometry>
+        <mesh filename="package://simple_robot_controller/urdf/gold_lynel_20241201-134522/result_round1/urdf/L_ARM.stl"/>
+      </geometry>
+      <material name="grey"/>
+    </visual>
+    <collision>
+      <origin xyz="-0.15273593171671013 0.1997709833692708 -0.5289105673345125" rpy="0 0 0"/>
+      <geometry>
+        <mesh filename="package://simple_robot_controller/urdf/gold_lynel_20241201-134522/result_round1/urdf/L_ARM.stl"/>
+      </geometry>
+    </collision>
+    <inertial>
+      <origin xyz="0.066934062516325 -0.04736320834172722 -0.06361177295356063" rpy="0 0 0"/>
+      <mass value="0.7196400000000001"/>
+      <inertia ixx="0.00019951529589795026" ixy="-1.140351613306637e-06" ixz="-1.0976797711355628e-05" iyy="0.00018593692183591586" iyz="3.140307341170576e-06" izz="9.996837481240548e-05"/>
+    </inertial>
+  </link>
+  <link name="L_ARM_virtual">
+  </link>
+  <joint name="L_ARM_joint1" type="revolute">
+    <parent link="BODY_UP"/>
+    <child link="L_ARM_virtual"/>
+    <origin xyz="0.10567790605316332 0.03638334030210348 0.14882533530244912" rpy="0 0 0"/>
+    <axis xyz="0.0 1.0 0.0"/>
+    <limit lower="-1.57" upper="1.57" effort="20" velocity="1.5"/>
+  </joint>
+  <joint name="L_ARM_joint2" type="revolute">
+    <parent link="L_ARM_virtual"/>
+    <child link="L_ARM"/>
+    <origin xyz="0.0486 -0.0486 0.0" rpy="0 0 0"/>
+    <axis xyz="1.0 0.0 0.0"/>
+    <limit lower="-1.57" upper="1.57" effort="20" velocity="1.5"/>
+  </joint>
+  <link name="R_ARM">
+    <visual>
+      <origin xyz="0.14780916976724842 0.201411008077993 -0.5142386139565268" rpy="0 0 0"/>
+      <geometry>
+        <mesh filename="package://simple_robot_controller/urdf/gold_lynel_20241201-134522/result_round1/urdf/R_ARM.stl"/>
+      </geometry>
+      <material name="grey"/>
+    </visual>
+    <collision>
+      <origin xyz="0.14780916976724842 0.201411008077993 -0.5142386139565268" rpy="0 0 0"/>
+      <geometry>
+        <mesh filename="package://simple_robot_controller/urdf/gold_lynel_20241201-134522/result_round1/urdf/R_ARM.stl"/>
+      </geometry>
+    </collision>
+    <inertial>
+      <origin xyz="-0.07521310205370009 -0.036821470811011725 -0.05616019328448485" rpy="0 0 0"/>
+      <mass value="0.73968"/>
+      <inertia ixx="0.00021007814649578365" ixy="2.7894621998702104e-05" ixz="6.723835415314772e-06" iyy="0.0001831666272104137" iyz="1.2618280580791662e-05" izz="0.0001545847019995116"/>
+    </inertial>
+  </link>
+  <link name="R_ARM_virtual">
+  </link>
+  <joint name="R_ARM_joint1" type="revolute">
+    <parent link="BODY_UP"/>
+    <child link="R_ARM_virtual"/>
+    <origin xyz="-0.09766719543079525 0.03474331559338126 0.1341533819244635" rpy="0 0 0"/>
+    <axis xyz="0.0 1.0 0.0"/>
+    <limit lower="-1.57" upper="1.57" effort="20" velocity="1.5"/>
+  </joint>
+  <joint name="R_ARM_joint2" type="revolute">
+    <parent link="R_ARM_virtual"/>
+    <child link="R_ARM"/>
+    <origin xyz="-0.0486 -0.0486 0.0" rpy="0 0 0"/>
+    <axis xyz="-1.0 0.0 0.0"/>
+    <limit lower="-1.57" upper="1.57" effort="20" velocity="1.5"/>
+  </joint>
+  <link name="L_FOREARM">
+    <visual>
+      <origin xyz="-0.20276875905627587 0.21067146502486306 -0.4000421575151695" rpy="0 0 0"/>
+      <geometry>
+        <mesh filename="package://simple_robot_controller/urdf/gold_lynel_20241201-134522/result_round1/urdf/L_FOREARM.stl"/>
+      </geometry>
+      <material name="grey"/>
+    </visual>
+    <collision>
+      <origin xyz="-0.20276875905627587 0.21067146502486306 -0.4000421575151695" rpy="0 0 0"/>
+      <geometry>
+        <mesh filename="package://simple_robot_controller/urdf/gold_lynel_20241201-134522/result_round1/urdf/L_FOREARM.stl"/>
+      </geometry>
+    </collision>
+    <inertial>
+      <origin xyz="0.002213546722832277 -0.03496012108454022 -0.08412117002894026" rpy="0 0 0"/>
+      <mass value="0.86076"/>
+      <inertia ixx="0.000508582556879969" ixy="-3.2421134358008883e-05" ixz="-5.8919408406524416e-05" iyy="0.0004389720010455838" iyz="-0.00014842141922835614" izz="0.00017641601589293179"/>
+    </inertial>
+  </link>
+  <joint name="L_FOREARM_joint" type="revolute">
+    <parent link="L_ARM"/>
+    <child link="L_FOREARM"/>
+    <origin xyz="0.05003282733956574 -0.01090048165559228 -0.12886840981934292" rpy="0 0 0"/>
+    <axis xyz="1.0 0.0 0.0"/>
+    <limit lower="-1.57" upper="1.57" effort="20" velocity="1.5"/>
+  </joint>
+  <link name="R_FOREARM">
+    <visual>
+      <origin xyz="0.2027423048390666 0.1932260707120776 -0.3973372904300483" rpy="0 0 0"/>
+      <geometry>
+        <mesh filename="package://simple_robot_controller/urdf/gold_lynel_20241201-134522/result_round1/urdf/R_FOREARM.stl"/>
+      </geometry>
+      <material name="grey"/>
+    </visual>
+    <collision>
+      <origin xyz="0.2027423048390666 0.1932260707120776 -0.3973372904300483" rpy="0 0 0"/>
+      <geometry>
+        <mesh filename="package://simple_robot_controller/urdf/gold_lynel_20241201-134522/result_round1/urdf/R_FOREARM.stl"/>
+      </geometry>
+    </collision>
+    <inertial>
+      <origin xyz="0.003190500501636967 -0.04923929957673276 -0.07873896855015122" rpy="0 0 0"/>
+      <mass value="0.9012"/>
+      <inertia ixx="0.0005406780915279637" ixy="4.011009856857554e-05" ixz="6.222699112849435e-05" iyy="0.0004541532192743009" iyz="-0.00016873079880159756" izz="0.00020813233786617891"/>
+    </inertial>
+  </link>
+  <joint name="R_FOREARM_joint" type="revolute">
+    <parent link="R_ARM"/>
+    <child link="R_FOREARM"/>
+    <origin xyz="-0.05493313507181817 0.008184937365915418 -0.1169013235264785" rpy="0 0 0"/>
+    <axis xyz="-1.0 0.0 0.0"/>
+    <limit lower="-1.57" upper="1.57" effort="20" velocity="1.5"/>
+  </joint>
+  <link name="FL_foot">
+  </link>
+  <joint name="FL_foot_joint" type="fixed">
+    <parent link="FL_LOW"/>
+    <child link="FL_foot"/>
+    <origin xyz="0.00375 -0.0375 -0.1375" rpy="0 0 0"/>
+  </joint>
+  <link name="FR_foot">
+  </link>
+  <joint name="FR_foot_joint" type="fixed">
+    <parent link="FR_LOW"/>
+    <child link="FR_foot"/>
+    <origin xyz="-0.00375 -0.0375 -0.1375" rpy="0 0 0"/>
+  </joint>
+  <link name="RR_foot">
+  </link>
+  <joint name="RR_foot_joint" type="fixed">
+    <parent link="RR_LOW"/>
+    <child link="RR_foot"/>
+    <origin xyz="-0.0125 0.0 -0.1375" rpy="0 0 0"/>
+  </joint>
+  <link name="RL_foot">
+  </link>
+  <joint name="RL_foot_joint" type="fixed">
+    <parent link="RL_LOW"/>
+    <child link="RL_foot"/>
+    <origin xyz="0.0125 0.0 -0.1375" rpy="0 0 0"/>
+  </joint>
+<gazebo>
+   <plugin filename="libgazebo_ros_p3d.so" name="p3d_base_controller">
+   <alwaysOn>true</alwaysOn>
+       <updateRate>10.0</updateRate>
+       <bodyName>base_link</bodyName>
+       <topicName>odom/ground_truth</topicName>
+       <gaussianNoise>0.00000001</gaussianNoise>
+       <frameName>world</frameName>
+       <xyzOffsets>0 0 0</xyzOffsets>
+       <rpyOffsets>0 0 0</rpyOffsets>
+   </plugin>
+</gazebo>
+<gazebo>
+   <plugin filename="libgazebo_ros_control.so" name="gazebo_ros_control">
+       <legacyModeNS>true</legacyModeNS>
+   </plugin>
+</gazebo>
+</robot>
+

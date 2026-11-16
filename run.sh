@@ -5,6 +5,7 @@ repo_dir="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
 project="${1:---help}"
 if [[ $# -gt 0 ]]; then shift; fi
 case "$project" in
+    middle) exec bash "$repo_dir/projects/dog_middle_sim/run.sh" "$@" ;;
     supermimic) exec bash "$repo_dir/projects/go2_mujoco_mimic/run_gpu.sh" "$@" ;;
     go2) exec bash "$repo_dir/projects/go2_learning/run.sh" "$@" ;;
     go2-sim2sim) exec bash "$repo_dir/projects/go2_sim2sim/run.sh" "$@" ;;
@@ -15,6 +16,7 @@ case "$project" in
     -h|--help)
         printf '%s\n' \
             '用法：bash run.sh <工程> [运行方式] [参数]' \
+            '  middle             Middle 四足：PD 仿真；train/play/evaluate 为 SuperMimic' \
             '  supermimic         Go2 MuJoCo Warp：train-state、play、reference、evaluate-state' \
             '  go2                Go2 主工程：view（默认）、train、play' \
             '  go2-sim2sim        独立 MuJoCo：play（默认）、test、fetch-model' \

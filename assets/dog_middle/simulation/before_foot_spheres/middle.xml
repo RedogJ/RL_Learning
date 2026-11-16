@@ -1,0 +1,205 @@
+<mujoco model="dog_middle">
+  <compiler angle="radian" autolimits="true" inertiafromgeom="false" />
+  <option timestep="0.002" integrator="implicitfast" gravity="0 0 -9.81" cone="elliptic" iterations="50" />
+  <size njmax="512" nconmax="128" />
+  <default>
+    <joint damping="0.3" armature="0.002" frictionloss="0.02" />
+    <geom friction="0.8 0.005 0.0001" condim="3" />
+  </default>
+  <asset>
+    <texture name="checker" type="2d" builtin="checker" rgb1="0.2 0.24 0.28" rgb2="0.7 0.74 0.78" width="512" height="512" />
+    <material name="ground" texture="checker" texrepeat="4 4" texuniform="true" reflectance="0" />
+    <mesh name="BODY" file="../n02087046_4058_neutral_res_e300_smoothed_scaled_20241031-023114/result_round1/urdf_with_motors/BODY.stl" />
+    <mesh name="BODY_motor_0" file="../n02087046_4058_neutral_res_e300_smoothed_scaled_20241031-023114/result_round1/urdf_with_motors/motor_2.stl" />
+    <mesh name="BODY_motor_1" file="../n02087046_4058_neutral_res_e300_smoothed_scaled_20241031-023114/result_round1/urdf_with_motors/motor_2.stl" />
+    <mesh name="BODY_motor_2" file="../n02087046_4058_neutral_res_e300_smoothed_scaled_20241031-023114/result_round1/urdf_with_motors/motor_2.stl" />
+    <mesh name="BODY_motor_3" file="../n02087046_4058_neutral_res_e300_smoothed_scaled_20241031-023114/result_round1/urdf_with_motors/motor_2.stl" />
+    <mesh name="FL_UP" file="../n02087046_4058_neutral_res_e300_smoothed_scaled_20241031-023114/result_round1/urdf_with_motors/FL_UP.stl" />
+    <mesh name="FL_UP_motor_0" file="../n02087046_4058_neutral_res_e300_smoothed_scaled_20241031-023114/result_round1/urdf_with_motors/motor_2.stl" />
+    <mesh name="FL_UP_motor_1" file="../n02087046_4058_neutral_res_e300_smoothed_scaled_20241031-023114/result_round1/urdf_with_motors/motor_1.stl" />
+    <mesh name="FL_LOW" file="../n02087046_4058_neutral_res_e300_smoothed_scaled_20241031-023114/result_round1/urdf_with_motors/FL_LOW.stl" />
+    <mesh name="FL_LOW_motor_0" file="../n02087046_4058_neutral_res_e300_smoothed_scaled_20241031-023114/result_round1/urdf_with_motors/motor_1.stl" />
+    <mesh name="FR_UP" file="../n02087046_4058_neutral_res_e300_smoothed_scaled_20241031-023114/result_round1/urdf_with_motors/FR_UP.stl" />
+    <mesh name="FR_UP_motor_0" file="../n02087046_4058_neutral_res_e300_smoothed_scaled_20241031-023114/result_round1/urdf_with_motors/motor_2.stl" />
+    <mesh name="FR_UP_motor_1" file="../n02087046_4058_neutral_res_e300_smoothed_scaled_20241031-023114/result_round1/urdf_with_motors/motor_1.stl" />
+    <mesh name="FR_LOW" file="../n02087046_4058_neutral_res_e300_smoothed_scaled_20241031-023114/result_round1/urdf_with_motors/FR_LOW.stl" />
+    <mesh name="FR_LOW_motor_0" file="../n02087046_4058_neutral_res_e300_smoothed_scaled_20241031-023114/result_round1/urdf_with_motors/motor_1.stl" />
+    <mesh name="RL_UP" file="../n02087046_4058_neutral_res_e300_smoothed_scaled_20241031-023114/result_round1/urdf_with_motors/RL_UP.stl" />
+    <mesh name="RL_UP_motor_0" file="../n02087046_4058_neutral_res_e300_smoothed_scaled_20241031-023114/result_round1/urdf_with_motors/motor_2.stl" />
+    <mesh name="RL_UP_motor_1" file="../n02087046_4058_neutral_res_e300_smoothed_scaled_20241031-023114/result_round1/urdf_with_motors/motor_1.stl" />
+    <mesh name="RL_LOW" file="../n02087046_4058_neutral_res_e300_smoothed_scaled_20241031-023114/result_round1/urdf_with_motors/RL_LOW.stl" />
+    <mesh name="RL_LOW_motor_0" file="../n02087046_4058_neutral_res_e300_smoothed_scaled_20241031-023114/result_round1/urdf_with_motors/motor_1.stl" />
+    <mesh name="RR_UP" file="../n02087046_4058_neutral_res_e300_smoothed_scaled_20241031-023114/result_round1/urdf_with_motors/RR_UP.stl" />
+    <mesh name="RR_UP_motor_0" file="../n02087046_4058_neutral_res_e300_smoothed_scaled_20241031-023114/result_round1/urdf_with_motors/motor_2.stl" />
+    <mesh name="RR_UP_motor_1" file="../n02087046_4058_neutral_res_e300_smoothed_scaled_20241031-023114/result_round1/urdf_with_motors/motor_1.stl" />
+    <mesh name="RR_LOW" file="../n02087046_4058_neutral_res_e300_smoothed_scaled_20241031-023114/result_round1/urdf_with_motors/RR_LOW.stl" />
+    <mesh name="RR_LOW_motor_0" file="../n02087046_4058_neutral_res_e300_smoothed_scaled_20241031-023114/result_round1/urdf_with_motors/motor_1.stl" />
+  </asset>
+  <worldbody>
+    <light pos="0 -1 3" dir="0 0 -1" directional="true" />
+    <geom name="ground" type="plane" size="0 0 0.1" material="ground" contype="2" conaffinity="1" />
+    <body name="BODY" pos="0 0 0.3">
+      <freejoint name="root" />
+      <inertial pos="0.00035553329995 -0.14026852986 0.0877788357573" mass="2.1567600000000002" fullinertia="0.11720606784042749 0.017465080393924005 0.10685133020063547 -0.0006206588923385226 6.547874812218115e-05 0.02071475385544998" />
+      <geom name="BODY_visual" type="mesh" mesh="BODY" pos="0 0 0" group="2" contype="0" conaffinity="0" rgba="0.68 0.47 0.28 1" />
+      <geom name="BODY_collision" type="mesh" mesh="BODY" pos="0 0 0" group="3" contype="1" conaffinity="2" rgba="1 0.3 0.1 0.25" />
+      <body name="BODY_motor_0" pos="-0.0164209144138 -0.242188786883 0.00169403185898" quat="0.707106781187 0.707106781187 0 0">
+        <inertial pos="0 0 0" mass="0.01" fullinertia="0.0001 0.0001 0.0001 0.0 0.0 0.0" />
+        <geom name="BODY_motor_0_visual" type="mesh" mesh="BODY_motor_0" pos="0 0 0" group="2" contype="0" conaffinity="0" rgba="0.18 0.20 0.23 1" />
+        <geom name="BODY_motor_0_collision" type="mesh" mesh="BODY_motor_0" pos="0 0 0" group="3" contype="1" conaffinity="2" rgba="1 0.3 0.1 0.25" />
+      </body>
+      <body name="BODY_motor_1" pos="-0.0204102068784 -0.162344836929 -0.010876215386" quat="0.707106781187 0.707106781187 0 0">
+        <inertial pos="0 0 0" mass="0.01" fullinertia="0.0001 0.0001 0.0001 0.0 0.0 0.0" />
+        <geom name="BODY_motor_1_visual" type="mesh" mesh="BODY_motor_1" pos="0 0 0" group="2" contype="0" conaffinity="0" rgba="0.18 0.20 0.23 1" />
+        <geom name="BODY_motor_1_collision" type="mesh" mesh="BODY_motor_1" pos="0 0 0" group="3" contype="1" conaffinity="2" rgba="1 0.3 0.1 0.25" />
+      </body>
+      <body name="BODY_motor_2" pos="-0.00907478251004 0.160592229737 -0.009054080718" quat="0.707106781187 -0.707106781187 0 0">
+        <inertial pos="0 0 0" mass="0.01" fullinertia="0.0001 0.0001 0.0001 0.0 0.0 0.0" />
+        <geom name="BODY_motor_2_visual" type="mesh" mesh="BODY_motor_2" pos="0 0 0" group="2" contype="0" conaffinity="0" rgba="0.18 0.20 0.23 1" />
+        <geom name="BODY_motor_2_collision" type="mesh" mesh="BODY_motor_2" pos="0 0 0" group="3" contype="1" conaffinity="2" rgba="1 0.3 0.1 0.25" />
+      </body>
+      <body name="BODY_motor_3" pos="-0.0111880047375 0.0979968090376 -0.00322551031907" quat="0.707106781187 -0.707106781187 0 0">
+        <inertial pos="0 0 0" mass="0.01" fullinertia="0.0001 0.0001 0.0001 0.0 0.0 0.0" />
+        <geom name="BODY_motor_3_visual" type="mesh" mesh="BODY_motor_3" pos="0 0 0" group="2" contype="0" conaffinity="0" rgba="0.18 0.20 0.23 1" />
+        <geom name="BODY_motor_3_collision" type="mesh" mesh="BODY_motor_3" pos="0 0 0" group="3" contype="1" conaffinity="2" rgba="1 0.3 0.1 0.25" />
+      </body>
+      <body name="FL_UP" pos="0.0448290855862 -0.301688786883 0.00169403185898">
+        <joint name="FL_UP_joint1" type="hinge" pos="-0.06125 0.06125 -0" axis="0. 1. 0." range="-1.57 1.57" />
+        <joint name="FL_UP_joint2" type="hinge" pos="0 0 0" axis="1. 0. 0." range="-1.57 1.57" />
+        <inertial pos="0.0782592562901 -0.0335555254948 -0.068585903042" mass="0.09408" fullinertia="0.00037119645918367325 0.00028611805102040906 0.00017732384693877533 -1.1459188775510216e-05 -2.2488198979591822e-05 5.794835204081634e-05" />
+        <geom name="FL_UP_visual" type="mesh" mesh="FL_UP" pos="-0.0448290855862 0.301688786883 -0.00169403185898" group="2" contype="0" conaffinity="0" rgba="0.68 0.47 0.28 1" />
+        <geom name="FL_UP_collision" type="mesh" mesh="FL_UP" pos="-0.0448290855862 0.301688786883 -0.00169403185898" group="3" contype="1" conaffinity="2" rgba="1 0.3 0.1 0.25" />
+        <body name="FL_UP_motor_0" pos="-0.00175 0 0" quat="0.707106781187 0 -0.707106781187 0">
+          <inertial pos="0 0 0" mass="0.01" fullinertia="0.0001 0.0001 0.0001 0.0 0.0 0.0" />
+          <geom name="FL_UP_motor_0_visual" type="mesh" mesh="FL_UP_motor_0" pos="0 0 0" group="2" contype="0" conaffinity="0" rgba="0.18 0.20 0.23 1" />
+          <geom name="FL_UP_motor_0_collision" type="mesh" mesh="FL_UP_motor_0" pos="0 0 0" group="3" contype="1" conaffinity="2" rgba="1 0.3 0.1 0.25" />
+        </body>
+        <body name="FL_UP_motor_1" pos="0.0281779917135 0.0282406791569 -0.183150156095" quat="0.707106781187 0 0.707106781187 0">
+          <inertial pos="0 0 0" mass="0.01" fullinertia="0.0001 0.0001 0.0001 0.0 0.0 0.0" />
+          <geom name="FL_UP_motor_1_visual" type="mesh" mesh="FL_UP_motor_1" pos="0 0 0" group="2" contype="0" conaffinity="0" rgba="0.18 0.20 0.23 1" />
+          <geom name="FL_UP_motor_1_collision" type="mesh" mesh="FL_UP_motor_1" pos="0 0 0" group="3" contype="1" conaffinity="2" rgba="1 0.3 0.1 0.25" />
+        </body>
+        <body name="FL_LOW" pos="0.0270279917135 0.0282406791569 -0.183150156095">
+          <joint name="FL_LOW_joint" type="hinge" axis="1. 0. 0." range="-1.57 1.57" />
+          <inertial pos="0.0127199872782 0.00660709563749 -0.0337707414122" mass="0.04068" fullinertia="0.00010257423008849552 9.239631858407075e-05 3.732481415929211e-05 3.5947256637168136e-06 -9.93369911504425e-06 -8.971150442477863e-06" />
+          <geom name="FL_LOW_visual" type="mesh" mesh="FL_LOW" pos="-0.0718570772997 0.273448107726 0.181456124236" group="2" contype="0" conaffinity="0" rgba="0.68 0.47 0.28 1" />
+          <geom name="FL_LOW_collision" type="mesh" mesh="FL_LOW" pos="-0.0718570772997 0.273448107726 0.181456124236" group="3" contype="1" conaffinity="2" rgba="1 0.3 0.1 0.25" />
+          <site name="FL_sole" pos="0.00817298194952 -0.0126896848451 -0.129385436128" size="0.006" rgba="0 0.8 0.9 1" group="4" />
+          <body name="FL_LOW_motor_0" pos="-0.00115 -5.55111512313e-17 2.77555756156e-17" quat="0.707106781187 0 -0.707106781187 0">
+            <inertial pos="0 0 0" mass="0.01" fullinertia="0.0001 0.0001 0.0001 0.0 0.0 0.0" />
+            <geom name="FL_LOW_motor_0_visual" type="mesh" mesh="FL_LOW_motor_0" pos="0 0 0" group="2" contype="0" conaffinity="0" rgba="0.18 0.20 0.23 1" />
+            <geom name="FL_LOW_motor_0_collision" type="mesh" mesh="FL_LOW_motor_0" pos="0 0 0" group="3" contype="1" conaffinity="2" rgba="1 0.3 0.1 0.25" />
+          </body>
+          <site name="left_front_foot" pos="0.00836240934226 -0.0205062635434 -0.122977477751" size="0.004" group="4" />
+        </body>
+      </body>
+      <body name="FR_UP" pos="-0.0816602068784 -0.221844836929 -0.010876215386">
+        <joint name="FR_UP_joint1" type="hinge" pos="0.06125 0.06125 -0" axis="0. 1. 0." range="-1.57 1.57" />
+        <joint name="FR_UP_joint2" type="hinge" pos="0 0 0" axis="-1.  0.  0." range="-1.57 1.57" />
+        <inertial pos="-0.0564445554545 -0.0842644513147 -0.0624911481854" mass="0.09996000000000001" fullinertia="0.00039310985834333737 0.0003543390828331337 0.00018352805762304888 2.979474669867935e-05 9.4472513805522e-05 -6.600789435774312e-05" />
+        <geom name="FR_UP_visual" type="mesh" mesh="FR_UP" pos="0.0816602068784 0.221844836929 0.010876215386" group="2" contype="0" conaffinity="0" rgba="0.68 0.47 0.28 1" />
+        <geom name="FR_UP_collision" type="mesh" mesh="FR_UP" pos="0.0816602068784 0.221844836929 0.010876215386" group="3" contype="1" conaffinity="2" rgba="1 0.3 0.1 0.25" />
+        <body name="FR_UP_motor_0" pos="0.00175 0 0" quat="0.707106781187 0 0.707106781187 0">
+          <inertial pos="0 0 0" mass="0.01" fullinertia="0.0001 0.0001 0.0001 0.0 0.0 0.0" />
+          <geom name="FR_UP_motor_0_visual" type="mesh" mesh="FR_UP_motor_0" pos="0 0 0" group="2" contype="0" conaffinity="0" rgba="0.18 0.20 0.23 1" />
+          <geom name="FR_UP_motor_0_collision" type="mesh" mesh="FR_UP_motor_0" pos="0 0 0" group="3" contype="1" conaffinity="2" rgba="1 0.3 0.1 0.25" />
+        </body>
+        <body name="FR_UP_motor_1" pos="0.00347146824406 -0.0457415898456 -0.15733486663" quat="0.707106781187 0 -0.707106781187 0">
+          <inertial pos="0 0 0" mass="0.01" fullinertia="0.0001 0.0001 0.0001 0.0 0.0 0.0" />
+          <geom name="FR_UP_motor_1_visual" type="mesh" mesh="FR_UP_motor_1" pos="0 0 0" group="2" contype="0" conaffinity="0" rgba="0.18 0.20 0.23 1" />
+          <geom name="FR_UP_motor_1_collision" type="mesh" mesh="FR_UP_motor_1" pos="0 0 0" group="3" contype="1" conaffinity="2" rgba="1 0.3 0.1 0.25" />
+        </body>
+        <body name="FR_LOW" pos="0.00462146824406 -0.0457415898456 -0.15733486663">
+          <joint name="FR_LOW_joint" type="hinge" axis="-1.  0.  0." range="-1.57 1.57" />
+          <inertial pos="-0.00904286623209 -0.00329214349243 -0.0506450040385" mass="0.031920000000000004" fullinertia="8.959330827067683e-05 7.88072030075189e-05 2.7564902255639077e-05 -7.375939849623945e-08 1.0063308270676703e-05 -2.742676691729323e-06" />
+          <geom name="FR_LOW_visual" type="mesh" mesh="FR_LOW" pos="0.0770387386343 0.267586426775 0.168211082016" group="2" contype="0" conaffinity="0" rgba="0.68 0.47 0.28 1" />
+          <geom name="FR_LOW_collision" type="mesh" mesh="FR_LOW" pos="0.0770387386343 0.267586426775 0.168211082016" group="3" contype="1" conaffinity="2" rgba="1 0.3 0.1 0.25" />
+          <site name="FR_sole" pos="-0.00297303085257 -0.0185731625978 -0.142632892336" size="0.006" rgba="0 0.8 0.9 1" group="4" />
+          <body name="FR_LOW_motor_0" pos="0.00115 -5.55111512313e-17 -2.77555756156e-17" quat="0.707106781187 0 0.707106781187 0">
+            <inertial pos="0 0 0" mass="0.01" fullinertia="0.0001 0.0001 0.0001 0.0 0.0 0.0" />
+            <geom name="FR_LOW_motor_0_visual" type="mesh" mesh="FR_LOW_motor_0" pos="0 0 0" group="2" contype="0" conaffinity="0" rgba="0.18 0.20 0.23 1" />
+            <geom name="FR_LOW_motor_0_collision" type="mesh" mesh="FR_LOW_motor_0" pos="0 0 0" group="3" contype="1" conaffinity="2" rgba="1 0.3 0.1 0.25" />
+          </body>
+          <site name="right_front_foot" pos="-0.00836237158311 -0.0205062635434 -0.122977066931" size="0.004" group="4" />
+        </body>
+      </body>
+      <body name="RL_UP" pos="0.05217521749 0.220092229737 -0.009054080718">
+        <joint name="RL_UP_joint1" type="hinge" pos="-0.06125 -0.06125 -0" axis=" 0. -1.  0." range="-1.57 1.57" />
+        <joint name="RL_UP_joint2" type="hinge" pos="0 0 0" axis="1. 0. 0." range="-1.57 1.57" />
+        <inertial pos="0.0680417854448 0.0463323970144 -0.0483927857028" mass="0.07896" fullinertia="0.00025822272948328217 0.0002023852158054714 0.00013393730699088135 -8.10058358662614e-06 -5.048502127659574e-05 -4.445846808510635e-05" />
+        <geom name="RL_UP_visual" type="mesh" mesh="RL_UP" pos="-0.05217521749 -0.220092229737 0.009054080718" group="2" contype="0" conaffinity="0" rgba="0.68 0.47 0.28 1" />
+        <geom name="RL_UP_collision" type="mesh" mesh="RL_UP" pos="-0.05217521749 -0.220092229737 0.009054080718" group="3" contype="1" conaffinity="2" rgba="1 0.3 0.1 0.25" />
+        <body name="RL_UP_motor_0" pos="-0.00175 0 0" quat="0.707106781187 0 -0.707106781187 0">
+          <inertial pos="0 0 0" mass="0.01" fullinertia="0.0001 0.0001 0.0001 0.0 0.0 0.0" />
+          <geom name="RL_UP_motor_0_visual" type="mesh" mesh="RL_UP_motor_0" pos="0 0 0" group="2" contype="0" conaffinity="0" rgba="0.18 0.20 0.23 1" />
+          <geom name="RL_UP_motor_0_collision" type="mesh" mesh="RL_UP_motor_0" pos="0 0 0" group="3" contype="1" conaffinity="2" rgba="1 0.3 0.1 0.25" />
+        </body>
+        <body name="RL_UP_motor_1" pos="0.00164901138426 -0.028633760551 -0.143471348385" quat="0.707106781187 0 0.707106781187 0">
+          <inertial pos="0 0 0" mass="0.01" fullinertia="0.0001 0.0001 0.0001 0.0 0.0 0.0" />
+          <geom name="RL_UP_motor_1_visual" type="mesh" mesh="RL_UP_motor_1" pos="0 0 0" group="2" contype="0" conaffinity="0" rgba="0.18 0.20 0.23 1" />
+          <geom name="RL_UP_motor_1_collision" type="mesh" mesh="RL_UP_motor_1" pos="0 0 0" group="3" contype="1" conaffinity="2" rgba="1 0.3 0.1 0.25" />
+        </body>
+        <body name="RL_LOW" pos="0.000499011384259 -0.028633760551 -0.143471348385">
+          <joint name="RL_LOW_joint" type="hinge" axis="1. 0. 0." range="-1.57 1.57" />
+          <inertial pos="0.00745009298186 0.0124975771606 -0.0506214724832" mass="0.05028" fullinertia="0.00016912169928400952 0.0001489201718377086 5.315209546539373e-05 6.907274463007161e-06 -1.769779474940335e-05 7.567045346062054e-06" />
+          <geom name="RL_LOW_visual" type="mesh" mesh="RL_LOW" pos="-0.0526742288742 -0.191458469186 0.152525429103" group="2" contype="0" conaffinity="0" rgba="0.68 0.47 0.28 1" />
+          <geom name="RL_LOW_collision" type="mesh" mesh="RL_LOW" pos="-0.0526742288742 -0.191458469186 0.152525429103" group="3" contype="1" conaffinity="2" rgba="1 0.3 0.1 0.25" />
+          <site name="RL_sole" pos="0.0123624964821 0.0125493304481 -0.155181850817" size="0.006" rgba="0 0.8 0.9 1" group="4" />
+          <body name="RL_LOW_motor_0" pos="-0.00115 0 0" quat="0.707106781187 0 -0.707106781187 0">
+            <inertial pos="0 0 0" mass="0.01" fullinertia="0.0001 0.0001 0.0001 0.0 0.0 0.0" />
+            <geom name="RL_LOW_motor_0_visual" type="mesh" mesh="RL_LOW_motor_0" pos="0 0 0" group="2" contype="0" conaffinity="0" rgba="0.18 0.20 0.23 1" />
+            <geom name="RL_LOW_motor_0_collision" type="mesh" mesh="RL_LOW_motor_0" pos="0 0 0" group="3" contype="1" conaffinity="2" rgba="1 0.3 0.1 0.25" />
+          </body>
+          <site name="left_foot" pos="0.00600700278078 -0.00216212888813 -0.131890220756" size="0.004" group="4" />
+        </body>
+      </body>
+      <body name="RR_UP" pos="-0.0724380047375 0.157496809038 -0.00322551031907">
+        <joint name="RR_UP_joint1" type="hinge" pos="0.06125 -0.06125 -0" axis=" 0. -1.  0." range="-1.57 1.57" />
+        <joint name="RR_UP_joint2" type="hinge" pos="0 0 0" axis="-1.  0.  0." range="-1.57 1.57" />
+        <inertial pos="-0.0560234424095 0.0838870466447 -0.0414579032245" mass="0.08316" fullinertia="0.0002409239826839824 0.0002046667012987011 0.00017427411255411252 -3.792909090909093e-05 6.58645714285713e-05 3.0743999999999975e-05" />
+        <geom name="RR_UP_visual" type="mesh" mesh="RR_UP" pos="0.0724380047375 -0.157496809038 0.00322551031907" group="2" contype="0" conaffinity="0" rgba="0.68 0.47 0.28 1" />
+        <geom name="RR_UP_collision" type="mesh" mesh="RR_UP" pos="0.0724380047375 -0.157496809038 0.00322551031907" group="3" contype="1" conaffinity="2" rgba="1 0.3 0.1 0.25" />
+        <body name="RR_UP_motor_0" pos="0.00175 0 0" quat="0.707106781187 0 0.707106781187 0">
+          <inertial pos="0 0 0" mass="0.01" fullinertia="0.0001 0.0001 0.0001 0.0 0.0 0.0" />
+          <geom name="RR_UP_motor_0_visual" type="mesh" mesh="RR_UP_motor_0" pos="0 0 0" group="2" contype="0" conaffinity="0" rgba="0.18 0.20 0.23 1" />
+          <geom name="RR_UP_motor_0_collision" type="mesh" mesh="RR_UP_motor_0" pos="0 0 0" group="3" contype="1" conaffinity="2" rgba="1 0.3 0.1 0.25" />
+        </body>
+        <body name="RR_UP_motor_1" pos="0.0207071577401 0.0436216968488 -0.122026333023" quat="0.707106781187 0 -0.707106781187 0">
+          <inertial pos="0 0 0" mass="0.01" fullinertia="0.0001 0.0001 0.0001 0.0 0.0 0.0" />
+          <geom name="RR_UP_motor_1_visual" type="mesh" mesh="RR_UP_motor_1" pos="0 0 0" group="2" contype="0" conaffinity="0" rgba="0.18 0.20 0.23 1" />
+          <geom name="RR_UP_motor_1_collision" type="mesh" mesh="RR_UP_motor_1" pos="0 0 0" group="3" contype="1" conaffinity="2" rgba="1 0.3 0.1 0.25" />
+        </body>
+        <body name="RR_LOW" pos="0.0218571577401 0.0436216968488 -0.122026333023">
+          <joint name="RR_LOW_joint" type="hinge" axis="-1.  0.  0." range="-1.57 1.57" />
+          <inertial pos="-0.00982408262429 0.00835248069566 -0.0645901162844" mass="0.05004" fullinertia="0.00022040610071942456 0.00020480920863309322 4.723798561151064e-05 -4.6129496402877566e-06 2.416330935251809e-05 5.790589928057555e-06" />
+          <geom name="RR_LOW_visual" type="mesh" mesh="RR_LOW" pos="0.0505808469974 -0.201118505886 0.125251843342" group="2" contype="0" conaffinity="0" rgba="0.68 0.47 0.28 1" />
+          <geom name="RR_LOW_collision" type="mesh" mesh="RR_LOW" pos="0.0505808469974 -0.201118505886 0.125251843342" group="3" contype="1" conaffinity="2" rgba="1 0.3 0.1 0.25" />
+          <site name="RR_sole" pos="-0.0135706692386 0.00391917943169 -0.182472662321" size="0.006" rgba="0 0.8 0.9 1" group="4" />
+          <body name="RR_LOW_motor_0" pos="0.00115 0 0" quat="0.707106781187 0 0.707106781187 0">
+            <inertial pos="0 0 0" mass="0.01" fullinertia="0.0001 0.0001 0.0001 0.0 0.0 0.0" />
+            <geom name="RR_LOW_motor_0_visual" type="mesh" mesh="RR_LOW_motor_0" pos="0 0 0" group="2" contype="0" conaffinity="0" rgba="0.18 0.20 0.23 1" />
+            <geom name="RR_LOW_motor_0_collision" type="mesh" mesh="RR_LOW_motor_0" pos="0 0 0" group="3" contype="1" conaffinity="2" rgba="1 0.3 0.1 0.25" />
+          </body>
+          <site name="right_foot" pos="-0.00567805825432 -0.000841703310196 -0.139942574635" size="0.004" group="4" />
+        </body>
+      </body>
+    </body>
+  </worldbody>
+  <actuator>
+    <motor name="FL_UP_joint1_motor" joint="FL_UP_joint1" gear="1" ctrllimited="true" ctrlrange="-20.0 20.0" />
+    <motor name="FL_UP_joint2_motor" joint="FL_UP_joint2" gear="1" ctrllimited="true" ctrlrange="-20.0 20.0" />
+    <motor name="FL_LOW_joint_motor" joint="FL_LOW_joint" gear="1" ctrllimited="true" ctrlrange="-20.0 20.0" />
+    <motor name="FR_UP_joint1_motor" joint="FR_UP_joint1" gear="1" ctrllimited="true" ctrlrange="-20.0 20.0" />
+    <motor name="FR_UP_joint2_motor" joint="FR_UP_joint2" gear="1" ctrllimited="true" ctrlrange="-20.0 20.0" />
+    <motor name="FR_LOW_joint_motor" joint="FR_LOW_joint" gear="1" ctrllimited="true" ctrlrange="-20.0 20.0" />
+    <motor name="RL_UP_joint1_motor" joint="RL_UP_joint1" gear="1" ctrllimited="true" ctrlrange="-20.0 20.0" />
+    <motor name="RL_UP_joint2_motor" joint="RL_UP_joint2" gear="1" ctrllimited="true" ctrlrange="-20.0 20.0" />
+    <motor name="RL_LOW_joint_motor" joint="RL_LOW_joint" gear="1" ctrllimited="true" ctrlrange="-20.0 20.0" />
+    <motor name="RR_UP_joint1_motor" joint="RR_UP_joint1" gear="1" ctrllimited="true" ctrlrange="-20.0 20.0" />
+    <motor name="RR_UP_joint2_motor" joint="RR_UP_joint2" gear="1" ctrllimited="true" ctrlrange="-20.0 20.0" />
+    <motor name="RR_LOW_joint_motor" joint="RR_LOW_joint" gear="1" ctrllimited="true" ctrlrange="-20.0 20.0" />
+  </actuator>
+  <keyframe>
+    <key name="stand" qpos="0 0 0.283006493512 1 0 0 0 -0.106006650575 -0.656343147688 0.995455813649 0.111686534658 0.0754587031562 0.390726991035 0.160237982254 -0.206834138878 -0.276442613405 -0.164537205987 0.0905448408008 0.446015496881" qvel="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0" ctrl="0 0 0 0 0 0 0 0 0 0 0 0" />
+  </keyframe>
+</mujoco>

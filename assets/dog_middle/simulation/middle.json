@@ -1,0 +1,51 @@
+{
+  "source": "assets/dog_middle/n02087046_4058_neutral_res_e300_smoothed_scaled_20241031-023114/result_round1/urdf_with_motors/n02087046_4058_neutral_res_e300_smoothed_scaled20241031-023418__with_motors.urdf",
+  "joint_names": [
+    "FL_UP_joint1",
+    "FL_UP_joint2",
+    "FL_LOW_joint",
+    "FR_UP_joint1",
+    "FR_UP_joint2",
+    "FR_LOW_joint",
+    "RL_UP_joint1",
+    "RL_UP_joint2",
+    "RL_LOW_joint",
+    "RR_UP_joint1",
+    "RR_UP_joint2",
+    "RR_LOW_joint"
+  ],
+  "motor_body_count": 16,
+  "excluded_placeholder_links": [
+    "FL_UP_virtual",
+    "FR_UP_virtual",
+    "RL_UP_virtual",
+    "RR_UP_virtual",
+    "left_front_foot",
+    "right_front_foot",
+    "left_foot",
+    "right_foot"
+  ],
+  "mass_kg": 2.8458400000000004,
+  "initial_height_m": 0.28300649351157925,
+  "stand_angles_rad": {
+    "FL_UP_joint1": -0.10600665057542179,
+    "FL_UP_joint2": -0.656343147687733,
+    "FL_LOW_joint": 0.9954558136491501,
+    "FR_UP_joint1": 0.11168653465798078,
+    "FR_UP_joint2": 0.07545870315619696,
+    "FR_LOW_joint": 0.39072699103500896,
+    "RL_UP_joint1": 0.16023798225364644,
+    "RL_UP_joint2": -0.2068341388780301,
+    "RL_LOW_joint": -0.2764426134047715,
+    "RR_UP_joint1": -0.16453720598661242,
+    "RR_UP_joint2": 0.09054484080079038,
+    "RR_LOW_joint": 0.44601549688143255
+  },
+  "notes": [
+    "9个躯干/腿实体与16个电机外壳采用源文件声明质量和惯性；尚未经实机核验",
+    "排除8个无几何节点的1 kg/单位惯性占位参数，不代表确认实机连接件无质量",
+    "4个无质量中间link转换为同一body上的顺序双hinge；不额外填质量",
+    "原始STL用作外观和凸包碰撞；初期关闭机器人自碰撞",
+    "阻尼/摩擦/armature和PD为仿真初始化参数，不代表实机"
+  ]
+}

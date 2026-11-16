@@ -1,0 +1,140 @@
+{
+  "format": "middle_motion_v1",
+  "source": "projects/go2_mujoco_mimic/data/kine2go/ai4_dog_canter/motion.npy",
+  "source_sha256": "c4de6861404d53b0fe5a09b3573d53b6f833c107f4689641544c697c43dd841c",
+  "source_frames": [
+    430,
+    459
+  ],
+  "source_clip": {
+    "name": "ai4_dog_canter",
+    "source": "AI4Animation - natural dog mocap (SIGGRAPH 2018 release)",
+    "source_url": "https://github.com/sebastianstarke/AI4Animation/tree/master/AI4Animation/SIGGRAPH_2018",
+    "license": "CC BY-NC 4.0",
+    "attribution": "H. Zhang et al., 'Mode-Adaptive Neural Networks for Quadruped Motion Control', SIGGRAPH 2018",
+    "fps": 60,
+    "n_frames": 571,
+    "duration_s": 9.517,
+    "description": "dog canter (AI4Animation paper eval set)",
+    "tags": [
+      "canter"
+    ]
+  },
+  "fps": 60.0,
+  "frames": 29,
+  "duration_seconds": 0.4666666666666667,
+  "joint_names": [
+    "FL_UP_joint1",
+    "FL_UP_joint2",
+    "FL_LOW_joint",
+    "FR_UP_joint1",
+    "FR_UP_joint2",
+    "FR_LOW_joint",
+    "RL_UP_joint1",
+    "RL_UP_joint2",
+    "RL_LOW_joint",
+    "RR_UP_joint1",
+    "RR_UP_joint2",
+    "RR_LOW_joint"
+  ],
+  "model_sha256": "66680469050729e9299fb83c759872d82c9bd9093f4b3556c03a9645b46f57ab",
+  "morphology_scale": 0.7302889906659367,
+  "stride_scale": 0.65,
+  "lift_scale": 0.4,
+  "axis_mapping": [
+    [
+      0.0,
+      1.0,
+      0.0
+    ],
+    [
+      -1.0,
+      0.0,
+      0.0
+    ],
+    [
+      0.0,
+      0.0,
+      1.0
+    ]
+  ],
+  "cycle_delta_xy_m": [
+    -0.03375141767697324,
+    -0.5859249785283748
+  ],
+  "source_foot_center_local_m": [
+    [
+      0.232768054332012,
+      0.12692522728089622,
+      -0.28045119978073196
+    ],
+    [
+      0.2445125554908263,
+      -0.11512218155444352,
+      -0.2542853749152381
+    ],
+    [
+      -0.2145145090142486,
+      0.16107778529295996,
+      -0.25650917362288644
+    ],
+    [
+      -0.2705059999864401,
+      -0.12527717911148367,
+      -0.2411106238483616
+    ]
+  ],
+  "cycle_delta_yaw_rad": 0.06528117316302232,
+  "foot_xy_rms_error_m": [
+    0.0053502274419090015,
+    0.010816307928801476,
+    0.003714968460722589,
+    0.0022306402593545
+  ],
+  "foot_xy_max_error_m": [
+    0.014757847736454553,
+    0.025446338507590805,
+    0.01018470762214087,
+    0.005268155286019751
+  ],
+  "ground_lift_max_m": 0.00039024499418735537,
+  "foot_ground_min_m": -2.7755575615628914e-17,
+  "peak_joint_velocity_rad_s": [
+    1.1330043750093441,
+    5.91876544948629,
+    15.75228562443564,
+    1.2902466547201747,
+    9.772795986249934,
+    15.495167663522967,
+    1.0514600339158986,
+    8.062651683662079,
+    16.384664986417572,
+    1.6271457369879783,
+    12.264806513573198,
+    15.985540611631572
+  ],
+  "urdf_velocity_limits_rad_s": [
+    1.5,
+    1.5,
+    1.5,
+    1.5,
+    1.5,
+    1.5,
+    1.5,
+    1.5,
+    1.5,
+    1.5,
+    1.5,
+    1.5
+  ],
+  "peak_velocity_to_urdf_limit_ratio": 10.923109990945049,
+  "joint_cycle_gap_rad": 0.0,
+  "cyclic_optimization_evaluations": 19,
+  "cyclic_optimization_converged": true,
+  "notes": [
+    "足端IK映射，非Go2策略权重迁移",
+    "当前仅验证运动学，不保证动力学可行",
+    "原始canter周期端点做了姿态闭合；抬脚/步幅按middle范围缩小",
+    "碰撞网格逐帧最低点抬升，避免参考回放穿地；不代表真实接触力解"
+  ]
+}

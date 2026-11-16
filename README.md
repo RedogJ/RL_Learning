@@ -54,6 +54,10 @@ python scripts/export_supermimic.py \
 
 ## 仓库其他工程
 
+Middle 自定义四足：`bash run.sh middle` 打开 PD 仿真，
+`bash run.sh middle train` 启动独立的 SuperMimic 风格世界模型训练。
+首个任务使用静止站姿参考，见 [Middle 工程说明](projects/dog_middle_sim/README.md)。
+
 ```text
 RL_Learning/
 ├── run.sh                       # 统一入口；bash run.sh --help

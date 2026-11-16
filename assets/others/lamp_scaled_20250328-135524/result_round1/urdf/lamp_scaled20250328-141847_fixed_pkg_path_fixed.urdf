@@ -1,0 +1,159 @@
+<?xml version="1.0"?>
+<robot name="robot">
+  <material name="red">
+    <color rgba="1 0 0 1"/>
+  </material>
+  <material name="magenta">
+    <color rgba="0.2 0 0.2 1"/>
+  </material>
+  <material name="green">
+    <color rgba="0 1 0 1"/>
+  </material>
+  <material name="cyan">
+    <color rgba="0 1 1 1"/>
+  </material>
+  <material name="blue">
+    <color rgba="0 0 1 1"/>
+  </material>
+  <material name="orange">
+    <color rgba="1 0.5 0 1"/>
+  </material>
+  <material name="yellow">
+    <color rgba="1 1 0 1"/>
+  </material>
+  <material name="pink">
+    <color rgba="1 0 1 1"/>
+  </material>
+  <material name="grey">
+    <color rgba="0.8 0.8 0.8 1"/>
+  </material>
+  <material name="motor">
+    <color rgba="0.2 0.2 0.2 1"/>
+  </material>
+  <link name="BODY">
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <mesh filename="package://simple_robot_controller/urdf/lamp_scaled_20250328-135524/result_round1/urdf/BODY.stl"/>
+      </geometry>
+      <material name="grey"/>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <mesh filename="package://simple_robot_controller/urdf/lamp_scaled_20250328-135524/result_round1/urdf/BODY.stl"/>
+      </geometry>
+    </collision>
+    <inertial>
+      <origin xyz="0.14982238206252366 -0.0026934298415440556 -0.33886225585160223" rpy="0 0 0"/>
+      <mass value="1.2050400000000001"/>
+      <inertia ixx="0.0005746157366435893" ixy="2.694278042222685e-05" ixz="-0.00010117661796703835" iyy="0.0006413134478938398" iyz="3.191486695877299e-05" izz="0.0009942271604635713"/>
+    </inertial>
+  </link>
+  <link name="link1">
+    <visual>
+      <origin xyz="-0.215293213976817 0.005359394249583308 0.2576345022250975" rpy="0 0 0"/>
+      <geometry>
+        <mesh filename="package://simple_robot_controller/urdf/lamp_scaled_20250328-135524/result_round1/urdf/link1.stl"/>
+      </geometry>
+      <material name="grey"/>
+    </visual>
+    <collision>
+      <origin xyz="-0.215293213976817 0.005359394249583308 0.2576345022250975" rpy="0 0 0"/>
+      <geometry>
+        <mesh filename="package://simple_robot_controller/urdf/lamp_scaled_20250328-135524/result_round1/urdf/link1.stl"/>
+      </geometry>
+    </collision>
+    <inertial>
+      <origin xyz="-0.005392329067974155 0.002072792378876257 0.1508537713227679" rpy="0 0 0"/>
+      <mass value="0.88332"/>
+      <inertia ixx="0.0013073046365982884" ixy="-1.5341624949056283e-06" ixz="2.6316376732101583e-05" iyy="0.001302526496943345" iyz="0.00013566776934180138" izz="9.31102859665809e-05"/>
+    </inertial>
+  </link>
+  <joint name="link1_joint" type="revolute">
+    <parent link="BODY"/>
+    <child link="link1"/>
+    <origin xyz="0.215293213976817 -0.005359394249583308 -0.2576345022250975" rpy="0 0 0"/>
+    <axis xyz="0 1 0"/>
+    <limit lower="-1.57" upper="1.57" effort="20" velocity="1.5"/>
+  </joint>
+  <link name="link2">
+    <visual>
+      <origin xyz="-0.20804797608889586 0.012735085187570832 -0.06645119074435202" rpy="0 0 0"/>
+      <geometry>
+        <mesh filename="package://simple_robot_controller/urdf/lamp_scaled_20250328-135524/result_round1/urdf/link2.stl"/>
+      </geometry>
+      <material name="grey"/>
+    </visual>
+    <collision>
+      <origin xyz="-0.20804797608889586 0.012735085187570832 -0.06645119074435202" rpy="0 0 0"/>
+      <geometry>
+        <mesh filename="package://simple_robot_controller/urdf/lamp_scaled_20250328-135524/result_round1/urdf/link2.stl"/>
+      </geometry>
+    </collision>
+    <inertial>
+      <origin xyz="-0.08566899844267989 0.005634960231725722 0.08714711838758295" rpy="0 0 0"/>
+      <mass value="0.60024"/>
+      <inertia ixx="0.0003191517712664929" ixy="-5.6458588239703916e-05" ixz="0.0003494428284686109" iyy="0.000789777376124546" iyz="4.9773717013194565e-05" izz="0.0005267675378348661"/>
+    </inertial>
+  </link>
+  <joint name="link2_joint" type="revolute">
+    <parent link="link1"/>
+    <child link="link2"/>
+    <origin xyz="-0.007245237887921121 -0.0073756909379875234 0.32408569296944945" rpy="0 0 0"/>
+    <axis xyz="0 1 0"/>
+    <limit lower="-1.57" upper="1.57" effort="20" velocity="1.5"/>
+  </joint>
+  <link name="link3">
+    <visual>
+      <origin xyz="-0.005875954398412265 0.01 -0.24883540923467212" rpy="0 0 0"/>
+      <geometry>
+        <mesh filename="package://simple_robot_controller/urdf/lamp_scaled_20250328-135524/result_round1/urdf/link3.stl"/>
+      </geometry>
+      <material name="grey"/>
+    </visual>
+    <collision>
+      <origin xyz="-0.005875954398412265 0.01 -0.24883540923467212" rpy="0 0 0"/>
+      <geometry>
+        <mesh filename="package://simple_robot_controller/urdf/lamp_scaled_20250328-135524/result_round1/urdf/link3.stl"/>
+      </geometry>
+    </collision>
+    <inertial>
+      <origin xyz="-0.10324054347648777 0.010834618830503932 0.01975802646054617" rpy="0 0 0"/>
+      <mass value="1.1504400000000001"/>
+      <inertia ixx="0.0004976899062532615" ixy="-1.3961840760926326e-05" ixz="-4.6713274003858995e-05" iyy="0.0008921047435850554" iyz="2.392315335871477e-06" izz="0.0008377864859705741"/>
+    </inertial>
+  </link>
+  <joint name="link3_joint" type="revolute">
+    <parent link="link2"/>
+    <child link="link3"/>
+    <origin xyz="-0.2021720216904836 0.0027350851875708316 0.18238421849032008" rpy="0 0 0"/>
+    <axis xyz="0 1 0"/>
+    <limit lower="-1.57" upper="1.57" effort="20" velocity="1.5"/>
+  </joint>
+  <link name="foot">
+  </link>
+  <joint name="foot_joint" type="fixed">
+    <parent link="BODY"/>
+    <child link="foot"/>
+    <origin xyz="0.0 0.0 0.0" rpy="0 0 0"/>
+  </joint>
+<gazebo>
+   <plugin filename="libgazebo_ros_p3d.so" name="p3d_base_controller">
+   <alwaysOn>true</alwaysOn>
+       <updateRate>10.0</updateRate>
+       <bodyName>base_link</bodyName>
+       <topicName>odom/ground_truth</topicName>
+       <gaussianNoise>0.00000001</gaussianNoise>
+       <frameName>world</frameName>
+       <xyzOffsets>0 0 0</xyzOffsets>
+       <rpyOffsets>0 0 0</rpyOffsets>
+   </plugin>
+</gazebo>
+<gazebo>
+   <plugin filename="libgazebo_ros_control.so" name="gazebo_ros_control">
+       <legacyModeNS>true</legacyModeNS>
+   </plugin>
+</gazebo>
+</robot>
+

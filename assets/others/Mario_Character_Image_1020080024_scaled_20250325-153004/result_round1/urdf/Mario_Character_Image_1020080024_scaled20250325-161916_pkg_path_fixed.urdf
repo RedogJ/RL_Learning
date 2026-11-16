@@ -1,0 +1,292 @@
+<?xml version="1.0"?>
+<robot name="robot">
+  <material name="red">
+    <color rgba="1 0 0 1"/>
+  </material>
+  <material name="magenta">
+    <color rgba="0.2 0 0.2 1"/>
+  </material>
+  <material name="green">
+    <color rgba="0 1 0 1"/>
+  </material>
+  <material name="cyan">
+    <color rgba="0 1 1 1"/>
+  </material>
+  <material name="blue">
+    <color rgba="0 0 1 1"/>
+  </material>
+  <material name="orange">
+    <color rgba="1 0.5 0 1"/>
+  </material>
+  <material name="yellow">
+    <color rgba="1 1 0 1"/>
+  </material>
+  <material name="pink">
+    <color rgba="1 0 1 1"/>
+  </material>
+  <material name="grey">
+    <color rgba="0.8 0.8 0.8 1"/>
+  </material>
+  <material name="motor">
+    <color rgba="0.2 0.2 0.2 1"/>
+  </material>
+  <link name="BODY">
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <mesh filename="package://simple_robot_controller/urdf/Mario_Character_Image_1020080024_scaled_20250325-153004/result_round1/urdf/BODY.stl"/>
+      </geometry>
+      <material name="grey"/>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <mesh filename="package://simple_robot_controller/urdf/Mario_Character_Image_1020080024_scaled_20250325-153004/result_round1/urdf/BODY.stl"/>
+      </geometry>
+    </collision>
+    <inertial>
+      <origin xyz="0.010728288459331933 0.009941838746356686 -0.05091869683113984" rpy="0 0 0"/>
+      <mass value="11.46852"/>
+      <inertia ixx="0.011234903024563059" ixy="0.00047131664124840106" ixz="0.0006059880255791827" iyy="0.02408779316480752" iyz="-0.001007950218323294" izz="0.02061606957725889"/>
+    </inertial>
+  </link>
+  <link name="HEAD">
+    <visual>
+      <origin xyz="-0.0019620390302602323 -0.018128642632976245 -0.10247200929405618" rpy="0 0 0"/>
+      <geometry>
+        <mesh filename="package://simple_robot_controller/urdf/Mario_Character_Image_1020080024_scaled_20250325-153004/result_round1/urdf/HEAD.stl"/>
+      </geometry>
+      <material name="grey"/>
+    </visual>
+    <collision>
+      <origin xyz="-0.0019620390302602323 -0.018128642632976245 -0.10247200929405618" rpy="0 0 0"/>
+      <geometry>
+        <mesh filename="package://simple_robot_controller/urdf/Mario_Character_Image_1020080024_scaled_20250325-153004/result_round1/urdf/HEAD.stl"/>
+      </geometry>
+    </collision>
+    <inertial>
+      <origin xyz="0.004376096137684385 -0.0058640366437789915 0.15187239310129058" rpy="0 0 0"/>
+      <mass value="14.40576"/>
+      <inertia ixx="0.020396573574392087" ixy="-3.826796542633247e-05" ixz="9.472052384983234e-05" iyy="0.01799501924187264" iyz="0.0007971960705842357" izz="0.017386303722757544"/>
+    </inertial>
+  </link>
+  <joint name="HEAD_joint" type="revolute">
+    <parent link="BODY"/>
+    <child link="HEAD"/>
+    <origin xyz="0.0019620390302602323 0.018128642632976245 0.10247200929405618" rpy="0 0 0"/>
+    <axis xyz="0 0 1"/>
+    <limit lower="-1.57" upper="1.57" effort="20" velocity="1.5"/>
+  </joint>
+  <link name="L_LEG">
+    <visual>
+      <origin xyz="-0.09245238259146021 -0.015517773762211015 0.183967031063205" rpy="0 0 0"/>
+      <geometry>
+        <mesh filename="package://simple_robot_controller/urdf/Mario_Character_Image_1020080024_scaled_20250325-153004/result_round1/urdf/L_LEG.stl"/>
+      </geometry>
+      <material name="grey"/>
+    </visual>
+    <collision>
+      <origin xyz="-0.09245238259146021 -0.015517773762211015 0.183967031063205" rpy="0 0 0"/>
+      <geometry>
+        <mesh filename="package://simple_robot_controller/urdf/Mario_Character_Image_1020080024_scaled_20250325-153004/result_round1/urdf/L_LEG.stl"/>
+      </geometry>
+    </collision>
+    <inertial>
+      <origin xyz="0.04994002575706538 0.07944714679640791 -0.033557707650312435" rpy="0 0 0"/>
+      <mass value="0.84396"/>
+      <inertia ixx="0.00028575834394994936" ixy="1.9976405747902894e-05" ixz="-6.189245890800502e-05" iyy="0.0002850603615100235" iyz="-3.4823916714062542e-06" izz="0.0002567606510735114"/>
+    </inertial>
+  </link>
+  <link name="L_LEG_virtual">
+  </link>
+  <joint name="L_LEG_joint1" type="revolute">
+    <parent link="BODY"/>
+    <child link="L_LEG_virtual"/>
+    <origin xyz="0.031202382591460208 -0.045732226237788984 -0.183967031063205" rpy="0 0 0"/>
+    <axis xyz="0 -1 0"/>
+    <limit lower="-1.57" upper="1.57" effort="20" velocity="1.5"/>
+  </joint>
+  <joint name="L_LEG_joint2" type="revolute">
+    <parent link="L_LEG_virtual"/>
+    <child link="L_LEG"/>
+    <origin xyz="0.06125 0.06125 0.0" rpy="0 0 0"/>
+    <axis xyz="1 0 0"/>
+    <limit lower="-1.57" upper="1.57" effort="20" velocity="1.5"/>
+  </joint>
+  <link name="R_LEG">
+    <visual>
+      <origin xyz="0.08042967677984027 -0.023604673856353123 0.10416751072786777" rpy="0 0 0"/>
+      <geometry>
+        <mesh filename="package://simple_robot_controller/urdf/Mario_Character_Image_1020080024_scaled_20250325-153004/result_round1/urdf/R_LEG.stl"/>
+      </geometry>
+      <material name="grey"/>
+    </visual>
+    <collision>
+      <origin xyz="0.08042967677984027 -0.023604673856353123 0.10416751072786777" rpy="0 0 0"/>
+      <geometry>
+        <mesh filename="package://simple_robot_controller/urdf/Mario_Character_Image_1020080024_scaled_20250325-153004/result_round1/urdf/R_LEG.stl"/>
+      </geometry>
+    </collision>
+    <inertial>
+      <origin xyz="-0.05451527949466271 0.07432958523704518 -0.08627059635049629" rpy="0 0 0"/>
+      <mass value="1.25556"/>
+      <inertia ixx="0.0005523914019401702" ixy="-2.685338102121733e-05" ixz="0.00011608504920911706" iyy="0.0004936841174376314" iyz="2.9770656157411626e-05" izz="0.0003134898196262988"/>
+    </inertial>
+  </link>
+  <link name="R_LEG_virtual">
+  </link>
+  <joint name="R_LEG_joint1" type="revolute">
+    <parent link="BODY"/>
+    <child link="R_LEG_virtual"/>
+    <origin xyz="-0.019179676779840272 -0.03764532614364687 -0.10416751072786777" rpy="0 0 0"/>
+    <axis xyz="0 -1 0"/>
+    <limit lower="-1.57" upper="1.57" effort="20" velocity="1.5"/>
+  </joint>
+  <joint name="R_LEG_joint2" type="revolute">
+    <parent link="R_LEG_virtual"/>
+    <child link="R_LEG"/>
+    <origin xyz="-0.06125 0.06125 0.0" rpy="0 0 0"/>
+    <axis xyz="-1 0 0"/>
+    <limit lower="-1.57" upper="1.57" effort="20" velocity="1.5"/>
+  </joint>
+  <link name="L_LOWER_LEG">
+    <visual>
+      <origin xyz="-0.06880321355288034 -0.037622577568144466 0.2776223385273575" rpy="0 0 0"/>
+      <geometry>
+        <mesh filename="package://simple_robot_controller/urdf/Mario_Character_Image_1020080024_scaled_20250325-153004/result_round1/urdf/L_LOWER_LEG.stl"/>
+      </geometry>
+      <material name="grey"/>
+    </visual>
+    <collision>
+      <origin xyz="-0.06880321355288034 -0.037622577568144466 0.2776223385273575" rpy="0 0 0"/>
+      <geometry>
+        <mesh filename="package://simple_robot_controller/urdf/Mario_Character_Image_1020080024_scaled_20250325-153004/result_round1/urdf/L_LOWER_LEG.stl"/>
+      </geometry>
+    </collision>
+    <inertial>
+      <origin xyz="0.015561840727208648 0.025761793680181902 -0.05809890004929735" rpy="0 0 0"/>
+      <mass value="0.86028"/>
+      <inertia ixx="0.0003436164569326277" ixy="3.330281420003355e-07" ixz="-6.335139733575094e-05" iyy="0.00032153835186218523" iyz="6.952048493513755e-05" izz="0.00019952493307992815"/>
+    </inertial>
+  </link>
+  <joint name="L_LOWER_LEG_joint" type="revolute">
+    <parent link="L_LEG"/>
+    <child link="L_LOWER_LEG"/>
+    <origin xyz="-0.023649169038579866 0.022104803805933448 -0.09365530746415249" rpy="0 0 0"/>
+    <axis xyz="1 0 0"/>
+    <limit lower="-1.57" upper="1.57" effort="20" velocity="1.5"/>
+  </joint>
+  <link name="R_LOWER_LEG">
+    <visual>
+      <origin xyz="0.08659604230962252 -0.043360422025967654 0.2660063377379238" rpy="0 0 0"/>
+      <geometry>
+        <mesh filename="package://simple_robot_controller/urdf/Mario_Character_Image_1020080024_scaled_20250325-153004/result_round1/urdf/R_LOWER_LEG.stl"/>
+      </geometry>
+      <material name="grey"/>
+    </visual>
+    <collision>
+      <origin xyz="0.08659604230962252 -0.043360422025967654 0.2660063377379238" rpy="0 0 0"/>
+      <geometry>
+        <mesh filename="package://simple_robot_controller/urdf/Mario_Character_Image_1020080024_scaled_20250325-153004/result_round1/urdf/R_LOWER_LEG.stl"/>
+      </geometry>
+    </collision>
+    <inertial>
+      <origin xyz="0.007456569638847471 0.026060630960174677 -0.07482073721488058" rpy="0 0 0"/>
+      <mass value="1.2714"/>
+      <inertia ixx="0.0005289770456347294" ixy="4.090270469560847e-06" ixz="6.147581028786971e-05" iyy="0.0005094752274421814" iyz="9.118203061585727e-05" izz="0.00033941776840490845"/>
+    </inertial>
+  </link>
+  <joint name="R_LOWER_LEG_joint" type="revolute">
+    <parent link="R_LEG"/>
+    <child link="R_LOWER_LEG"/>
+    <origin xyz="-0.006166365529782248 0.019755748169614527 -0.16183882701005603" rpy="0 0 0"/>
+    <axis xyz="-1 0 0"/>
+    <limit lower="-1.57" upper="1.57" effort="20" velocity="1.5"/>
+  </joint>
+  <link name="L_FOOT">
+    <visual>
+      <origin xyz="-0.09812255449271425 -0.04601947115877773 0.3637992809653101" rpy="0 0 0"/>
+      <geometry>
+        <mesh filename="package://simple_robot_controller/urdf/Mario_Character_Image_1020080024_scaled_20250325-153004/result_round1/urdf/L_FOOT.stl"/>
+      </geometry>
+      <material name="grey"/>
+    </visual>
+    <collision>
+      <origin xyz="-0.09812255449271425 -0.04601947115877773 0.3637992809653101" rpy="0 0 0"/>
+      <geometry>
+        <mesh filename="package://simple_robot_controller/urdf/Mario_Character_Image_1020080024_scaled_20250325-153004/result_round1/urdf/L_FOOT.stl"/>
+      </geometry>
+    </collision>
+    <inertial>
+      <origin xyz="0.03291261320880788 -0.06969407651449586 -0.018183858639131356" rpy="0 0 0"/>
+      <mass value="1.5463200000000001"/>
+      <inertia ixx="0.0004943552195696898" ixy="2.152517943892603e-05" ixz="-8.484421562161303e-07" iyy="0.00035419719802499337" iyz="-3.7872449557659673e-06" izz="0.000568680054739637"/>
+    </inertial>
+  </link>
+  <joint name="L_FOOT_joint" type="revolute">
+    <parent link="L_LOWER_LEG"/>
+    <child link="L_FOOT"/>
+    <origin xyz="0.0293193409398339 0.008396893590633265 -0.0861769424379526" rpy="0 0 0"/>
+    <axis xyz="1 0 0"/>
+    <limit lower="-1.57" upper="1.57" effort="20" velocity="1.5"/>
+  </joint>
+  <link name="R_FOOT">
+    <visual>
+      <origin xyz="0.09023759385620941 -0.029915653697170225 0.3694460720636398" rpy="0 0 0"/>
+      <geometry>
+        <mesh filename="package://simple_robot_controller/urdf/Mario_Character_Image_1020080024_scaled_20250325-153004/result_round1/urdf/R_FOOT.stl"/>
+      </geometry>
+      <material name="grey"/>
+    </visual>
+    <collision>
+      <origin xyz="0.09023759385620941 -0.029915653697170225 0.3694460720636398" rpy="0 0 0"/>
+      <geometry>
+        <mesh filename="package://simple_robot_controller/urdf/Mario_Character_Image_1020080024_scaled_20250325-153004/result_round1/urdf/R_FOOT.stl"/>
+      </geometry>
+    </collision>
+    <inertial>
+      <origin xyz="-0.043536646073323707 -0.04522110999446257 -0.014810449689836802" rpy="0 0 0"/>
+      <mass value="1.2846"/>
+      <inertia ixx="0.0003333615206679107" ixy="7.5807941966370594e-06" ixz="2.094174451191029e-06" iyy="0.00028718821050911076" iyz="5.204701471275214e-06" izz="0.0003945936863848666"/>
+    </inertial>
+  </link>
+  <joint name="R_FOOT_joint" type="revolute">
+    <parent link="R_LOWER_LEG"/>
+    <child link="R_FOOT"/>
+    <origin xyz="-0.0036415515465868962 -0.013444768328797428 -0.10343973432571595" rpy="0 0 0"/>
+    <axis xyz="-1 0 0"/>
+    <limit lower="-1.57" upper="1.57" effort="20" velocity="1.5"/>
+  </joint>
+  <link name="l_foot">
+  </link>
+  <joint name="l_foot_joint" type="fixed">
+    <parent link="L_FOOT"/>
+    <child link="l_foot"/>
+    <origin xyz="0.05987348054575532 -0.09978913424292553 -0.009978913424292557" rpy="0 0 0"/>
+  </joint>
+  <link name="r_foot">
+  </link>
+  <joint name="r_foot_joint" type="fixed">
+    <parent link="R_FOOT"/>
+    <child link="r_foot"/>
+    <origin xyz="-0.049894567121462764 -0.09978913424292553 -0.009978913424292557" rpy="0 0 0"/>
+  </joint>
+<gazebo>
+   <plugin filename="libgazebo_ros_p3d.so" name="p3d_base_controller">
+   <alwaysOn>true</alwaysOn>
+       <updateRate>10.0</updateRate>
+       <bodyName>base_link</bodyName>
+       <topicName>odom/ground_truth</topicName>
+       <gaussianNoise>0.00000001</gaussianNoise>
+       <frameName>world</frameName>
+       <xyzOffsets>0 0 0</xyzOffsets>
+       <rpyOffsets>0 0 0</rpyOffsets>
+   </plugin>
+</gazebo>
+<gazebo>
+   <plugin filename="libgazebo_ros_control.so" name="gazebo_ros_control">
+       <legacyModeNS>true</legacyModeNS>
+   </plugin>
+</gazebo>
+</robot>
+

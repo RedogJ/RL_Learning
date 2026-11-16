@@ -1,0 +1,569 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<robot name="robot">
+  <link name="BODY">
+    <inertial>
+      <origin xyz="-0.031019754093846164 -0.17996159177713442 0.08660468425245144" rpy="0.0 0.0 0.0"/>
+      <mass value="5.08884"/>
+      <inertia ixx="0.12784997253308694" ixy="0.0035427880346261885" ixz="-0.0017582518458433682" iyy="0.02995504252690374" iyz="0.03307810372573014" izz="0.10953079282827047"/>
+    </inertial>
+    <visual>
+      <geometry>
+        <mesh filename="BODY.stl"/>
+      </geometry>
+      <material name="grey"/>
+      <origin xyz="0.0 0.0 0.0" rpy="0.0 0.0 0.0"/>
+    </visual>
+    <collision>
+      <geometry>
+        <mesh filename="BODY.stl"/>
+      </geometry>
+      <origin xyz="0.0 0.0 0.0" rpy="0.0 0.0 0.0"/>
+    </collision>
+  </link>
+  <link name="tail">
+    <inertial>
+      <origin xyz="-0.0034923572436604683 0.1423258358068781 -0.08469458938449374" rpy="0.0 0.0 0.0"/>
+      <mass value="0.62364"/>
+      <inertia ixx="0.005025274807845114" ixy="-9.497928040971399e-05" ixz="4.8536381272518586e-05" iyy="0.0012945344884556947" iyz="0.0016306632548971321" izz="0.00400075939349766"/>
+    </inertial>
+    <visual>
+      <geometry>
+        <mesh filename="tail.stl"/>
+      </geometry>
+      <material name="grey"/>
+      <origin xyz="0.030365257146981274 -0.17415448144385973 0.09141680698506299" rpy="0.0 0.0 0.0"/>
+    </visual>
+    <collision>
+      <geometry>
+        <mesh filename="tail.stl"/>
+      </geometry>
+      <origin xyz="0.030365257146981274 -0.17415448144385973 0.09141680698506299" rpy="0.0 0.0 0.0"/>
+    </collision>
+  </link>
+  <link name="leg_l">
+    <inertial>
+      <origin xyz="0.06984673545002204 0.008473794846656758 -0.06434140097377423" rpy="0.0 0.0 0.0"/>
+      <mass value="0.5712"/>
+      <inertia ixx="0.001514242108028757" ixy="8.961092441062117e-05" ixz="-0.00018138088387764523" iyy="0.0010868156262485913" iyz="-2.907066127058793e-05" izz="0.0010529045264091362"/>
+    </inertial>
+    <visual>
+      <geometry>
+        <mesh filename="leg_l.stl"/>
+      </geometry>
+      <material name="grey"/>
+      <origin xyz="-0.06022394948468902 0.008252335695403885 0.008963012831215261" rpy="0.0 0.0 0.0"/>
+    </visual>
+    <collision>
+      <geometry>
+        <mesh filename="leg_l.stl"/>
+      </geometry>
+      <origin xyz="-0.06022394948468902 0.008252335695403885 0.008963012831215261" rpy="0.0 0.0 0.0"/>
+    </collision>
+  </link>
+  <link name="leg_l_virtual">
+    <inertial>
+      <origin xyz="0.0 0.0 0.0" rpy="0.0 -0.0 0.0"/>
+      <mass value="1.0"/>
+      <inertia ixx="1.0" ixy="0.0" ixz="0.0" iyy="1.0" iyz="0.0" izz="1.0"/>
+    </inertial>
+  </link>
+  <link name="leg_r">
+    <inertial>
+      <origin xyz="-0.058144156165411714 0.05407212069394073 -0.1084324315898797" rpy="0.0 0.0 0.0"/>
+      <mass value="0.6664800000000001"/>
+      <inertia ixx="0.0019280273718924174" ixy="-0.00021269598731615355" ixz="0.00026992257097011057" iyy="0.0017158782571267323" iyz="0.00018800333866405384" izz="0.0012355775662710499"/>
+    </inertial>
+    <visual>
+      <geometry>
+        <mesh filename="leg_r.stl"/>
+      </geometry>
+      <material name="grey"/>
+      <origin xyz="0.1417869955786727 0.022431325994417307 -0.027372946571229694" rpy="0.0 0.0 0.0"/>
+    </visual>
+    <collision>
+      <geometry>
+        <mesh filename="leg_r.stl"/>
+      </geometry>
+      <origin xyz="0.1417869955786727 0.022431325994417307 -0.027372946571229694" rpy="0.0 0.0 0.0"/>
+    </collision>
+  </link>
+  <link name="leg_r_virtual">
+    <inertial>
+      <origin xyz="0.0 0.0 0.0" rpy="0.0 -0.0 0.0"/>
+      <mass value="1.0"/>
+      <inertia ixx="1.0" ixy="0.0" ixz="0.0" iyy="1.0" iyz="0.0" izz="1.0"/>
+    </inertial>
+  </link>
+  <link name="mouth">
+    <inertial>
+      <origin xyz="0.009145732704257005 -0.045428237853673115 -0.034137832008039284" rpy="0.0 0.0 0.0"/>
+      <mass value="0.13332"/>
+      <inertia ixx="0.00016277442121274418" ixy="-9.323119506318609e-06" ixz="-3.5313309701530227e-06" iyy="0.0001112571225634565" iyz="-4.8090543315067316e-05" izz="0.00010941742381393327"/>
+    </inertial>
+    <visual>
+      <geometry>
+        <mesh filename="mouth.stl"/>
+      </geometry>
+      <material name="grey"/>
+      <origin xyz="-0.005331523912986257 0.5043876390364475 -0.14600244055605668" rpy="0.0 0.0 0.0"/>
+    </visual>
+    <collision>
+      <geometry>
+        <mesh filename="mouth.stl"/>
+      </geometry>
+      <origin xyz="-0.005331523912986257 0.5043876390364475 -0.14600244055605668" rpy="0.0 0.0 0.0"/>
+    </collision>
+  </link>
+  <link name="lower_leg">
+    <inertial>
+      <origin xyz="0.00747033193271697 -0.032476740436960416 -0.07673051326644684" rpy="0.0 0.0 0.0"/>
+      <mass value="0.19704"/>
+      <inertia ixx="0.0004518078876593394" ixy="-2.9882931262362422e-06" ixz="-3.270725187975636e-05" iyy="0.0003379226940803881" iyz="-0.00012273810218718553" izz="0.0002604966556531035"/>
+    </inertial>
+    <visual>
+      <geometry>
+        <mesh filename="lower_leg.stl"/>
+      </geometry>
+      <material name="grey"/>
+      <origin xyz="-0.08211513369736351 0.05384083945349188 0.17863806760119108" rpy="0.0 0.0 0.0"/>
+    </visual>
+    <collision>
+      <geometry>
+        <mesh filename="lower_leg.stl"/>
+      </geometry>
+      <origin xyz="-0.08211513369736351 0.05384083945349188 0.17863806760119108" rpy="0.0 0.0 0.0"/>
+    </collision>
+  </link>
+  <link name="lower_leg_r">
+    <inertial>
+      <origin xyz="-0.02176195918432175 -0.02231513619873171 -0.0598976531051216" rpy="0.0 0.0 0.0"/>
+      <mass value="0.1626"/>
+      <inertia ixx="0.00024076784574252296" ixy="-8.192778693431742e-06" ixz="-7.799722301402166e-06" iyy="0.0002054948441099325" iyz="-4.007213761842056e-05" izz="0.00015704233329546843"/>
+    </inertial>
+    <visual>
+      <geometry>
+        <mesh filename="lower_leg_r.stl"/>
+      </geometry>
+      <material name="grey"/>
+      <origin xyz="0.15340806529027035 0.01 0.20412865187400175" rpy="0.0 0.0 0.0"/>
+    </visual>
+    <collision>
+      <geometry>
+        <mesh filename="lower_leg_r.stl"/>
+      </geometry>
+      <origin xyz="0.15340806529027035 0.01 0.20412865187400175" rpy="0.0 0.0 0.0"/>
+    </collision>
+  </link>
+  <link name="foot_l">
+    <inertial>
+      <origin xyz="0.0 0.0 0.0" rpy="0.0 -0.0 0.0"/>
+      <mass value="1.0"/>
+      <inertia ixx="1.0" ixy="0.0" ixz="0.0" iyy="1.0" iyz="0.0" izz="1.0"/>
+    </inertial>
+  </link>
+  <link name="foot_r">
+    <inertial>
+      <origin xyz="0.0 0.0 0.0" rpy="0.0 -0.0 0.0"/>
+      <mass value="1.0"/>
+      <inertia ixx="1.0" ixy="0.0" ixz="0.0" iyy="1.0" iyz="0.0" izz="1.0"/>
+    </inertial>
+  </link>
+  <link name="BODY_motor_0">
+    <inertial>
+      <origin xyz="0.0 0.0 0.0" rpy="0.0 -0.0 0.0"/>
+      <mass value="0.01"/>
+      <inertia ixx="0.0001" ixy="0.0" ixz="0.0" iyy="0.0001" iyz="0.0" izz="0.0001"/>
+    </inertial>
+    <visual>
+      <geometry>
+           <mesh filename="motor_0.stl" />
+      </geometry>
+      <origin xyz="0.0 0.0 0.0" rpy="0.0 -0.0 0.0"/>
+    </visual>
+    <collision name="BODY_motor_0_collision">
+      <geometry>
+           <mesh filename="motor_0.stl" />
+      </geometry>
+      <origin xyz="0.0 0.0 0.0" rpy="0.0 -0.0 0.0"/>
+    </collision>
+  </link>
+  <link name="BODY_motor_1">
+    <inertial>
+      <origin xyz="0.0 0.0 0.0" rpy="0.0 -0.0 0.0"/>
+      <mass value="0.01"/>
+      <inertia ixx="0.0001" ixy="0.0" ixz="0.0" iyy="0.0001" iyz="0.0" izz="0.0001"/>
+    </inertial>
+    <visual>
+      <geometry>
+           <mesh filename="motor_1.stl" />
+      </geometry>
+      <origin xyz="0.0 0.0 0.0" rpy="0.0 -0.0 0.0"/>
+    </visual>
+    <collision name="BODY_motor_1_collision">
+      <geometry>
+           <mesh filename="motor_1.stl" />
+      </geometry>
+      <origin xyz="0.0 0.0 0.0" rpy="0.0 -0.0 0.0"/>
+    </collision>
+  </link>
+  <link name="BODY_motor_2">
+    <inertial>
+      <origin xyz="0.0 0.0 0.0" rpy="0.0 -0.0 0.0"/>
+      <mass value="0.01"/>
+      <inertia ixx="0.0001" ixy="0.0" ixz="0.0" iyy="0.0001" iyz="0.0" izz="0.0001"/>
+    </inertial>
+    <visual>
+      <geometry>
+           <mesh filename="motor_1.stl" />
+      </geometry>
+      <origin xyz="0.0 0.0 0.0" rpy="0.0 -0.0 0.0"/>
+    </visual>
+    <collision name="BODY_motor_2_collision">
+      <geometry>
+           <mesh filename="motor_1.stl" />
+      </geometry>
+      <origin xyz="0.0 0.0 0.0" rpy="0.0 -0.0 0.0"/>
+    </collision>
+  </link>
+  <link name="BODY_motor_3">
+    <inertial>
+      <origin xyz="0.0 0.0 0.0" rpy="0.0 -0.0 0.0"/>
+      <mass value="0.01"/>
+      <inertia ixx="0.0001" ixy="0.0" ixz="0.0" iyy="0.0001" iyz="0.0" izz="0.0001"/>
+    </inertial>
+    <visual>
+      <geometry>
+           <mesh filename="motor_0.stl" />
+      </geometry>
+      <origin xyz="0.0 0.0 0.0" rpy="0.0 -0.0 0.0"/>
+    </visual>
+    <collision name="BODY_motor_3_collision">
+      <geometry>
+           <mesh filename="motor_0.stl" />
+      </geometry>
+      <origin xyz="0.0 0.0 0.0" rpy="0.0 -0.0 0.0"/>
+    </collision>
+  </link>
+  <link name="tail_motor_0">
+    <inertial>
+      <origin xyz="0.0 0.0 0.0" rpy="0.0 -0.0 0.0"/>
+      <mass value="0.01"/>
+      <inertia ixx="0.0001" ixy="0.0" ixz="0.0" iyy="0.0001" iyz="0.0" izz="0.0001"/>
+    </inertial>
+    <visual>
+      <geometry>
+           <mesh filename="motor_0.stl" />
+      </geometry>
+      <origin xyz="0.0 0.0 0.0" rpy="0.0 -0.0 0.0"/>
+    </visual>
+    <collision name="tail_motor_0_collision">
+      <geometry>
+           <mesh filename="motor_0.stl" />
+      </geometry>
+      <origin xyz="0.0 0.0 0.0" rpy="0.0 -0.0 0.0"/>
+    </collision>
+  </link>
+  <link name="leg_l_motor_0">
+    <inertial>
+      <origin xyz="0.0 0.0 0.0" rpy="0.0 -0.0 0.0"/>
+      <mass value="0.01"/>
+      <inertia ixx="0.0001" ixy="0.0" ixz="0.0" iyy="0.0001" iyz="0.0" izz="0.0001"/>
+    </inertial>
+    <visual>
+      <geometry>
+           <mesh filename="motor_1.stl" />
+      </geometry>
+      <origin xyz="0.0 0.0 0.0" rpy="0.0 -0.0 0.0"/>
+    </visual>
+    <collision name="leg_l_motor_0_collision">
+      <geometry>
+           <mesh filename="motor_1.stl" />
+      </geometry>
+      <origin xyz="0.0 0.0 0.0" rpy="0.0 -0.0 0.0"/>
+    </collision>
+  </link>
+  <link name="leg_l_motor_1">
+    <inertial>
+      <origin xyz="0.0 0.0 0.0" rpy="0.0 -0.0 0.0"/>
+      <mass value="0.01"/>
+      <inertia ixx="0.0001" ixy="0.0" ixz="0.0" iyy="0.0001" iyz="0.0" izz="0.0001"/>
+    </inertial>
+    <visual>
+      <geometry>
+           <mesh filename="motor_1.stl" />
+      </geometry>
+      <origin xyz="0.0 0.0 0.0" rpy="0.0 -0.0 0.0"/>
+    </visual>
+    <collision name="leg_l_motor_1_collision">
+      <geometry>
+           <mesh filename="motor_1.stl" />
+      </geometry>
+      <origin xyz="0.0 0.0 0.0" rpy="0.0 -0.0 0.0"/>
+    </collision>
+  </link>
+  <link name="leg_r_motor_0">
+    <inertial>
+      <origin xyz="0.0 0.0 0.0" rpy="0.0 -0.0 0.0"/>
+      <mass value="0.01"/>
+      <inertia ixx="0.0001" ixy="0.0" ixz="0.0" iyy="0.0001" iyz="0.0" izz="0.0001"/>
+    </inertial>
+    <visual>
+      <geometry>
+           <mesh filename="motor_1.stl" />
+      </geometry>
+      <origin xyz="0.0 0.0 0.0" rpy="0.0 -0.0 0.0"/>
+    </visual>
+    <collision name="leg_r_motor_0_collision">
+      <geometry>
+           <mesh filename="motor_1.stl" />
+      </geometry>
+      <origin xyz="0.0 0.0 0.0" rpy="0.0 -0.0 0.0"/>
+    </collision>
+  </link>
+  <link name="leg_r_motor_1">
+    <inertial>
+      <origin xyz="0.0 0.0 0.0" rpy="0.0 -0.0 0.0"/>
+      <mass value="0.01"/>
+      <inertia ixx="0.0001" ixy="0.0" ixz="0.0" iyy="0.0001" iyz="0.0" izz="0.0001"/>
+    </inertial>
+    <visual>
+      <geometry>
+           <mesh filename="motor_1.stl" />
+      </geometry>
+      <origin xyz="0.0 0.0 0.0" rpy="0.0 -0.0 0.0"/>
+    </visual>
+    <collision name="leg_r_motor_1_collision">
+      <geometry>
+           <mesh filename="motor_1.stl" />
+      </geometry>
+      <origin xyz="0.0 0.0 0.0" rpy="0.0 -0.0 0.0"/>
+    </collision>
+  </link>
+  <link name="mouth_motor_0">
+    <inertial>
+      <origin xyz="0.0 0.0 0.0" rpy="0.0 -0.0 0.0"/>
+      <mass value="0.01"/>
+      <inertia ixx="0.0001" ixy="0.0" ixz="0.0" iyy="0.0001" iyz="0.0" izz="0.0001"/>
+    </inertial>
+    <visual>
+      <geometry>
+           <mesh filename="motor_0.stl" />
+      </geometry>
+      <origin xyz="0.0 0.0 0.0" rpy="0.0 -0.0 0.0"/>
+    </visual>
+    <collision name="mouth_motor_0_collision">
+      <geometry>
+           <mesh filename="motor_0.stl" />
+      </geometry>
+      <origin xyz="0.0 0.0 0.0" rpy="0.0 -0.0 0.0"/>
+    </collision>
+  </link>
+  <link name="lower_leg_motor_0">
+    <inertial>
+      <origin xyz="0.0 0.0 0.0" rpy="0.0 -0.0 0.0"/>
+      <mass value="0.01"/>
+      <inertia ixx="0.0001" ixy="0.0" ixz="0.0" iyy="0.0001" iyz="0.0" izz="0.0001"/>
+    </inertial>
+    <visual>
+      <geometry>
+           <mesh filename="motor_1.stl" />
+      </geometry>
+      <origin xyz="0.0 0.0 0.0" rpy="0.0 -0.0 0.0"/>
+    </visual>
+    <collision name="lower_leg_motor_0_collision">
+      <geometry>
+           <mesh filename="motor_1.stl" />
+      </geometry>
+      <origin xyz="0.0 0.0 0.0" rpy="0.0 -0.0 0.0"/>
+    </collision>
+  </link>
+  <link name="lower_leg_r_motor_0">
+    <inertial>
+      <origin xyz="0.0 0.0 0.0" rpy="0.0 -0.0 0.0"/>
+      <mass value="0.01"/>
+      <inertia ixx="0.0001" ixy="0.0" ixz="0.0" iyy="0.0001" iyz="0.0" izz="0.0001"/>
+    </inertial>
+    <visual>
+      <geometry>
+           <mesh filename="motor_1.stl" />
+      </geometry>
+      <origin xyz="0.0 0.0 0.0" rpy="0.0 -0.0 0.0"/>
+    </visual>
+    <collision name="lower_leg_r_motor_0_collision">
+      <geometry>
+           <mesh filename="motor_1.stl" />
+      </geometry>
+      <origin xyz="0.0 0.0 0.0" rpy="0.0 -0.0 0.0"/>
+    </collision>
+  </link>
+  <joint name="tail_joint" type="revolute">
+    <limit effort="20.0" velocity="1.5" lower="-1.57" upper="1.57"/>
+    <parent link="BODY"/>
+    <child link="tail"/>
+    <axis xyz="0. 0. 1."/>
+    <origin xyz="-0.030365257146981274 0.17415448144385973 -0.09141680698506299" rpy="0.0 0.0 0.0"/>
+  </joint>
+  <joint name="leg_l_joint1" type="revolute">
+    <limit effort="20.0" velocity="1.5" lower="-1.57" upper="1.57"/>
+    <parent link="BODY"/>
+    <child link="leg_l_virtual"/>
+    <axis xyz=" 0. -1.  0."/>
+    <origin xyz="-0.001026050515310981 -0.06950233569540389 -0.008963012831215261" rpy="0.0 0.0 0.0"/>
+  </joint>
+  <joint name="leg_l_joint2" type="revolute">
+    <limit effort="20.0" velocity="1.5" lower="-1.57" upper="1.57"/>
+    <parent link="leg_l_virtual"/>
+    <child link="leg_l"/>
+    <axis xyz="1. 0. 0."/>
+    <origin xyz="0.06125 0.06125 0.0" rpy="0.0 0.0 0.0"/>
+  </joint>
+  <joint name="leg_r_joint1" type="revolute">
+    <limit effort="20.0" velocity="1.5" lower="-1.57" upper="1.57"/>
+    <parent link="BODY"/>
+    <child link="leg_r_virtual"/>
+    <axis xyz=" 0. -1.  0."/>
+    <origin xyz="-0.0805369955786727 -0.08368132599441731 0.027372946571229694" rpy="0.0 0.0 0.0"/>
+  </joint>
+  <joint name="leg_r_joint2" type="revolute">
+    <limit effort="20.0" velocity="1.5" lower="-1.57" upper="1.57"/>
+    <parent link="leg_r_virtual"/>
+    <child link="leg_r"/>
+    <axis xyz="-1.  0.  0."/>
+    <origin xyz="-0.06125 0.06125 0.0" rpy="0.0 0.0 0.0"/>
+  </joint>
+  <joint name="mouth_joint" type="revolute">
+    <limit effort="20.0" velocity="1.5" lower="-1.57" upper="1.57"/>
+    <parent link="BODY"/>
+    <child link="mouth"/>
+    <axis xyz="1. 0. 0."/>
+    <origin xyz="0.005331523912986257 -0.5043876390364475 0.14600244055605668" rpy="0.0 0.0 0.0"/>
+  </joint>
+  <joint name="lower_leg_joint" type="revolute">
+    <limit effort="20.0" velocity="1.5" lower="-1.57" upper="1.57"/>
+    <parent link="leg_l"/>
+    <child link="lower_leg"/>
+    <axis xyz="1. 0. 0."/>
+    <origin xyz="0.021891184212674483 -0.04558850375808799 -0.1696750547699758" rpy="0.0 0.0 0.0"/>
+  </joint>
+  <joint name="lower_leg_r_joint" type="revolute">
+    <limit effort="20.0" velocity="1.5" lower="-1.57" upper="1.57"/>
+    <parent link="leg_r"/>
+    <child link="lower_leg_r"/>
+    <axis xyz="-1.  0.  0."/>
+    <origin xyz="-0.011621069711597655 0.012431325994417305 -0.23150159844523144" rpy="0.0 0.0 0.0"/>
+  </joint>
+  <joint name="foot_l_joint" type="fixed">
+    <parent link="lower_leg"/>
+    <child link="foot_l"/>
+    <axis xyz="1. 0. 0."/>
+    <origin xyz="-0.01674131649489634 -0.05022394948468901 -0.11718921546427435" rpy="0.0 0.0 0.0"/>
+  </joint>
+  <joint name="foot_r_joint" type="fixed">
+    <parent link="lower_leg_r"/>
+    <child link="foot_r"/>
+    <axis xyz="1. 0. 0."/>
+    <origin xyz="-0.03348263298979268 -0.08370658247448169 -0.10044789896937804" rpy="0.0 0.0 0.0"/>
+  </joint>
+  <joint name="BODY_motor_0_joint" type="fixed">
+    <parent link="BODY"/>
+    <child link="BODY_motor_0"/>
+    <axis xyz="1. 0. 0."/>
+    <origin xyz="-0.030365257146981274 0.17415448144385973 -0.091416806985063" rpy="0.0 -0.0 0.0"/>
+  </joint>
+  <joint name="BODY_motor_1_joint" type="fixed">
+    <parent link="BODY"/>
+    <child link="BODY_motor_1"/>
+    <axis xyz="1. 0. 0."/>
+    <origin xyz="-0.001026050515310981 -0.0695023356954039 -0.008963012831215261" rpy="-1.5707963267948966 -0.0 0.0"/>
+  </joint>
+  <joint name="BODY_motor_2_joint" type="fixed">
+    <parent link="BODY"/>
+    <child link="BODY_motor_2"/>
+    <axis xyz="1. 0. 0."/>
+    <origin xyz="-0.0805369955786727 -0.08368132599441733 0.027372946571229694" rpy="-1.5707963267948966 -0.0 0.0"/>
+  </joint>
+  <joint name="BODY_motor_3_joint" type="fixed">
+    <parent link="BODY"/>
+    <child link="BODY_motor_3"/>
+    <axis xyz="1. 0. 0."/>
+    <origin xyz="0.005331523912986257 -0.5043876390364475 0.14600244055605668" rpy="0.0 1.5707963267948966 0.0"/>
+  </joint>
+  <joint name="tail_motor_0_joint" type="fixed">
+    <parent link="tail"/>
+    <child link="tail_motor_0"/>
+    <axis xyz="1. 0. 0."/>
+    <origin xyz="0.0 0.0 0.0" rpy="3.141592653589793 1.2246467991473532e-16 3.141592653589793"/>
+  </joint>
+  <joint name="leg_l_motor_0_joint" type="fixed">
+    <parent link="leg_l"/>
+    <child link="leg_l_motor_0"/>
+    <axis xyz="1. 0. 0."/>
+    <origin xyz="1.3877787807814457e-17 1.734723475976807e-18 0.0" rpy="-0.0 -1.5707963267948966 0.0"/>
+  </joint>
+  <joint name="leg_l_motor_1_joint" type="fixed">
+    <parent link="leg_l"/>
+    <child link="leg_l_motor_1"/>
+    <axis xyz="1. 0. 0."/>
+    <origin xyz="0.02189118421267449 -0.04558850375808799 -0.16967505476997582" rpy="0.0 1.5707963267948966 0.0"/>
+  </joint>
+  <joint name="leg_r_motor_0_joint" type="fixed">
+    <parent link="leg_r"/>
+    <child link="leg_r_motor_0"/>
+    <axis xyz="1. 0. 0."/>
+    <origin xyz="0.0 6.938893903907228e-18 0.0" rpy="0.0 1.5707963267948966 0.0"/>
+  </joint>
+  <joint name="leg_r_motor_1_joint" type="fixed">
+    <parent link="leg_r"/>
+    <child link="leg_r_motor_1"/>
+    <axis xyz="1. 0. 0."/>
+    <origin xyz="-0.011621069711597654 0.012431325994417314 -0.23150159844523144" rpy="-0.0 -1.5707963267948966 0.0"/>
+  </joint>
+  <joint name="mouth_motor_0_joint" type="fixed">
+    <parent link="mouth"/>
+    <child link="mouth_motor_0"/>
+    <axis xyz="1. 0. 0."/>
+    <origin xyz="0.0 0.0 0.0" rpy="-0.0 -1.5707963267948966 0.0"/>
+  </joint>
+  <joint name="lower_leg_motor_0_joint" type="fixed">
+    <parent link="lower_leg"/>
+    <child link="lower_leg_motor_0"/>
+    <axis xyz="1. 0. 0."/>
+    <origin xyz="0.0 0.0 -2.7755575615628914e-17" rpy="-0.0 -1.5707963267948966 0.0"/>
+  </joint>
+  <joint name="lower_leg_r_motor_0_joint" type="fixed">
+    <parent link="lower_leg_r"/>
+    <child link="lower_leg_r_motor_0"/>
+    <axis xyz="1. 0. 0."/>
+    <origin xyz="0.0 8.673617379884035e-18 0.0" rpy="0.0 1.5707963267948966 0.0"/>
+  </joint>
+  <material name="red">
+    <color rgba="1. 0. 0. 1."/>
+  </material>
+  <material name="magenta">
+    <color rgba="0.2 0.  0.2 1. "/>
+  </material>
+  <material name="green">
+    <color rgba="0. 1. 0. 1."/>
+  </material>
+  <material name="cyan">
+    <color rgba="0. 1. 1. 1."/>
+  </material>
+  <material name="blue">
+    <color rgba="0. 0. 1. 1."/>
+  </material>
+  <material name="orange">
+    <color rgba="1.  0.5 0.  1. "/>
+  </material>
+  <material name="yellow">
+    <color rgba="1. 1. 0. 1."/>
+  </material>
+  <material name="pink">
+    <color rgba="1. 0. 1. 1."/>
+  </material>
+  <material name="grey">
+    <color rgba="0.8 0.8 0.8 1. "/>
+  </material>
+  <material name="motor">
+    <color rgba="0.2 0.2 0.2 1. "/>
+  </material>
+</robot>

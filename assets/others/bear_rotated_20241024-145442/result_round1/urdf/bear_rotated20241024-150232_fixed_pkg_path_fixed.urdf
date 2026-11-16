@@ -1,0 +1,337 @@
+<?xml version="1.0"?>
+<robot name="robot">
+  <material name="red">
+    <color rgba="1 0 0 1"/>
+  </material>
+  <material name="magenta">
+    <color rgba="0.2 0 0.2 1"/>
+  </material>
+  <material name="green">
+    <color rgba="0 1 0 1"/>
+  </material>
+  <material name="cyan">
+    <color rgba="0 1 1 1"/>
+  </material>
+  <material name="blue">
+    <color rgba="0 0 1 1"/>
+  </material>
+  <material name="orange">
+    <color rgba="1 0.5 0 1"/>
+  </material>
+  <material name="yellow">
+    <color rgba="1 1 0 1"/>
+  </material>
+  <material name="pink">
+    <color rgba="1 0 1 1"/>
+  </material>
+  <material name="grey">
+    <color rgba="0.8 0.8 0.8 1"/>
+  </material>
+  <material name="motor">
+    <color rgba="0.2 0.2 0.2 1"/>
+  </material>
+  <link name="BODY">
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+           <mesh filename="package://simple_robot_controller/urdf/bear_rotated_20241024-145442/result_round1/urdf/BODY.stl" />
+      </geometry>
+      <material name="grey"/>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+           <mesh filename="package://simple_robot_controller/urdf/bear_rotated_20241024-145442/result_round1/urdf/BODY.stl" />
+      </geometry>
+    </collision>
+    <inertial>
+      <origin xyz="-0.0023991552920362763 -0.02176094420755447 0.3326790475257407" rpy="0 0 0"/>
+      <mass value="8.72124"/>
+      <inertia ixx="0.014779748213489458" ixy="0.00010200633410329074" ixz="0.00021978099886827996" iyy="0.011838890960847495" iyz="0.0017618618059014224" izz="0.006782616085580385"/>
+    </inertial>
+  </link>
+  <link name="L_LEG">
+    <visual>
+      <origin xyz="-0.08444068590843136 -0.005550315033849281 -0.16745715889338686" rpy="0 0 0"/>
+      <geometry>
+           <mesh filename="package://simple_robot_controller/urdf/bear_rotated_20241024-145442/result_round1/urdf/L_LEG.stl" />
+      </geometry>
+      <material name="grey"/>
+    </visual>
+    <collision>
+      <origin xyz="-0.08444068590843136 -0.005550315033849281 -0.16745715889338686" rpy="0 0 0"/>
+      <geometry>
+           <mesh filename="package://simple_robot_controller/urdf/bear_rotated_20241024-145442/result_round1/urdf/L_LEG.stl" />
+      </geometry>
+    </collision>
+    <inertial>
+      <origin xyz="0.0438094347544608 0.034090020884711913 -0.03517263502817233" rpy="0 0 0"/>
+      <mass value="0.30876000000000003"/>
+      <inertia ixx="5.892282335794789e-05" ixy="1.0095319179945567e-06" ixz="-1.61055094733774e-05" iyy="6.343249582199735e-05" iyz="-5.311328167508764e-06" izz="5.621367265837562e-05"/>
+    </inertial>
+  </link>
+  <link name="L_LEG_virtual">
+  </link>
+  <joint name="L_LEG_joint1" type="revolute">
+    <parent link="BODY"/>
+    <child link="L_LEG_virtual"/>
+    <origin xyz="0.04444068590843136 -0.03444968496615072 0.16745715889338686" rpy="0 0 0"/>
+    <axis xyz="0 -1 0"/>
+    <limit lower="-1.57" upper="1.57" effort="20" velocity="1.5"/>
+  </joint>
+  <joint name="L_LEG_joint2" type="revolute">
+    <parent link="L_LEG_virtual"/>
+    <child link="L_LEG"/>
+    <origin xyz="0.04 0.04 0.0" rpy="0 0 0"/>
+    <axis xyz="1 0 0"/>
+    <limit lower="-1.57" upper="1.57" effort="20" velocity="1.5"/>
+  </joint>
+  <link name="R_LEG">
+    <visual>
+      <origin xyz="0.07008929022201647 0.01 -0.16242428832939124" rpy="0 0 0"/>
+      <geometry>
+           <mesh filename="package://simple_robot_controller/urdf/bear_rotated_20241024-145442/result_round1/urdf/R_LEG.stl" />
+      </geometry>
+      <material name="grey"/>
+    </visual>
+    <collision>
+      <origin xyz="0.07008929022201647 0.01 -0.16242428832939124" rpy="0 0 0"/>
+      <geometry>
+           <mesh filename="package://simple_robot_controller/urdf/bear_rotated_20241024-145442/result_round1/urdf/R_LEG.stl" />
+      </geometry>
+    </collision>
+    <inertial>
+      <origin xyz="-0.05441623038267342 0.05056342483635498 -0.0350153690278068" rpy="0 0 0"/>
+      <mass value="0.34224"/>
+      <inertia ixx="5.861366444600302e-05" ixy="-4.091615007012634e-06" ixz="1.103618162692849e-05" iyy="5.6146845021037756e-05" iyz="6.766794004207612e-06" izz="5.412609151472655e-05"/>
+    </inertial>
+  </link>
+  <link name="R_LEG_virtual">
+  </link>
+  <joint name="R_LEG_joint1" type="revolute">
+    <parent link="BODY"/>
+    <child link="R_LEG_virtual"/>
+    <origin xyz="-0.03008929022201647 -0.05 0.16242428832939124" rpy="0 0 0"/>
+    <axis xyz="0 -1 0"/>
+    <limit lower="-1.57" upper="1.57" effort="20" velocity="1.5"/>
+  </joint>
+  <joint name="R_LEG_joint2" type="revolute">
+    <parent link="R_LEG_virtual"/>
+    <child link="R_LEG"/>
+    <origin xyz="-0.04 0.04 0.0" rpy="0 0 0"/>
+    <axis xyz="-1 0 0"/>
+    <limit lower="-1.57" upper="1.57" effort="20" velocity="1.5"/>
+  </joint>
+  <link name="L_ARM">
+    <visual>
+      <origin xyz="-0.08897618402665869 -0.0032515038197061187 -0.3705139338637276" rpy="0 0 0"/>
+      <geometry>
+           <mesh filename="package://simple_robot_controller/urdf/bear_rotated_20241024-145442/result_round1/urdf/L_ARM.stl" />
+      </geometry>
+      <material name="grey"/>
+    </visual>
+    <collision>
+      <origin xyz="-0.08897618402665869 -0.0032515038197061187 -0.3705139338637276" rpy="0 0 0"/>
+      <geometry>
+           <mesh filename="package://simple_robot_controller/urdf/bear_rotated_20241024-145442/result_round1/urdf/L_ARM.stl" />
+      </geometry>
+    </collision>
+    <inertial>
+      <origin xyz="0.07949924229970737 0.04563774106268355 -0.015652584077380738" rpy="0 0 0"/>
+      <mass value="0.55488"/>
+      <inertia ixx="0.00011817350467668691" ixy="-4.907338235294101e-06" ixz="2.5255991295415765e-06" iyy="0.00010033676194852929" iyz="5.569897058823542e-06" izz="7.827875727184423e-05"/>
+    </inertial>
+  </link>
+  <link name="L_ARM_virtual">
+  </link>
+  <joint name="L_ARM_joint1" type="revolute">
+    <parent link="BODY"/>
+    <child link="L_ARM_virtual"/>
+    <origin xyz="0.053976184026658686 -0.03174849618029388 0.3705139338637276" rpy="0 0 0"/>
+    <axis xyz="0 -1 0"/>
+    <limit lower="-1.57" upper="1.57" effort="20" velocity="1.5"/>
+  </joint>
+  <joint name="L_ARM_joint2" type="revolute">
+    <parent link="L_ARM_virtual"/>
+    <child link="L_ARM"/>
+    <origin xyz="0.035 0.034999999999999996 0.0" rpy="0 0 0"/>
+    <axis xyz="1 0 0"/>
+    <limit lower="-1.57" upper="1.57" effort="20" velocity="1.5"/>
+  </joint>
+  <link name="R_ARM">
+    <visual>
+      <origin xyz="0.1069425309750003 0.001928859643200844 -0.37344736692802016" rpy="0 0 0"/>
+      <geometry>
+           <mesh filename="package://simple_robot_controller/urdf/bear_rotated_20241024-145442/result_round1/urdf/R_ARM.stl" />
+      </geometry>
+      <material name="grey"/>
+    </visual>
+    <collision>
+      <origin xyz="0.1069425309750003 0.001928859643200844 -0.37344736692802016" rpy="0 0 0"/>
+      <geometry>
+           <mesh filename="package://simple_robot_controller/urdf/bear_rotated_20241024-145442/result_round1/urdf/R_ARM.stl" />
+      </geometry>
+    </collision>
+    <inertial>
+      <origin xyz="-0.07606560233425898 0.04775929717861119 -0.029932030210696736" rpy="0 0 0"/>
+      <mass value="0.55332"/>
+      <inertia ixx="0.00012624053188028652" ixy="4.686136873780048e-06" ixz="-5.222989752765077e-06" iyy="0.00010429461206896441" iyz="6.4054984547820295e-06" izz="7.949460361093079e-05"/>
+    </inertial>
+  </link>
+  <link name="R_ARM_virtual">
+  </link>
+  <joint name="R_ARM_joint1" type="revolute">
+    <parent link="BODY"/>
+    <child link="R_ARM_virtual"/>
+    <origin xyz="-0.0719425309750003 -0.036928859643200834 0.37344736692802016" rpy="0 0 0"/>
+    <axis xyz="0 -1 0"/>
+    <limit lower="-1.57" upper="1.57" effort="20" velocity="1.5"/>
+  </joint>
+  <joint name="R_ARM_joint2" type="revolute">
+    <parent link="R_ARM_virtual"/>
+    <child link="R_ARM"/>
+    <origin xyz="-0.035 0.034999999999999996 0.0" rpy="0 0 0"/>
+    <axis xyz="-1 0 0"/>
+    <limit lower="-1.57" upper="1.57" effort="20" velocity="1.5"/>
+  </joint>
+  <link name="L_LOW_LEG">
+    <visual>
+      <origin xyz="-0.08724524453572113 0.004938535882206795 -0.09008929022201646" rpy="0 0 0"/>
+      <geometry>
+           <mesh filename="package://simple_robot_controller/urdf/bear_rotated_20241024-145442/result_round1/urdf/L_LOW_LEG.stl" />
+      </geometry>
+      <material name="grey"/>
+    </visual>
+    <collision>
+      <origin xyz="-0.08724524453572113 0.004938535882206795 -0.09008929022201646" rpy="0 0 0"/>
+      <geometry>
+           <mesh filename="package://simple_robot_controller/urdf/bear_rotated_20241024-145442/result_round1/urdf/L_LOW_LEG.stl" />
+      </geometry>
+    </collision>
+    <inertial>
+      <origin xyz="0.004270355410247714 0.001155623315678229 -0.04891569056327328" rpy="0 0 0"/>
+      <mass value="0.4998"/>
+      <inertia ixx="9.649421398559381e-05" ixy="8.417225510204087e-06" ixz="-8.140550960384226e-06" iyy="7.698359315726222e-05" iyz="-2.247740816326529e-06" izz="7.61557608043224e-05"/>
+    </inertial>
+  </link>
+  <joint name="L_LOW_LEG_joint" type="revolute">
+    <parent link="L_LEG"/>
+    <child link="L_LOW_LEG"/>
+    <origin xyz="0.0028045586272897795 -0.010488850916056076 -0.0773678686713704" rpy="0 0 0"/>
+    <axis xyz="1 0 0"/>
+    <limit lower="-1.57" upper="1.57" effort="20" velocity="1.5"/>
+  </joint>
+  <link name="R_LOW_LEG">
+    <visual>
+      <origin xyz="0.10138875366211535 -0.004329724082230176 -0.08227835989083404" rpy="0 0 0"/>
+      <geometry>
+           <mesh filename="package://simple_robot_controller/urdf/bear_rotated_20241024-145442/result_round1/urdf/R_LOW_LEG.stl" />
+      </geometry>
+      <material name="grey"/>
+    </visual>
+    <collision>
+      <origin xyz="0.10138875366211535 -0.004329724082230176 -0.08227835989083404" rpy="0 0 0"/>
+      <geometry>
+           <mesh filename="package://simple_robot_controller/urdf/bear_rotated_20241024-145442/result_round1/urdf/R_LOW_LEG.stl" />
+      </geometry>
+    </collision>
+    <inertial>
+      <origin xyz="0.009382852113863319 -0.008382485287003636 -0.04383459931656455" rpy="0 0 0"/>
+      <mass value="0.46632"/>
+      <inertia ixx="8.553979371461645e-05" ixy="-7.012957025218662e-06" ixz="7.005227933607717e-06" iyy="6.934891752444645e-05" iyz="-2.1894709855892766e-06" izz="7.630323645779703e-05"/>
+    </inertial>
+  </link>
+  <joint name="R_LOW_LEG_joint" type="revolute">
+    <parent link="R_LEG"/>
+    <child link="R_LOW_LEG"/>
+    <origin xyz="-0.031299463440098874 0.014329724082230176 -0.08014592843855718" rpy="0 0 0"/>
+    <axis xyz="-1 0 0"/>
+    <limit lower="-1.57" upper="1.57" effort="20" velocity="1.5"/>
+  </joint>
+  <link name="L_FORE_ARM">
+    <visual>
+      <origin xyz="-0.1583845760307671 -0.006774976388427845 -0.29656782473005594" rpy="0 0 0"/>
+      <geometry>
+           <mesh filename="package://simple_robot_controller/urdf/bear_rotated_20241024-145442/result_round1/urdf/L_FORE_ARM.stl" />
+      </geometry>
+      <material name="grey"/>
+    </visual>
+    <collision>
+      <origin xyz="-0.1583845760307671 -0.006774976388427845 -0.29656782473005594" rpy="0 0 0"/>
+      <geometry>
+           <mesh filename="package://simple_robot_controller/urdf/bear_rotated_20241024-145442/result_round1/urdf/L_FORE_ARM.stl" />
+      </geometry>
+    </collision>
+    <inertial>
+      <origin xyz="0.03650108532161364 -0.04725539345412907 -0.04989993076232349" rpy="0 0 0"/>
+      <mass value="0.8364"/>
+      <inertia ixx="0.0003231582555774757" ixy="5.3779027456958414e-05" ixz="2.978100710186499e-05" iyy="0.0001545889220767556" iyz="-7.478397772596934e-05" izz="0.00028223297722381634"/>
+    </inertial>
+  </link>
+  <joint name="L_FORE_ARM_joint" type="revolute">
+    <parent link="L_ARM"/>
+    <child link="L_FORE_ARM"/>
+    <origin xyz="0.06940839200410844 0.003523472568721726 -0.07394610913367164" rpy="0 0 0"/>
+    <axis xyz="1 0 0"/>
+    <limit lower="-1.57" upper="1.57" effort="20" velocity="1.5"/>
+  </joint>
+  <link name="R_FORE_ARM">
+    <visual>
+      <origin xyz="0.17092819269714796 0.00239748193052124 -0.2874670916652145" rpy="0 0 0"/>
+      <geometry>
+           <mesh filename="package://simple_robot_controller/urdf/bear_rotated_20241024-145442/result_round1/urdf/R_FORE_ARM.stl" />
+      </geometry>
+      <material name="grey"/>
+    </visual>
+    <collision>
+      <origin xyz="0.17092819269714796 0.00239748193052124 -0.2874670916652145" rpy="0 0 0"/>
+      <geometry>
+           <mesh filename="package://simple_robot_controller/urdf/bear_rotated_20241024-145442/result_round1/urdf/R_FORE_ARM.stl" />
+      </geometry>
+    </collision>
+    <inertial>
+      <origin xyz="-0.028279551655914947 -0.04640591442902975 -0.048370908320992445" rpy="0 0 0"/>
+      <mass value="0.70848"/>
+      <inertia ixx="0.0002328392349466469" ixy="-3.7855686737804775e-05" ixz="-1.4913432545731721e-05" iyy="0.0001016802369791668" iyz="-4.278914748475649e-05" izz="0.00021739896087398262"/>
+    </inertial>
+  </link>
+  <joint name="R_FORE_ARM_joint" type="revolute">
+    <parent link="R_ARM"/>
+    <child link="R_FORE_ARM"/>
+    <origin xyz="-0.06398566172214766 -0.000468622287320396 -0.08598027526280565" rpy="0 0 0"/>
+    <axis xyz="-1 0 0"/>
+    <limit lower="-1.57" upper="1.57" effort="20" velocity="1.5"/>
+  </joint>
+  <link name="l_foot">
+  </link>
+  <joint name="l_foot_joint" type="fixed">
+    <parent link="L_LOW_LEG"/>
+    <child link="l_foot"/>
+    <origin xyz="0.0 0.0 -0.0700781289442644" rpy="0 0 0"/>
+  </joint>
+  <link name="r_foot">
+  </link>
+  <joint name="r_foot_joint" type="fixed">
+    <parent link="R_LOW_LEG"/>
+    <child link="r_foot"/>
+    <origin xyz="0.0 0.0 -0.060066967666512344" rpy="0 0 0"/>
+  </joint>
+<gazebo>
+   <plugin filename="libgazebo_ros_p3d.so" name="p3d_base_controller">
+   <alwaysOn>true</alwaysOn>
+       <updateRate>10.0</updateRate>
+       <bodyName>base_link</bodyName>
+       <topicName>odom/ground_truth</topicName>
+       <gaussianNoise>0.00000001</gaussianNoise>
+       <frameName>world</frameName>
+       <xyzOffsets>0 0 0</xyzOffsets>
+       <rpyOffsets>0 0 0</rpyOffsets>
+   </plugin>
+</gazebo>
+<gazebo>
+   <plugin filename="libgazebo_ros_control.so" name="gazebo_ros_control">
+       <legacyModeNS>true</legacyModeNS>
+   </plugin>
+</gazebo>
+</robot>
+
