@@ -121,7 +121,8 @@ def main():
         meta = json.loads(args.motion.with_name('clip.json').read_text())
         speed = meta.get('playback_speed', 1.)
         label = timing_label(meta, 'REFERENCE TIMING')
-        name = (f'reference_{speed:g}x.mp4' if meta.get('speed_status') == 'user_selected_normal_speed'
+        name = (f'reference_megasam_{speed:g}x.mp4' if meta.get('camera_compensation') == 'MegaSaM' else
+                f'reference_{speed:g}x.mp4' if meta.get('speed_status') == 'user_selected_normal_speed'
                 else 'reference_slow1x.mp4' if speed == 1 else f'reference_est{speed:g}x.mp4')
         default_video = PROJECT/'videos'/name
         render(np.array(records), np.array(records), args.video or default_video,

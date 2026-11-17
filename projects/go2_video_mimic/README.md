@@ -2,10 +2,10 @@
 
 独立实验：把 dog2go2 从侧跑视频重定向得到的 Go2 动作，接到现有 SuperMimic
 训练链路。目标是学习相对身体动作和跑步节奏，允许机器人在物理世界中自由移动。
-参考视频的相机运动和真实世界跑速不在这里恢复。
+当前参考来自 MegaSaM 相机补偿后的重定向结果；训练仍采用 anchor，不追踪世界 XY 和绝对 yaw。
 
 当前采用用户选定的 **原片3×播放速度作为正常速度**。准备参考、新训练和参考录像
-默认统一使用 `data/side_run_3x/motion.npy`：50 Hz、92帧、首尾时间跨度1.82秒。
+默认统一使用 `data/side_run_megasam_3x/motion.npy`：50 Hz、92帧、首尾时间跨度1.82秒。
 
 ## 运行
 
@@ -53,10 +53,10 @@ Git不包含镜像本体、训练权重、日志、缓存和生成录像；从�
 若要续训，另外复制对应日志目录，并使用其中检查点的 `--resume` 参数。
 
 ```bash
-# 默认准备3×正常速度参考；原片保留慢动作时序，只在这里重定时一次
+# 默认导入已经采用3×时序的 MegaSaM 导出，不再次加速
 bash run.sh video-mimic prepare
 
-# 时序、关节速度/加速度、限位与直接PD物理检查
+# 历史未补偿版本的时序、关节速度/加速度、限位与直接PD物理对照
 bash run.sh video-mimic timing
 
 # anchor 坐标、速度运输项、奖励梯度、关节顺序与非循环端点检查
@@ -64,7 +64,7 @@ bash run.sh video-mimic check
 
 # 新训练默认使用3×参考；20轮世界模型、5轮Critic预热，第26轮起更新Actor
 bash run.sh video-mimic train --num-envs 64 --cycles 100 \
-  --wm-updates 8 --actor-batch 64 --run-name anchor_side_run_3x
+  --wm-updates 8 --actor-batch 64 --run-name anchor_side_run_megasam_3x
 
 # 从自己项目的检查点续训；cycles 是追加轮数
 bash run.sh video-mimic train \
@@ -79,7 +79,7 @@ bash run.sh video-mimic evaluate \
 bash run.sh video-mimic evaluate \
   --checkpoint projects/go2_video_mimic/logs/<运行目录>/model_100.pt --random-start
 
-# 单独检查3×参考；此视频是运动学播放，输出videos/reference_3x.mp4
+# 单独检查3×参考；此视频是运动学播放，输出videos/reference_megasam_3x.mp4
 bash run.sh video-mimic reference
 ```
 
@@ -88,7 +88,27 @@ bash run.sh video-mimic reference
 两边使用跟随实体的观察相机。评估在真实失败处结束该回合，不把失败后的重置算成完成。
 无噪声从头评估的多个环境初态相同，结果不代表独立随机扰动下的成功概率。
 
-## 参考数据
+## 当前 MegaSaM 参考
+
+源文件为 `data/source/side_run_megasam_3x_go2.pkl`，来自 dog2go2 的
+`motions/side_run_megasam_groundcomp_3x.pkl`，对应 Pexels/Brixiv 9898378 侧跑片段。
+完整补偿报告保存在 `data/source/side_run_megasam_quality.json`。
+PKL 本身已经是3×时序，默认 `prepare` 的额外倍率为1；不要再传 `--speed 3`。
+导入后仍为92帧、50 Hz、1.82秒。元数据记录源文件SHA256、总倍率3和额外倍率1。
+高度、倾斜和关节保留；补偿后的全局位移和yaw由anchor消除，不作为跟踪目标。
+源轨迹仍有约10.5厘米最大足端穿地和滑脚，属于试训练参考，不能据此认定动力学可行。
+新参考应从头训练；旧检查点续训和评估会沿用它们各自的旧参考。
+
+```bash
+bash run.sh video-mimic train --num-envs 64 --cycles 2000 --run-name anchor_side_run_megasam_3x
+bash run.sh video-mimic reference
+# 训练结束后选择这次运行的目录
+run_dir=$(ls -dt projects/go2_video_mimic/logs/anchor_side_run_megasam_3x_* | head -n 1)
+bash run.sh video-mimic play --checkpoint "$run_dir/model_2000.pt" \
+  --video projects/go2_video_mimic/videos/policy_megasam_3x.mp4
+```
+
+## 历史未补偿参考数据
 
 `data/source/side_run_go2.pkl` 来自 dog2go2 的
 `independent_side_run_9898378.pkl`；原视频、裁剪和来源记录在同目录
@@ -105,7 +125,7 @@ bash run.sh video-mimic reference
 | 参考 | 帧数 | 首尾时间跨度 | 估计关节周期 | 离散峰值关节速度 | 离散峰值关节加速度 |
 | --- | --- | --- | --- | --- | --- |
 | 1×慢动作基线 | 274 | 5.46 s | 2.22 s | 12.63 rad/s | 259.7 rad/s² |
-| 3×正常速度（当前采用） | 92 | 1.82 s | 0.74 s | 15.34 rad/s | 428.3 rad/s² |
+| 3×正常速度（旧版未补偿） | 92 | 1.82 s | 0.74 s | 15.34 rad/s | 428.3 rad/s² |
 | 估计5× | 55 | 1.08 s | 0.444 s | 20.38 rad/s | 672.5 rad/s² |
 
 用户看过倍率对照后选定3×作为正常速度，元数据记录为 `user_selected_normal_speed`，
@@ -114,11 +134,11 @@ bash run.sh video-mimic reference
 关节周期由慢动作关节序列自相关估计后按倍率换算。
 5×末端裁去源时间轴0.06秒，以保持严格50 Hz，不额外拉伸最后一个控制间隔。
 元数据记录倍率、估计状态和裁尾量；三个版本独立保存，旧参考及检查点保持可复查。
-新训练默认采用 `side_run_3x`，续训及策略评估沿用检查点原参考。
+新训练默认采用 `side_run_megasam_3x`，续训及策略评估沿用检查点原参考。
 此前1×/5×检查点仍属于各自历史试验；训练3×应从头启动，不能直接把旧检查点当作3×策略。
 仿真仍为600 Hz、控制50 Hz、重力−9.81 m/s²。
 
-[当前3×正常速度参考](videos/reference_3x.mp4)。历史
+[当前3×正常速度参考](videos/reference_megasam_3x.mp4)。历史
 [1×/3×/5×同时间轴对照](videos/reference_timing_comparison.mp4)保留当时的估计标签；
 快版本到终点后标注并冻结末帧，不循环拼接。
 以上都是运动学参考，不是训练后的物理表现。
@@ -127,7 +147,7 @@ bash run.sh video-mimic reference
 这种短时开环测试只能辅助检查，不能证明已恢复真实速度或已能稳定奔跑。
 
 参考 XY/yaw 选择固定坐标规范；高度、roll/pitch、关节运动保留。
-这种处理没有估计相机或物理速度。实体根部仍在真实物理中自由运动。
+anchor 本身不估计相机或物理速度；当前源文件先经过 MegaSaM 补偿。实体根部仍在真实物理中自由运动。
 未来目标与奖励都去除参考平面位移和绝对 yaw，避免从其他通道重新要求跟踪错误轨迹。
 
 ## 与原 SuperMimic 的关系

@@ -9,7 +9,7 @@ from go2_video_mimic.config import reward_config
 from go2_video_mimic.task import AnchorTask
 from go2_video_mimic.prepare import convert
 from go2_mujoco_mimic.tasks.mimic.config import MimicTaskCfg
-from go2_video_mimic.config import SLOW_MOTION
+from go2_video_mimic.config import MOTION
 
 
 def pose():
@@ -91,7 +91,7 @@ class AnchorTests(unittest.TestCase):
         from go2_mujoco_mimic.environment import Go2Environment
         from go2_mujoco_mimic.tasks.mimic.kinematics import BodyKinematics
         cpu = Go2Environment(600, 50)
-        frames = np.load(SLOW_MOTION)
+        frames = np.load(MOTION)
         joints = frames[:, 6:18].reshape(-1, 3, 4).transpose(0, 2, 1).reshape(-1, 12)
         limits = cpu.model.jnt_range[cpu.joint_ids]
         self.assertTrue((joints >= limits[:, 0]-1e-5).all())
@@ -109,6 +109,28 @@ class AnchorTests(unittest.TestCase):
             state = torch.tensor(np.r_[frames[i, 48:55], joints[i], np.zeros(18)], dtype=torch.float32)[None]
             positions, _ = fk(state)
             np.testing.assert_allclose(positions.detach().numpy()[0], cpu.data.xpos[ids], atol=1e-6)
+
+    def test_default_megasam_import_does_not_apply_three_times_again(self):
+        import json
+        import pickle
+        import tempfile
+        from pathlib import Path
+        from unittest.mock import patch
+        from go2_video_mimic.prepare import main
+        from go2_video_mimic.config import DEFAULT_SOURCE
+        with tempfile.TemporaryDirectory() as directory:
+            with patch('sys.argv', ['prepare', '--output', directory]):
+                main()
+            output = np.load(Path(directory)/'motion.npy')
+            metadata = json.loads((Path(directory)/'clip.json').read_text())
+        with DEFAULT_SOURCE.open('rb') as stream:
+            source = pickle.load(stream)
+        self.assertEqual(len(output), len(source['root_pos']))
+        self.assertEqual(metadata['playback_speed'], 3.)
+        self.assertEqual(metadata['retime_factor'], 1.)
+        self.assertEqual(metadata['camera_compensation'], 'MegaSaM')
+        np.testing.assert_allclose(output, convert(source, speed=1.))
+        np.testing.assert_allclose(output, np.load(MOTION))
 
     def test_retiming_scales_velocity_and_acceleration_on_same_physical_clock(self):
         t = np.arange(21)/50.

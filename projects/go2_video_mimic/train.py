@@ -204,7 +204,7 @@ def main():
     p = argparse.ArgumentParser(description=__doc__)
     p.add_argument('--motion', type=Path)
     p.add_argument('--resume', type=Path)
-    p.add_argument('--run-name', default='anchor_side_run_3x')
+    p.add_argument('--run-name', default='anchor_side_run_megasam_3x')
     for name in asdict(TrainCfg()):
         if name == 'actor_hidden': continue
         kind = float if isinstance(getattr(TrainCfg(), name), float) else int

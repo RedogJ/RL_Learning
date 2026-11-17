@@ -1,0 +1,144 @@
+{
+  "baseline": {
+    "frames": 92,
+    "fps": 50.0,
+    "span_s": 1.82,
+    "endpoint_xy_m": 2.8981509580185647,
+    "path_xy_m": 4.71542906264587,
+    "speed_median_m_s": 2.580385865537303,
+    "speed_peak_m_s": 5.260449391045979,
+    "labeled_stance_slip_m_s": 2.247920327623718,
+    "near_ground_slip_m_s": 2.0116101795375996,
+    "minimum_foot_center_z_m": -0.0006073510964229589,
+    "minimum_foot_clearance_m": -0.022607351096422958,
+    "peak_joint_velocity_rad_s": 27.143389447894133,
+    "note": "Kinematic Go2-scale quantities, not measured dog speed or a physics rollout."
+  },
+  "compensated": {
+    "frames": 92,
+    "fps": 50.0,
+    "span_s": 1.82,
+    "endpoint_xy_m": 2.821065344769075,
+    "path_xy_m": 2.887683929004767,
+    "speed_median_m_s": 1.621752198058393,
+    "speed_peak_m_s": 2.257082484349653,
+    "labeled_stance_slip_m_s": 1.0352271920555605,
+    "near_ground_slip_m_s": 1.1258127292622162,
+    "minimum_foot_center_z_m": -0.0829883998128168,
+    "minimum_foot_clearance_m": -0.1049883998128168,
+    "peak_joint_velocity_rad_s": 21.997066543486902,
+    "note": "Kinematic Go2-scale quantities, not measured dog speed or a physics rollout."
+  },
+  "camera_quality_warning": false,
+  "camera_audit": {
+    "ground": {
+      "median_pair_median_px": 0.17412259043996023,
+      "worst_pair_p90_px": 8.789499826059934
+    },
+    "upper_background": {
+      "median_pair_median_px": 0.2800112602018116,
+      "worst_pair_p90_px": 17.59339145959076
+    },
+    "long_ground_tracks": {
+      "samples": 43438,
+      "median_reprojection_px": 10.408980961218493,
+      "p90_reprojection_px": 23.04635154131245,
+      "max_age_frames": 137,
+      "note": "Diagnostic tracks share the image with the fit; not an independent ground-truth benchmark."
+    },
+    "interpretation": "Upper-background residual includes parallax: these points are not on the ground. Metres remain unverified."
+  },
+  "reconstruction": [
+    {
+      "name": "side_run_megasam_static_3x",
+      "solver_success": true,
+      "solver_cost": 2657.8834280981055,
+      "solver_optimality": 0.3142051966738906,
+      "metres_per_unit": 0.3826126004863881
+    },
+    {
+      "name": "side_run_megasam_groundcomp_3x",
+      "solver_success": true,
+      "solver_cost": 1392.6349187846986,
+      "solver_optimality": 0.40570526450566874,
+      "metres_per_unit": 0.3623435801594653
+    }
+  ],
+  "camera_local_quality": {
+    "method": "MegaSaM_3D_camera",
+    "frames": 138,
+    "trim_start_frame": 0,
+    "ground_plane": {
+      "inlier_fraction": 0.998,
+      "residual_median_model_units": 0.0023882222884954174,
+      "depth_source": "UniDepth prior; optimized road depth is not used"
+    },
+    "scale_to_unidepth": 14.5087251663208,
+    "camera_height_m": 0.4715110857560726,
+    "scale_samples": 2500,
+    "scale_ratio_p10_p90": [
+      10.60164966583252,
+      31.759765052795405
+    ],
+    "camera_height_range_m": [
+      0.46835093820839213,
+      0.4787260935250394
+    ],
+    "focal_px": 6206.251763478405,
+    "background_audit": {
+      "frames": 138,
+      "start_frame": 0,
+      "image_size": [
+        584,
+        328
+      ],
+      "fps": 25.0,
+      "source_intrinsic": [
+        [
+          6206.252115059222,
+          0.0,
+          640.0
+        ],
+        [
+          0.0,
+          6206.25141189759,
+          360.0
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "camera_endpoint_arbitrary_units": 0.007792050508083844,
+      "camera_path_arbitrary_units": 0.012749859651900505,
+      "camera_rotation_from_first_max_deg": 8.865959796467227,
+      "camera_rotation_step_max_deg": 0.09645143204581455,
+      "tracks_triangulated": 1632,
+      "heldout_samples": 75879,
+      "negative_depth_tracks": 0,
+      "heldout_median_px": 0.4136910585745652,
+      "heldout_p90_px": 2.5049598885678352,
+      "longest_track_frames": 138,
+      "metric_scale_verified": false,
+      "note": "Diagnostic background observations share images with estimation. Not independent truth; not proof of metric velocity."
+    },
+    "local_quality_ok": true,
+    "quality_criterion": "Background triangulation held-out P90 <=5 px; maximum adjacent rotation <5 degrees",
+    "scale_status": "UniDepth prediction anchor; absolute metres unverified"
+  },
+  "playback_speed": 3.0,
+  "scale_verified": false,
+  "camera_file": "/home/redog-j/Desktop/dog2go2/.docker-data/work/capture/side_run_megasam_camera.npz",
+  "note": "Prototype comparison only. Shared unverified initial depth calibration; no physics rollout.",
+  "quality_gates": {
+    "camera_local_quality_ok": true,
+    "long_ground_track_p90_limit_px": 5.0,
+    "long_ground_track_ok": false,
+    "solver_converged": true,
+    "foot_sphere_clearance_ok": false,
+    "metric_scale_verified": false
+  },
+  "accepted_for_metric_velocity": false,
+  "accepted_for_training": false
+}

@@ -6,7 +6,7 @@ import pickle
 from pathlib import Path
 import numpy as np
 from scipy.spatial.transform import Rotation, Slerp
-from .config import PROJECT, DEFAULT_SPEED
+from .config import PROJECT, DEFAULT_SPEED, DEFAULT_SOURCE
 
 
 def convert(motion, fps=50., speed=1.):
@@ -47,44 +47,61 @@ def convert(motion, fps=50., speed=1.):
 
 def main():
     p = argparse.ArgumentParser(description=__doc__)
-    p.add_argument('--source', type=Path, default=PROJECT/'data/source/side_run_go2.pkl')
+    p.add_argument('--source', type=Path, default=DEFAULT_SOURCE)
     p.add_argument('--output', type=Path)
-    p.add_argument('--speed', type=float, default=DEFAULT_SPEED,
-                   help='Playback multiplier; default 3x is the user-selected normal speed for the bundled source')
+    p.add_argument('--speed', type=float,
+                   help='Additional retiming factor; default 1 for the already-3x MegaSaM export, 3 for the bundled original slow source')
     p.add_argument('--speed-note')
     args = p.parse_args()
+    compensated = args.source.resolve() == DEFAULT_SOURCE.resolve()
+    old_source = args.source.resolve() == (PROJECT/'data/source/side_run_go2.pkl').resolve()
+    if args.speed is None:
+        args.speed = DEFAULT_SPEED if old_source else 1.
+    source_playback_speed = DEFAULT_SPEED if compensated else 1.
+    effective_speed = source_playback_speed * args.speed
     # Only read locally generated, trusted PKL files, never arbitrary downloads.
     with args.source.open('rb') as f:
         motion = pickle.load(f)
     out = convert(motion, speed=args.speed)
-    selected_normal = (args.speed == DEFAULT_SPEED and args.source.resolve() ==
-                       (PROJECT/'data/source/side_run_go2.pkl').resolve())
+    selected_normal = (compensated and args.speed == 1.) or (old_source and args.speed == DEFAULT_SPEED)
     status = ('user_selected_normal_speed' if selected_normal else
-              'source_slow_motion_unadjusted' if args.speed == 1 else 'estimated_unverified')
+              'source_slow_motion_unadjusted' if old_source and args.speed == 1 else
+              'source_timing_preserved' if args.speed == 1 else 'estimated_unverified')
     note = args.speed_note or (
-        'User selected 3x playback as normal speed for this clip; source capture FPS was not supplied.'
+        ('User selected 3x normal speed; MegaSaM PKL already has this timing. No additional retiming.' if compensated else
+         'User selected 3x playback as normal speed for this clip; source capture FPS was not supplied.')
         if selected_normal else 'Original slow-motion timeline retained.' if args.speed == 1 else
         'Source capture FPS unknown; multiplier is an explicit estimate.')
     if args.output is None:
-        name = ('side_run_3x' if selected_normal else 'side_run' if args.speed == 1
+        name = ('side_run_megasam_3x' if compensated and args.speed == 1 else
+                f'side_run_megasam_est{effective_speed:g}x' if compensated else
+                'side_run_3x' if selected_normal else 'side_run' if args.speed == 1
                 else f'side_run_est{args.speed:g}x')
         args.output = PROJECT/'data'/name
     previous = args.output/'clip.json'
-    if previous.exists() and json.loads(previous.read_text()).get('playback_speed', 1.) != args.speed:
-        raise ValueError('Use a separate output directory when changing the time scale')
+    if previous.exists():
+        prior = json.loads(previous.read_text())
+        if (prior.get('playback_speed', 1.) != effective_speed or
+                prior.get('camera_compensation', 'none') != ('MegaSaM' if compensated else 'none')):
+            raise ValueError('Use a separate output directory when changing the reference or time scale')
     args.output.mkdir(parents=True, exist_ok=True)
     np.save(args.output/'motion.npy', out)
     metadata = dict(format='go2_anchor_video_v1', fps=50., frames=len(out),
                     duration_s=(len(out)-1)/50., cyclic=False,
-                    playback_speed=args.speed,
+                    playback_speed=effective_speed, retime_factor=args.speed,
+                    source_playback_speed=source_playback_speed,
+                    camera_compensation='MegaSaM' if compensated else 'none',
+                    reference_id=args.output.name,
                     speed_status=status, speed_note=note,
                     source_span_s=(len(motion['root_pos'])-1)/float(motion['fps']),
                     source_used_span_s=(len(out)-1)/50.*args.speed,
                     source_trimmed_tail_s=max(0., (len(motion['root_pos'])-1)/float(motion['fps'])-(len(out)-1)/50.*args.speed),
                     source=str(args.source), source_sha256=hashlib.sha256(args.source.read_bytes()).hexdigest(),
                     joint_order='FL FR RL RR, each hip/thigh/calf', quaternion='wxyz',
-                    notes=['Reference XY and yaw are gauge-fixed, not motion-compensated.',
-                           'No true global velocity is inferred; height, tilt and joints are retained.',
+                    notes=[('Source has MegaSaM camera compensation; anchor training removes reference XY/yaw.' if compensated else
+                            'Reference XY and yaw are gauge-fixed, not motion-compensated.'),
+                           'Global speed is not a training target; height, tilt and joints are retained.',
+                           'Candidate reference is not certified physically feasible; inspect the source quality report.',
                            'Reference is resampled on a new 50Hz physical timeline, not merely encoded faster.',
                            'Velocities are recomputed from retimed FK; accelerations are audited separately.',
                            'Any sub-control-step tail is explicitly trimmed; endpoints are not loop-closed.',

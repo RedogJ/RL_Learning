@@ -5,7 +5,8 @@ PROJECT = Path(__file__).resolve().parent
 SLOW_MOTION = PROJECT / 'data/side_run/motion.npy'
 # User selected 3x playback as normal speed for this source clip.
 DEFAULT_SPEED = 3.
-MOTION = PROJECT / 'data/side_run_3x/motion.npy'
+DEFAULT_SOURCE = PROJECT / 'data/source/side_run_megasam_3x_go2.pkl'
+MOTION = PROJECT / 'data/side_run_megasam_3x/motion.npy'
 
 
 @dataclass
