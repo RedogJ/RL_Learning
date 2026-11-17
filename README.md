@@ -54,6 +54,13 @@ python scripts/export_supermimic.py \
 
 ## 仓库其他工程
 
+Go2 视频 anchor 模仿：新建于 [`projects/go2_video_mimic`](projects/go2_video_mimic/README.md)，
+复用现有 SuperMimic，用侧跑视频参考训练相对身体动作；不要求恢复参考世界 XY/yaw。
+当前按用户选定的3×作为正常速度，准备参考、新训练及参考播放统一使用该时序。
+入口为 `bash run.sh video-mimic check`、`bash run.sh video-mimic train`。
+另一台Linux/NVIDIA机器复用或导入现有 `isaaclab-base:local` 镜像后，
+执行 `bash run.sh video-mimic doctor` 检查，再启动训练；无需重新构建镜像或下载视频重建模型。
+
 Middle 自定义四足：`bash run.sh middle` 打开 PD 仿真，
 `bash run.sh middle train` 启动独立的 SuperMimic 风格世界模型训练。
 首个任务使用静止站姿参考，见 [Middle 工程说明](projects/dog_middle_sim/README.md)。
@@ -63,6 +70,7 @@ RL_Learning/
 ├── run.sh                       # 统一入口；bash run.sh --help
 ├── projects/
 │   ├── go2_mujoco_mimic/         # 当前重点：MuJoCo Warp世界模型模仿RL
+│   ├── go2_video_mimic/          # 独立视频参考＋anchor相对SuperMimic
 │   ├── go2_learning/             # Isaac Lab + RSL-RL：standing/running/upright等
 │   └── go2_sim2sim/              # Isaac策略的MuJoCo验证
 ├── examples/                    # PPO及RSL-RL倒立摆学习示例

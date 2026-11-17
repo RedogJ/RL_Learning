@@ -1,0 +1,16 @@
+{
+  "format": "go2_anchor_video_v1",
+  "fps": 50.0,
+  "frames": 274,
+  "duration_s": 5.46,
+  "cyclic": false,
+  "source": "/workspace/projects/go2_video_mimic/data/source/side_run_go2.pkl",
+  "source_sha256": "91751312b3468d3318d648abc4e6daccd75e2debab590ee3df897589b90883b1",
+  "joint_order": "FL FR RL RR, each hip/thigh/calf",
+  "quaternion": "wxyz",
+  "notes": [
+    "Reference XY and yaw are gauge-fixed, not motion-compensated.",
+    "No true global velocity is inferred; height, tilt and joints are retained.",
+    "Unused legacy 61-column fields remain zero; body poses and velocities use model FK."
+  ]
+}

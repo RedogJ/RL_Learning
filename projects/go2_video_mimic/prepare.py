@@ -1,0 +1,97 @@
+"""Convert our trusted dog2go2 PKL to a noncyclic anchor training reference."""
+import argparse
+import hashlib
+import json
+import pickle
+from pathlib import Path
+import numpy as np
+from scipy.spatial.transform import Rotation, Slerp
+from .config import PROJECT, DEFAULT_SPEED
+
+
+def convert(motion, fps=50., speed=1.):
+    if not all(np.isfinite(x) and x > 0 for x in (fps, speed)):
+        raise ValueError('fps and speed must be positive finite values')
+    if motion['robot_type'] != 'unitree_go2':
+        raise ValueError('Expected our Go2 motion export')
+    q = np.asarray(motion['dof_pos'], dtype=float)
+    p = np.asarray(motion['root_pos'], dtype=float)
+    quat = np.asarray(motion['root_rot'], dtype=float)
+    if q.shape != (len(p), 12) or quat.shape != (len(p), 4) or len(p) < 4:
+        raise ValueError('Invalid motion shapes')
+    if not all(np.isfinite(x).all() for x in (q, p, quat)):
+        raise ValueError('Motion contains nonfinite values')
+    src_fps = float(motion['fps'])
+    if not np.isfinite(src_fps) or src_fps <= 0:
+        raise ValueError('Invalid source fps')
+    t = np.arange(len(p))/src_fps
+    times = np.arange(int(np.floor(t[-1]/speed*fps+1e-6))+1)/fps
+    if len(times) < 4:
+        raise ValueError('Retimed reference must contain at least four control frames')
+    query = times*speed
+    # PKL is FR FL RR RL, xyz + xyzw; native RL Go2 is FL FR RL RR + wxyz.
+    q = q.reshape(-1, 4, 3)[:, [1, 0, 3, 2]].reshape(-1, 12)
+    joint = np.stack([np.interp(query, t, col) for col in q.T], -1)
+    r = Slerp(t, Rotation.from_quat(quat))(query)
+    yaw = np.arctan2(r.as_matrix()[:, 1, 0], r.as_matrix()[:, 0, 0])
+    tilt = (Rotation.from_euler('z', -yaw[:, None])*r).as_quat()[:, [3, 0, 1, 2]]
+    for i in range(1, len(tilt)):
+        if np.dot(tilt[i-1], tilt[i]) < 0:
+            tilt[i] *= -1
+    out = np.zeros((len(times), 61), dtype=np.float32)
+    out[:, 6:18] = joint.reshape(-1, 4, 3).transpose(0, 2, 1).reshape(-1, 12)
+    out[:, 50] = np.interp(query, t, p[:, 2])
+    out[:, 51:55] = tilt
+    return out
+
+
+def main():
+    p = argparse.ArgumentParser(description=__doc__)
+    p.add_argument('--source', type=Path, default=PROJECT/'data/source/side_run_go2.pkl')
+    p.add_argument('--output', type=Path)
+    p.add_argument('--speed', type=float, default=DEFAULT_SPEED,
+                   help='Playback multiplier; default 3x is the user-selected normal speed for the bundled source')
+    p.add_argument('--speed-note')
+    args = p.parse_args()
+    # Only read locally generated, trusted PKL files, never arbitrary downloads.
+    with args.source.open('rb') as f:
+        motion = pickle.load(f)
+    out = convert(motion, speed=args.speed)
+    selected_normal = (args.speed == DEFAULT_SPEED and args.source.resolve() ==
+                       (PROJECT/'data/source/side_run_go2.pkl').resolve())
+    status = ('user_selected_normal_speed' if selected_normal else
+              'source_slow_motion_unadjusted' if args.speed == 1 else 'estimated_unverified')
+    note = args.speed_note or (
+        'User selected 3x playback as normal speed for this clip; source capture FPS was not supplied.'
+        if selected_normal else 'Original slow-motion timeline retained.' if args.speed == 1 else
+        'Source capture FPS unknown; multiplier is an explicit estimate.')
+    if args.output is None:
+        name = ('side_run_3x' if selected_normal else 'side_run' if args.speed == 1
+                else f'side_run_est{args.speed:g}x')
+        args.output = PROJECT/'data'/name
+    previous = args.output/'clip.json'
+    if previous.exists() and json.loads(previous.read_text()).get('playback_speed', 1.) != args.speed:
+        raise ValueError('Use a separate output directory when changing the time scale')
+    args.output.mkdir(parents=True, exist_ok=True)
+    np.save(args.output/'motion.npy', out)
+    metadata = dict(format='go2_anchor_video_v1', fps=50., frames=len(out),
+                    duration_s=(len(out)-1)/50., cyclic=False,
+                    playback_speed=args.speed,
+                    speed_status=status, speed_note=note,
+                    source_span_s=(len(motion['root_pos'])-1)/float(motion['fps']),
+                    source_used_span_s=(len(out)-1)/50.*args.speed,
+                    source_trimmed_tail_s=max(0., (len(motion['root_pos'])-1)/float(motion['fps'])-(len(out)-1)/50.*args.speed),
+                    source=str(args.source), source_sha256=hashlib.sha256(args.source.read_bytes()).hexdigest(),
+                    joint_order='FL FR RL RR, each hip/thigh/calf', quaternion='wxyz',
+                    notes=['Reference XY and yaw are gauge-fixed, not motion-compensated.',
+                           'No true global velocity is inferred; height, tilt and joints are retained.',
+                           'Reference is resampled on a new 50Hz physical timeline, not merely encoded faster.',
+                           'Velocities are recomputed from retimed FK; accelerations are audited separately.',
+                           'Any sub-control-step tail is explicitly trimmed; endpoints are not loop-closed.',
+                           'Unused legacy 61-column fields remain zero; body poses and velocities use model FK.'])
+    (args.output/'clip.json').write_text(json.dumps(metadata, indent=2)+'\n')
+    print(json.dumps(metadata, indent=2))
+
+
+if __name__ == '__main__':
+    main()

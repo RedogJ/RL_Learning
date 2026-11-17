@@ -1,0 +1,20 @@
+{
+  "source_url": "https://www.pexels.com/video/side-view-of-dog-running-in-slow-motion-9898378/",
+  "author": "Brixiv",
+  "download_url": "https://videos.pexels.com/video-files/9898378/9898378-uhd_3840_2160_24fps.mp4",
+  "original": "media/pexels_9898378_original.mp4",
+  "original_sha256": "446ceee69de05547b045947d75cb44e12a5f7da680ff2c76e8add5bd1d394d3e",
+  "clip": "media/independent_side_run_9898378.mp4",
+  "trim_seconds": [
+    0,
+    5.5
+  ],
+  "width": 1920,
+  "fps": 25,
+  "playback_speed": 1,
+  "source_timing": "Original stock footage is slow motion; no speed change applied.",
+  "visual_review": "Single dog running left to right in side profile. Full body and paw area inside image. Fence behind dog, no external occluders in selected segment. Excludes later foreground stump crossing.",
+  "camera": "Camera pans right following the dog; fixed-camera world placement assumption is not met.",
+  "checkpoint": ".docker-data/models/animer/checkpoints/inference.ckpt",
+  "pipeline": "capture/run_default.sh, default parameters"
+}
