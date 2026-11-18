@@ -9,7 +9,7 @@ from scipy.spatial.transform import Rotation, Slerp
 from .config import PROJECT, DEFAULT_SPEED, DEFAULT_SOURCE
 
 
-def convert(motion, fps=50., speed=1.):
+def convert(motion, fps=50., speed=1., preserve_world=False):
     if not all(np.isfinite(x) and x > 0 for x in (fps, speed)):
         raise ValueError('fps and speed must be positive finite values')
     if motion['robot_type'] != 'unitree_go2':
@@ -34,14 +34,18 @@ def convert(motion, fps=50., speed=1.):
     joint = np.stack([np.interp(query, t, col) for col in q.T], -1)
     r = Slerp(t, Rotation.from_quat(quat))(query)
     yaw = np.arctan2(r.as_matrix()[:, 1, 0], r.as_matrix()[:, 0, 0])
-    tilt = (Rotation.from_euler('z', -yaw[:, None])*r).as_quat()[:, [3, 0, 1, 2]]
-    for i in range(1, len(tilt)):
-        if np.dot(tilt[i-1], tilt[i]) < 0:
-            tilt[i] *= -1
+    if not preserve_world:
+        r = Rotation.from_euler('z', -yaw[:, None])*r
+    orientation = r.as_quat()[:, [3, 0, 1, 2]]
+    for i in range(1, len(orientation)):
+        if np.dot(orientation[i-1], orientation[i]) < 0:
+            orientation[i] *= -1
     out = np.zeros((len(times), 61), dtype=np.float32)
     out[:, 6:18] = joint.reshape(-1, 4, 3).transpose(0, 2, 1).reshape(-1, 12)
+    if preserve_world:
+        out[:, 48:50] = np.stack([np.interp(query, t, col) for col in p[:, :2].T], -1)
     out[:, 50] = np.interp(query, t, p[:, 2])
-    out[:, 51:55] = tilt
+    out[:, 51:55] = orientation
     return out
 
 
@@ -62,7 +66,7 @@ def main():
     # Only read locally generated, trusted PKL files, never arbitrary downloads.
     with args.source.open('rb') as f:
         motion = pickle.load(f)
-    out = convert(motion, speed=args.speed)
+    out = convert(motion, speed=args.speed, preserve_world=compensated)
     selected_normal = (compensated and args.speed == 1.) or (old_source and args.speed == DEFAULT_SPEED)
     status = ('user_selected_normal_speed' if selected_normal else
               'source_slow_motion_unadjusted' if old_source and args.speed == 1 else
@@ -73,15 +77,16 @@ def main():
         if selected_normal else 'Original slow-motion timeline retained.' if args.speed == 1 else
         'Source capture FPS unknown; multiplier is an explicit estimate.')
     if args.output is None:
-        name = ('side_run_megasam_3x' if compensated and args.speed == 1 else
-                f'side_run_megasam_est{effective_speed:g}x' if compensated else
+        name = ('side_run_megasam_world_3x' if compensated and args.speed == 1 else
+                f'side_run_megasam_world_est{effective_speed:g}x' if compensated else
                 'side_run_3x' if selected_normal else 'side_run' if args.speed == 1
                 else f'side_run_est{args.speed:g}x')
         args.output = PROJECT/'data'/name
+    tracking = 'world_anchor' if compensated else 'relative_only'
     previous = args.output/'clip.json'
     if previous.exists():
         prior = json.loads(previous.read_text())
-        if (prior.get('playback_speed', 1.) != effective_speed or
+        if (prior.get('tracking', 'relative_only') != tracking or prior.get('playback_speed', 1.) != effective_speed or
                 prior.get('camera_compensation', 'none') != ('MegaSaM' if compensated else 'none')):
             raise ValueError('Use a separate output directory when changing the reference or time scale')
     args.output.mkdir(parents=True, exist_ok=True)
@@ -91,16 +96,16 @@ def main():
                     playback_speed=effective_speed, retime_factor=args.speed,
                     source_playback_speed=source_playback_speed,
                     camera_compensation='MegaSaM' if compensated else 'none',
-                    reference_id=args.output.name,
+                    tracking=tracking, reference_id=args.output.name,
                     speed_status=status, speed_note=note,
                     source_span_s=(len(motion['root_pos'])-1)/float(motion['fps']),
                     source_used_span_s=(len(out)-1)/50.*args.speed,
                     source_trimmed_tail_s=max(0., (len(motion['root_pos'])-1)/float(motion['fps'])-(len(out)-1)/50.*args.speed),
                     source=str(args.source), source_sha256=hashlib.sha256(args.source.read_bytes()).hexdigest(),
                     joint_order='FL FR RL RR, each hip/thigh/calf', quaternion='wxyz',
-                    notes=[('Source has MegaSaM camera compensation; anchor training removes reference XY/yaw.' if compensated else
+                    notes=[('Source has MegaSaM camera compensation; retain world root pose and velocities for anchor tracking.' if compensated else
                             'Reference XY and yaw are gauge-fixed, not motion-compensated.'),
-                           'Global speed is not a training target; height, tilt and joints are retained.',
+                           'Height, tilt and joints are retained.',
                            'Candidate reference is not certified physically feasible; inspect the source quality report.',
                            'Reference is resampled on a new 50Hz physical timeline, not merely encoded faster.',
                            'Velocities are recomputed from retimed FK; accelerations are audited separately.',

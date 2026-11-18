@@ -6,7 +6,7 @@ SLOW_MOTION = PROJECT / 'data/side_run/motion.npy'
 # User selected 3x playback as normal speed for this source clip.
 DEFAULT_SPEED = 3.
 DEFAULT_SOURCE = PROJECT / 'data/source/side_run_megasam_3x_go2.pkl'
-MOTION = PROJECT / 'data/side_run_megasam_3x/motion.npy'
+MOTION = PROJECT / 'data/side_run_megasam_world_3x/motion.npy'
 
 
 @dataclass

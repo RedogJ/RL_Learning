@@ -23,7 +23,7 @@ from go2_mujoco_mimic.tasks.mimic.state_train import fit_critic
 from go2_mujoco_mimic.tasks.mimic.rewards import (
     gravity_local, rotation_vector, estimate_torque_squared)
 from .config import PROJECT, MOTION, TrainCfg
-from .environment import AnchorEnv, make_config, goal, policy_input, ACTION_MAPPING
+from .environment import AnchorEnv, make_config, goal, ACTION_MAPPING
 
 FORMAT = 'go2_anchor_supermimic_v1'
 
@@ -119,11 +119,11 @@ def imagine(env, actor, model, critic, opt_a, opt_v, batch, cfg, update_actor):
     model.requires_grad_(False)
     critic.requires_grad_(False)
     for t in range(cfg.horizon):
-        g = goal(env, frame, limit)
+        g = goal(env, frame, limit, s)
         ss.append(s.detach()); gg.append(g.detach()); hh.append(history.detach())
         tt.append(critic_remaining_time(env, frame, limit).detach())
         valid.append((frame < limit).detach())
-        action = actor(policy_input(env, s, history, frame, limit))
+        action = actor(torch.cat((history.flatten(1), g), -1))
         with torch.autocast('cuda', dtype=torch.bfloat16):
             ns = model(s, action, ctx)
         nf = torch.minimum(frame+1, limit)
@@ -144,7 +144,7 @@ def imagine(env, actor, model, critic, opt_a, opt_v, batch, cfg, update_actor):
         survive = survive*(1-done)
         history = torch.cat((history[:, 1:], obs_from_state(ns, action, env.default_q)[:, None]), 1)
         s, frame, prev = ns, nf, action
-    tail_goal, tail_time = goal(env, frame, limit), critic_remaining_time(env, frame, limit)
+    tail_goal, tail_time = goal(env, frame, limit, s), critic_remaining_time(env, frame, limit)
     max_value = 4.8*env.dt/(1-cfg.gamma)
     tail = critic(s, tail_goal, ctx, history, tail_time).clamp(max=max_value)
     objective = objective+cfg.gamma**cfg.horizon*survive*tail
@@ -204,7 +204,7 @@ def main():
     p = argparse.ArgumentParser(description=__doc__)
     p.add_argument('--motion', type=Path)
     p.add_argument('--resume', type=Path)
-    p.add_argument('--run-name', default='anchor_side_run_megasam_3x')
+    p.add_argument('--run-name', default='anchor_side_run_megasam_world_3x')
     for name in asdict(TrainCfg()):
         if name == 'actor_hidden': continue
         kind = float if isinstance(getattr(TrainCfg(), name), float) else int

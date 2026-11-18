@@ -49,3 +49,23 @@ def features(pose):
     out = dict(pose)
     out.update(pos=local_p, quat=local_q, linear_vel=local_v, angular_vel=local_w)
     return out
+
+
+def reanchor(actual, reference):
+    """Align body pose targets while retaining world root and velocity targets."""
+    root = reference['pos'][:, :1]
+    origin = torch.cat((actual['pos'][:, :1, :2], root[..., 2:3]), -1)
+    delta = yaw_quat(quat_mul(actual['quat'][:, 0], quat_conjugate(reference['quat'][:, 0])))
+    delta = delta[:, None].expand_as(reference['quat'])
+    return dict(reference, pos=origin + rotate(delta, reference['pos'] - root),
+                quat=quat_mul(delta, reference['quat']),
+                root_pos=root[:, 0], root_quat=reference['quat'][:, 0])
+
+
+def world_goal(reference, root):
+    """Future reference poses in the current physical or imagined robot frame."""
+    inv = quat_conjugate(F.normalize(root[:, None, 3:7], dim=-1)).expand_as(reference['quat'])
+    pos = rotate(inv, reference['pos'] - root[:, None, :3])
+    ori = quat_mul(inv, reference['quat'])
+    ori = torch.where(ori[..., :1] < 0, -ori, ori)
+    return torch.cat((reference['joints'], pos, ori), -1)

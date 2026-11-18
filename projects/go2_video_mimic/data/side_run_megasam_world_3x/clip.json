@@ -1,0 +1,31 @@
+{
+  "format": "go2_anchor_video_v1",
+  "fps": 50.0,
+  "frames": 92,
+  "duration_s": 1.82,
+  "cyclic": false,
+  "playback_speed": 3.0,
+  "retime_factor": 1.0,
+  "source_playback_speed": 3.0,
+  "camera_compensation": "MegaSaM",
+  "tracking": "world_anchor",
+  "reference_id": "side_run_megasam_world_3x",
+  "speed_status": "user_selected_normal_speed",
+  "speed_note": "User selected 3x normal speed; MegaSaM PKL already has this timing. No additional retiming.",
+  "source_span_s": 1.82,
+  "source_used_span_s": 1.82,
+  "source_trimmed_tail_s": 0.0,
+  "source": "/workspace/projects/go2_video_mimic/data/source/side_run_megasam_3x_go2.pkl",
+  "source_sha256": "687fc5895313ac6206ff4d7f770846445b1e6485d3d26fb38faac646ee570df4",
+  "joint_order": "FL FR RL RR, each hip/thigh/calf",
+  "quaternion": "wxyz",
+  "notes": [
+    "Source has MegaSaM camera compensation; retain world root pose and velocities for anchor tracking.",
+    "Height, tilt and joints are retained.",
+    "Candidate reference is not certified physically feasible; inspect the source quality report.",
+    "Reference is resampled on a new 50Hz physical timeline, not merely encoded faster.",
+    "Velocities are recomputed from retimed FK; accelerations are audited separately.",
+    "Any sub-control-step tail is explicitly trimmed; endpoints are not loop-closed.",
+    "Unused legacy 61-column fields remain zero; body poses and velocities use model FK."
+  ]
+}

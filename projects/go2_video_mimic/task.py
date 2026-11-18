@@ -1,11 +1,20 @@
 import torch
 from go2_mujoco_mimic.tasks.mimic.task import MimicTask
-from .anchor import features
+from .anchor import features, reanchor
 
 
 class AnchorTask(MimicTask):
+    def __init__(self, cfg, world_tracking=False):
+        super().__init__(cfg)
+        self.world_tracking = world_tracking
+
     def reward(self, actual, reference, action, previous_action, joint_pos, limits, dt, **kwargs):
-        total, terms = super().reward(features(actual), features(reference), action,
+        if self.world_tracking:
+            target_pose = reanchor(actual, reference)
+            tracked_pose = actual
+        else:
+            tracked_pose, target_pose = features(actual), features(reference)
+        total, terms = super().reward(tracked_pose, target_pose, action,
                                      previous_action, joint_pos, limits, dt, **kwargs)
         # Differentiable height-gated foot slip proxy, used in real and imagined
         # transitions alike. This is not a measured contact-force label.

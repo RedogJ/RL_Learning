@@ -60,8 +60,9 @@ def compute_reward(cfg, actual, ref, action, previous_action, joint_pos, joint_l
     ori = rotation_vector(actual['quat'], ref['quat']).square().sum(-1).mean(-1)
     vel = (actual['linear_vel'] - ref['linear_vel']).square().sum(-1).mean(-1)
     ang = (actual['angular_vel'] - ref['angular_vel']).square().sum(-1).mean(-1)
-    root_pos = (actual['pos'][:, 0] - ref['pos'][:, 0]).square().sum(-1)
-    root_ori = rotation_vector(actual['quat'][:, 0], ref['quat'][:, 0]).square().sum(-1)
+    # Body pose targets may be re-anchored while root targets stay in world coordinates.
+    root_pos = (actual['pos'][:, 0] - ref.get('root_pos', ref['pos'][:, 0])).square().sum(-1)
+    root_ori = rotation_vector(actual['quat'][:, 0], ref.get('root_quat', ref['quat'][:, 0])).square().sum(-1)
     limits = (joint_limits[:, 0] - joint_pos).clamp_min(0) + (joint_pos - joint_limits[:, 1]).clamp_min(0)
     terms = {
         'body_position': cfg.body_position_weight * torch.exp(-pos / cfg.body_position_sigma**2),

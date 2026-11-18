@@ -4,7 +4,7 @@ import torch
 from scipy.spatial.transform import Rotation
 from go2_mujoco_mimic.tasks.mimic.kinematics import rotate
 from go2_mujoco_mimic.tasks.mimic.rewards import quat_mul
-from go2_video_mimic.anchor import features, canonical_goal, yaw_quat
+from go2_video_mimic.anchor import features, canonical_goal, world_goal, yaw_quat
 from go2_video_mimic.config import reward_config
 from go2_video_mimic.task import AnchorTask
 from go2_video_mimic.prepare import convert
@@ -64,6 +64,40 @@ class AnchorTests(unittest.TestCase):
         a.sum().backward()
         self.assertTrue(torch.isfinite(actual['pos'].grad).all())
         self.assertGreater(float(actual['pos'].grad.abs().sum()), 0.)
+
+    def test_world_tracking_detects_running_in_place_and_turn_rate(self):
+        task = AnchorTask(MimicTaskCfg(reward=reward_config()), world_tracking=True)
+        actual = pose()
+        zeros = torch.zeros(2, 12)
+        ref = dict(actual, joint_pos=zeros)
+        moved = gauge(actual)
+        moved['joint_pos'] = zeros
+        limits = torch.tensor([[-3., 3.]]).expand(12, -1)
+        def terms(target):
+            return task.reward(actual, target, zeros, zeros, zeros, limits, .02,
+                               joint_vel=zeros, prev_joint_vel=zeros, target=zeros,
+                               torque_squared_mean=zeros)[1]
+        match, miss = terms(ref), terms(moved)
+        for key in ('body_position', 'body_orientation', 'joint_position'):
+            torch.testing.assert_close(match[key], miss[key], atol=1e-6, rtol=1e-5)
+        for key in ('root_position', 'root_orientation', 'body_linear_velocity', 'body_angular_velocity'):
+            self.assertTrue((match[key] > miss[key]).all(), key)
+        # Same posture and leg velocities, but the reference advances at 1.5 m/s.
+        running = {**ref, 'pos': ref['pos'] + torch.tensor([.3, 0., 0.]),
+                   'linear_vel': ref['linear_vel'] + torch.tensor([1.5, 0., 0.])}
+        stationary = terms(running)
+        for key in ('body_position', 'joint_position', 'root_orientation'):
+            torch.testing.assert_close(stationary[key], match[key])
+        for key in ('root_position', 'body_linear_velocity'):
+            self.assertTrue((stationary[key] < match[key]).all())
+
+    def test_future_goal_uses_current_robot_frame_and_retains_travel(self):
+        root = torch.tensor([[4., 2., .3, .70710678, 0., 0., .70710678]])
+        ref = dict(pos=torch.tensor([[[4., 2.2, .3], [4., 2.4, .3]]]),
+                   quat=root[:, None, 3:7].expand(-1, 2, -1), joints=torch.zeros(1, 2, 12))
+        g = world_goal(ref, root)
+        torch.testing.assert_close(g[0, :, 12:15], torch.tensor([[.2, 0., 0.], [.4, 0., 0.]]))
+        torch.testing.assert_close(g[0, :, 15:], torch.tensor([[1., 0., 0., 0.]]).expand(2, -1))
 
     def test_policy_goal_excludes_xy_and_absolute_yaw(self):
         a = dict(pos=torch.tensor([[2., -3., .3]]), quat=torch.tensor([[1., 0., 0., 0.]]),
@@ -129,7 +163,11 @@ class AnchorTests(unittest.TestCase):
         self.assertEqual(metadata['playback_speed'], 3.)
         self.assertEqual(metadata['retime_factor'], 1.)
         self.assertEqual(metadata['camera_compensation'], 'MegaSaM')
-        np.testing.assert_allclose(output, convert(source, speed=1.))
+        np.testing.assert_allclose(output, convert(source, speed=1., preserve_world=True))
+        np.testing.assert_allclose(output[:, 48:51], source['root_pos'], atol=1e-6)
+        self.assertGreater(np.linalg.norm(output[-1, 48:50]-output[0, 48:50]), 2.)
+        relative = Rotation.from_quat(output[:, [52, 53, 54, 51]]).inv() * Rotation.from_quat(source['root_rot'])
+        np.testing.assert_allclose(relative.magnitude(), 0., atol=1e-6)
         np.testing.assert_allclose(output, np.load(MOTION))
 
     def test_retiming_scales_velocity_and_acceleration_on_same_physical_clock(self):

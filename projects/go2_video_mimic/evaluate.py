@@ -30,7 +30,7 @@ def timing_label(meta, prefix):
     return f'{prefix}: ESTIMATED {speed:g}x - original speed unverified'
 
 
-def render(records, reference_poses, path, fps=50., reference_only=False, speed_label=''):
+def render(records, reference_poses, path, fps=50., reference_only=False, speed_label='', world_tracking=False):
     cpu = Go2Environment(600, 50, checkerboard=True)
     m, d = cpu.model, cpu.data
     m.vis.global_.offwidth = max(m.vis.global_.offwidth, 960)
@@ -70,7 +70,7 @@ def render(records, reference_poses, path, fps=50., reference_only=False, speed_
                 frame = Image.fromarray(np.concatenate((real, ref), axis=1))
                 draw = ImageDraw.Draw(frame)
                 labels = ('KINEMATIC REFERENCE' if reference_only else 'POLICY - REAL PHYSICS',
-                          'ANCHOR-ALIGNED REFERENCE')
+                          'WORLD REFERENCE' if world_tracking else 'ANCHOR-ALIGNED REFERENCE')
                 for x, text in zip((12, 972), labels):
                     draw.rectangle((x-4, 8, x+350, 42), fill='black')
                     draw.text((x, 12), text, fill='white', font=font)
@@ -81,19 +81,18 @@ def render(records, reference_poses, path, fps=50., reference_only=False, speed_
             writer.stdin.close()
             if writer.wait() != 0: raise RuntimeError('Video encoding failed')
     left = 'kinematic reference' if reference_only else 'real physics'
-    print(f'Video: {path}; left={left}, right=anchor-aligned reference; tracking view', flush=True)
+    print(f'Video: {path}; left={left}, right=reference; tracking view', flush=True)
 
 
-def aligned_reference(env, index=0):
+def display_reference(env, index=0):
     ref = env.ref.sample(env.frame[index:index+1])
-    actual = env.qpos[index:index+1, 3:7]
-    # Gauge-fixed reference has zero yaw; align it to the actual robot's yaw.
-    from go2_mujoco_mimic.tasks.mimic.rewards import quat_mul
-    q = quat_mul(yaw_quat(actual), ref['quat'])[0].cpu().numpy()
     qp = env.qpos[index].cpu().numpy().copy()
-    qp[:2] = env.qpos[index, :2].cpu().numpy()
-    qp[2] = float(ref['pos'][0, 2])
-    qp[3:7] = q
+    qp[:3] = ref['pos'][0].cpu().numpy()
+    qp[3:7] = ref['quat'][0].cpu().numpy()
+    if not env.world_tracking:
+        from go2_mujoco_mimic.tasks.mimic.rewards import quat_mul
+        qp[:2] = env.qpos[index, :2].cpu().numpy()
+        qp[3:7] = quat_mul(yaw_quat(env.qpos[index:index+1, 3:7]), ref['quat'])[0].cpu().numpy()
     qp[env.qids.cpu().numpy()] = ref['joints'][0].cpu().numpy()
     return qp
 
@@ -121,12 +120,14 @@ def main():
         meta = json.loads(args.motion.with_name('clip.json').read_text())
         speed = meta.get('playback_speed', 1.)
         label = timing_label(meta, 'REFERENCE TIMING')
-        name = (f'reference_megasam_{speed:g}x.mp4' if meta.get('camera_compensation') == 'MegaSaM' else
+        world = meta.get('tracking') == 'world_anchor'
+        name = (f'reference_megasam_world_{speed:g}x.mp4' if world else
+                f'reference_megasam_{speed:g}x.mp4' if meta.get('camera_compensation') == 'MegaSaM' else
                 f'reference_{speed:g}x.mp4' if meta.get('speed_status') == 'user_selected_normal_speed'
                 else 'reference_slow1x.mp4' if speed == 1 else f'reference_est{speed:g}x.mp4')
         default_video = PROJECT/'videos'/name
         render(np.array(records), np.array(records), args.video or default_video,
-               reference_only=True, speed_label=label)
+               reference_only=True, speed_label=label, world_tracking=world)
         print('Reference-only kinematic playback, not a policy result.')
         return
     if args.checkpoint is None: p.error('--checkpoint is required for policy evaluation')
@@ -147,11 +148,13 @@ def main():
     total, seconds = torch.zeros(args.num_envs, device=env.device), torch.zeros(args.num_envs, device=env.device)
     completed = torch.zeros_like(live)
     expected = (env.frame_limit-env.start_frame).float()/env.ref.fps
-    records, refs = [env.qpos[0].cpu().numpy().copy()], [aligned_reference(env)]
+    records, refs = [env.qpos[0].cpu().numpy().copy()], [display_reference(env)]
     errors, joint_errors, physical_distance = [], [], []
+    root_xy_sq, root_vxy_sq = [], []
     start_xy = env.qpos[:, :2].clone()
     for _ in range(int(np.ceil(cfg.episode_seconds/env.dt))+2):
-        previous_frame = env.frame.clone()
+        previous_xy = env.qpos[:, :2].clone()
+        previous_ref_xy = env.ref.position[env.frame, :2]
         _, reward, failed, truncated, _ = env.step(actor(env.observation()))
         total += torch.where(live, reward, 0.)
         seconds += live*env.dt
@@ -163,10 +166,13 @@ def main():
         af = features(dict(pos=actual_pos, quat=actual_q, linear_vel=zero, angular_vel=zero))
         rf = features(dict(pos=ref['body_pos'], quat=ref['body_quat'], linear_vel=zero, angular_vel=zero))
         if live.any():
+            root_xy_sq.extend((env.qpos[live, :2]-ref['pos'][live, :2]).square().sum(-1).tolist())
+            step_error = (env.qpos[:, :2]-previous_xy) - (ref['pos'][:, :2]-previous_ref_xy)
+            root_vxy_sq.extend((step_error[live]/env.dt).square().sum(-1).tolist())
             errors.extend((af['pos'][live]-rf['pos'][live]).square().sum(-1).mean(-1).sqrt().tolist())
             joint_errors.extend((env.qpos[live][:, env.qids]-ref['joints'][live]).square().mean(-1).tolist())
         if bool(live[0]):
-            records.append(env.qpos[0].cpu().numpy().copy()); refs.append(aligned_reference(env))
+            records.append(env.qpos[0].cpu().numpy().copy()); refs.append(display_reference(env))
         done = failed | truncated
         physical_distance.extend((env.qpos[live & done, :2]-start_xy[live & done]).norm(dim=-1).tolist())
         live &= ~done
@@ -181,6 +187,9 @@ def main():
                   joint_position_rmse_rad=float(np.sqrt(np.mean(joint_errors))),
                   endpoint_displacement_mean_m=float(np.mean(physical_distance)) if physical_distance else None,
                   notes='Real physics; no exploration or observation noise. Completion is reference-end without failure. Deterministic start trials share the same initial state.')
+    if env.world_tracking:
+        result.update(root_xy_rmse_m=float(np.sqrt(np.mean(root_xy_sq))),
+                      root_vxy_rmse_mps=float(np.sqrt(np.mean(root_vxy_sq))))
     out = args.checkpoint.parent/f'evaluation_{"random" if args.random_start else "start"}_{args.seed}.json'
     out.write_text(json.dumps(result, indent=2)+'\n')
     np.savez_compressed(out.with_suffix('.npz'),
@@ -188,7 +197,7 @@ def main():
     print(json.dumps(result, indent=2), flush=True)
     if args.video:
         label = timing_label(meta, 'TRAINING REFERENCE')
-        render(np.array(records), np.array(refs), args.video, speed_label=label)
+        render(np.array(records), np.array(refs), args.video, speed_label=label, world_tracking=env.world_tracking)
 
 
 if __name__ == '__main__':
